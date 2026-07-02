@@ -1,0 +1,16 @@
+{
+  "name": "stockpulse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "StockPulse full-stack stock learning dashboard with paper trading and educational AI insights.",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "install:all": "npm install --prefix client && npm install --prefix server",
+    "lint": "npm run lint --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
