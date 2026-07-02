@@ -136,10 +136,4 @@ Then restart the server. StockPulse uses Finnhub for quotes, company profiles, c
 
 The client and server both include demo data so the portfolio demo works without paid APIs. Live API integration should be added behind the `stockDataService` methods so controllers and UI components do not change.
 
-## Future Improvements
 
-- Add real provider adapters for Finnhub, Alpha Vantage, Polygon, or Twelve Data.
-- Add Mongo-backed portfolio snapshots for historical performance charts.
-- Add focus trapping to modals for stricter accessibility.
-- Add automated tests for auth, trades, and watchlist persistence.
-- Add deployment configuration for Vercel/Netlify and Render/Railway.
