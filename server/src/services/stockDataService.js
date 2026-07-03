@@ -1506,7 +1506,8 @@ export async function getMarketNews() {
       return {
         demo: false,
         provider: 'finnhub',
-        news: news.slice(0, 6).map(mapNewsItem),
+        // Keep a fuller feed available because the dashboard card scrolls internally.
+        news: news.slice(0, 15).map(mapNewsItem),
       };
     } catch (error) {
       return { demo: true, provider: 'demo', message: `${getDemoMessage()} ${error.message}`, news: demoNews };
