@@ -295,12 +295,12 @@ export default function Watchlist() {
         <div className="section-title">
           <div>
             <span className="chip">Saved tickers</span>
-            <h1 className="page-title" style={{ margin: '14px 0 8px' }}>Watchlist</h1>
+            <h1 className="page-title">Watchlist</h1>
             <p className="muted">Monitor prices, volume, news, and earnings for stocks you are learning about.</p>
           </div>
           <Button onClick={() => openInsight({ screen: 'Watchlist', tickers: items.map((item) => item.ticker) })}>Ask AI</Button>
         </div>
-        <form onSubmit={addStock} style={{ display: 'flex', gap: 10, alignItems: 'end', maxWidth: 520 }}>
+        <form className="watchlist-add-form" onSubmit={addStock}>
           <Input label="Add stock" name="watchlist-ticker" placeholder="Ticker symbol" value={ticker} onChange={(event) => setTicker(event.target.value)} />
           <Button type="submit"><Plus size={18} /> <span style={{ marginLeft: 8 }}>Add</span></Button>
         </form>

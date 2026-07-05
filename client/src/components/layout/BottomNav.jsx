@@ -1,8 +1,11 @@
 /**
  * File purpose: Defines the reusable Bottom Nav React component and its focused user interaction.
  */
-import { BookOpen, BriefcaseBusiness, LayoutDashboard, Search, Star } from 'lucide-react';
+import { BookOpen, BriefcaseBusiness, LayoutDashboard, LogIn, Search, Star, UserRound } from 'lucide-react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import AccountSettingsModal from '../auth/AccountSettingsModal';
 
 const links = [
   { to: '/', label: 'Home', icon: LayoutDashboard },
@@ -19,14 +22,31 @@ const links = [
  * @returns {JSX.Element} The rendered component interface.
  */
 export default function BottomNav() {
+  const { user } = useAuth();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
-    <nav className="bottom-nav" aria-label="Mobile primary navigation">
-      {links.map(({ to, label, icon: Icon }) => (
-        <NavLink key={to} to={to}>
-          <Icon size={18} />
-          <span>{label}</span>
-        </NavLink>
-      ))}
-    </nav>
+    <>
+      <nav className="bottom-nav" aria-label="Mobile primary navigation">
+        {links.map(({ to, label, icon: Icon }) => (
+          <NavLink key={to} to={to}>
+            <Icon size={18} />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+        {user ? (
+          <button className={settingsOpen ? 'active' : ''} type="button" aria-label="Open account settings" onClick={() => setSettingsOpen(true)}>
+            <UserRound size={18} />
+            <span>Account</span>
+          </button>
+        ) : (
+          <NavLink to="/login">
+            <LogIn size={18} />
+            <span>Log in</span>
+          </NavLink>
+        )}
+      </nav>
+      <AccountSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </>
   );
 }

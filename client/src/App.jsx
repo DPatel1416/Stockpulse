@@ -96,9 +96,9 @@ function AppShell() {
         <Footer compact={location.pathname !== '/learn'} />
       </main>
       <BottomNav />
-      <Button className="floating-ai" aria-label="Open AI insight panel" onClick={() => openInsight(aiContext)}>
+      <Button className="floating-ai" aria-label="Open AI insight panel" title="Get Insight" onClick={() => openInsight(aiContext)}>
         <Sparkles size={18} />
-        <span style={{ marginLeft: 8 }}>Get Insight</span>
+        <span>Get Insight</span>
       </Button>
       <AIInsightPanel open={aiOpen} onClose={() => setAiOpen(false)} context={aiContext} />
       <GuestChoiceModal

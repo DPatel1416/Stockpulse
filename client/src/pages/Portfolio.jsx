@@ -494,11 +494,12 @@ function AllocationCard({ holdings }) {
                 nameKey="ticker"
                 innerRadius={64}
                 outerRadius={112}
-                paddingAngle={4}
+                paddingAngle={0}
+                stroke="none"
                 label={AllocationLogoLabel}
                 labelLine={false}
               >
-                {holdings.map((holding, index) => <Cell key={holding.ticker} fill={colors[index % colors.length]} />)}
+                {holdings.map((holding, index) => <Cell key={holding.ticker} fill={colors[index % colors.length]} stroke="none" />)}
               </Pie>
               <Tooltip
                 formatter={formatAllocationTooltip}
@@ -587,7 +588,7 @@ export default function Portfolio() {
         <div className="section-title">
           <div>
             <span className="chip">{isAuthenticated ? 'Virtual account' : 'Guest portfolio preview'}</span>
-            <h1 className="page-title" style={{ margin: '14px 0 8px' }}>Portfolio</h1>
+            <h1 className="page-title">Portfolio</h1>
             <p className="muted">Track performance, manage holdings, place orders, and review account activity.</p>
           </div>
           <Button onClick={() => openInsight({ screen: 'Portfolio', portfolio })}>

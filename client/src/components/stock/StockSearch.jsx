@@ -120,7 +120,12 @@ export default function StockSearch({ compact = false }) {
   }
 
   return (
-    <form ref={searchRef} onSubmit={handleSubmit} style={{ position: 'relative', display: 'flex', gap: 10, alignItems: compact ? 'end' : 'center' }}>
+    <form
+      ref={searchRef}
+      className={`stock-search-form${compact ? ' compact' : ''}`}
+      onSubmit={handleSubmit}
+      style={{ position: 'relative', alignItems: compact ? 'end' : 'center' }}
+    >
       <div style={{ position: 'relative', flex: 1 }}>
         <Input
           label={compact ? 'Search stock' : undefined}
@@ -155,8 +160,9 @@ export default function StockSearch({ compact = false }) {
           </div>
         )}
       </div>
-      <Button type="submit" iconOnly={compact} aria-label="Search stock ticker">
-        {compact ? <Search size={18} /> : 'Search'}
+      <Button className="stock-search-submit" type="submit" iconOnly={compact} aria-label="Search stock ticker">
+        <Search size={17} />
+        {!compact && <span>Search</span>}
       </Button>
     </form>
   );

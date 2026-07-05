@@ -281,18 +281,14 @@ export default function StockDetails() {
         </div>
         <div className="content-grid" style={{ alignItems: 'end' }}>
           <div className="span-8">
-            <span className="chip ticker-chip-with-logo">
-              <StockLogo stock={stock} size={22} />
-              {stock.ticker} - Market open
-            </span>
             <div className="stock-detail-heading">
               <StockLogo stock={stock} size={58} />
-              <h1 className="page-title" style={{ margin: '14px 0 8px' }}>{stock.company}</h1>
+              <h1 className="page-title">{stock.company}</h1>
             </div>
             <p className="muted">Study price, volume, earnings, news, and order workflows.</p>
           </div>
           <div className="span-4">
-            <strong style={{ display: 'block', fontSize: '2.4rem' }}>{formatCurrency(stock.price)}</strong>
+            <strong className="stock-detail-price">{formatCurrency(stock.price)}</strong>
             <span className={getChangeClass(stock.change)}>{formatPercent(stock.change)} today</span>
           </div>
         </div>

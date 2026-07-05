@@ -2,7 +2,7 @@
  * File purpose: Defines the reusable Account Settings Modal React component and its focused user interaction.
  */
 import { useEffect, useState } from 'react';
-import { KeyRound, UserRound, X } from 'lucide-react';
+import { KeyRound, LogOut, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 import GlassCard from '../ui/GlassCard';
@@ -24,7 +24,7 @@ const emptyPasswordForm = {
  * @returns {JSX.Element} The rendered component interface.
  */
 export default function AccountSettingsModal({ open, onClose }) {
-  const { user, updateProfile, updatePassword } = useAuth();
+  const { user, updateProfile, updatePassword, logout } = useAuth();
   const { showToast } = useToasts();
   const [name, setName] = useState(user?.name || '');
   const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
@@ -174,6 +174,18 @@ export default function AccountSettingsModal({ open, onClose }) {
               {busyAction === 'password' ? 'Updating...' : 'Update password'}
             </Button>
           </form>
+
+          <div className="account-settings-form account-settings-session">
+            <div className="account-settings-form-title">
+              <LogOut size={17} />
+              <h3>Session</h3>
+            </div>
+            <p className="muted">Signed in as {user.email}</p>
+            <Button variant="danger" onClick={() => { logout(); onClose(); }}>
+              <LogOut size={16} />
+              Log out
+            </Button>
+          </div>
         </GlassCard>
       </div>
     </div>

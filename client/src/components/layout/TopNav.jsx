@@ -38,7 +38,7 @@ export default function TopNav() {
             <span className="chip status-checking">Checking markets</span>
           )}
         </div>
-        <Button variant="ghost" iconOnly aria-label="Toggle theme" onClick={toggleTheme}>
+        <Button className="theme-toggle-button" variant="ghost" iconOnly aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`} title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme}>
           {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
       </div>

@@ -525,8 +525,8 @@ export default function Dashboard() {
       <GlassCard variant="glow">
         <div className="content-grid" style={{ alignItems: 'center' }}>
           <div className="span-8 hero-copy">
-            <h1 className="page-title" style={{ margin: '18px 0 12px' }}>StockPulse</h1>
-            <p className="muted" style={{ maxWidth: 680, fontSize: '1.08rem' }}>
+            <h1 className="page-title">StockPulse</h1>
+            <p className="muted hero-description">
               A virtual trading platform for students and aspiring investors to explore the market, practise trading, and build confidence without risking real money.
             </p>
             <div className="hero-pulse-grid" aria-label="Dashboard market pulse">
