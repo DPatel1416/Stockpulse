@@ -8025,3 +8025,28 @@ body {
     text-overflow: clip;
   }
 }
+@media (max-width: 570px) {
+  .portfolio-page .returns-chart-canvas {
+    height: 260px;
+    min-height: 260px;
+    max-height: 260px;
+    aspect-ratio: auto;
+  }
+
+  :root .dashboard-page .dashboard-hero-card .hero-pulse-grid .hero-pulse-item:nth-child(2) {
+    margin-right: 2px;
+    border-right: 1px solid var(--glass-stroke);
+  }
+}
+@media (max-width: 570px) {
+  .watchlist-page .firm-rating-scroll {
+    gap: 6px;
+    padding: 4px 8px 8px 3px;
+  }
+
+  .watchlist-page .firm-rating-scroll .analyst-firm-row {
+    height: 47px;
+    min-height: 47px;
+    padding: 6px 12px;
+  }
+}
