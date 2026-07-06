@@ -11,6 +11,7 @@ import PasswordInput from '../components/ui/PasswordInput';
 import { useToasts } from '../components/ui/Toast';
 import { useAuth } from '../context/AuthContext';
 import { rememberAccessChoice } from '../utils/accessChoice';
+import { isValidEmail } from '../utils/validation';
 
 // Register creates a virtual portfolio with a $10,000 opening cash balance.
 /**
@@ -32,6 +33,11 @@ export default function Register() {
    */
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (!isValidEmail(form.email)) {
+      showToast('Enter a valid email address.', 'error');
+      return;
+    }
 
     if (form.password !== form.confirmPassword) {
       showToast('Passwords must match.', 'error');

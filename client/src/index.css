@@ -4946,6 +4946,26 @@ select option {
   gap: 15px;
   padding-top: 4px;
 }
+.auth-forgot-password {
+  justify-self: end;
+  margin-top: -6px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 750;
+  padding: 2px 0;
+}
+
+.auth-forgot-password:hover,
+.auth-forgot-password:focus-visible {
+  color: var(--accent-strong);
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 .auth-wide-action {
   width: 100%;
@@ -8048,5 +8068,31 @@ body {
     height: 47px;
     min-height: 47px;
     padding: 6px 12px;
+  }
+}
+/* Keep the portfolio performance chart from collapsing on deployed mobile layouts. */
+@media (max-width: 885px) {
+  .portfolio-page .portfolio-returns-card .returns-chart-canvas {
+    height: clamp(260px, 54vw, 330px);
+    min-height: 260px;
+    max-height: 330px;
+    aspect-ratio: auto;
+  }
+
+  .portfolio-page .portfolio-returns-card .returns-chart-canvas .recharts-responsive-container {
+    height: 100% !important;
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 570px) {
+  .portfolio-page .portfolio-returns-card .returns-chart-canvas {
+    height: 280px;
+    min-height: 280px;
+    max-height: 280px;
+  }
+
+  .portfolio-page .portfolio-returns-card .returns-chart-canvas .recharts-responsive-container {
+    min-height: 280px;
   }
 }

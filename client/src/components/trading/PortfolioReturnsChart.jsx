@@ -16,67 +16,10 @@ import { TrendingUp } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { api } from '../../services/api';
 import { formatCurrency, getChangeClass } from '../../utils/format';
+import { formatMarketDate, formatMarketDateTime, formatMarketTime, getMarketSessionBounds, normalizeMarketTimestamp } from '../../utils/marketTime';
 import GlassCard from '../ui/GlassCard';
 
 const ranges = ['1D', '5D', '1M', '3M', '6M', '1Y', '5Y', 'YTD'];
-const marketOpenMinutes = 9 * 60 + 30;
-const marketCloseMinutes = 16 * 60;
-
-/**
- * Checks whether a date falls on Saturday or Sunday.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
- * @param {Date} date - Date being inspected or adjusted.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
- */
-function isWeekend(date) {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-}
-
-/**
- * Creates a copy of a date positioned at a specific regular-session minute.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @param {number} minuteOfDay - Minutes elapsed since midnight in local market time.
- * @returns {Date} A new date positioned at the requested market minute.
- */
-function atMarketMinute(date, minuteOfDay) {
-  const result = new Date(date);
-  result.setHours(Math.floor(minuteOfDay / 60), minuteOfDay % 60, 0, 0);
-  return result;
-}
-
-/**
- * Finds the nearest earlier weekday trading date.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @returns {Date} The nearest earlier weekday trading date.
- */
-function previousTradingDay(date) {
-  const result = new Date(date);
-
-  do {
-    result.setDate(result.getDate() - 1);
-  } while (isWeekend(result));
-
-  return result;
-}
-
-/**
- * Converts the chart timestamp into the consistent shape expected by later code.
- * Normalization at one boundary prevents later code from handling many input shapes.
- * @param {string|Date|number} timestamp - Time value to normalize or display.
- * @returns {*} The normalized chart timestamp result.
- */
-function normalizeChartTimestamp(timestamp) {
-  const date = new Date(timestamp);
-  if (!Number.isFinite(date.getTime())) return Date.now();
-
-  if (isWeekend(date)) return atMarketMinute(previousTradingDay(date), marketCloseMinutes).getTime();
-  if (date < atMarketMinute(date, marketOpenMinutes)) return atMarketMinute(previousTradingDay(date), marketCloseMinutes).getTime();
-  if (date > atMarketMinute(date, marketCloseMinutes)) return atMarketMinute(date, marketCloseMinutes).getTime();
-  return date.getTime();
-}
 
 /**
  * Formats the axis currency for display or transport.
@@ -108,14 +51,14 @@ function formatTimeLabel(timestamp, range) {
   if (!Number.isFinite(date.getTime())) return '';
 
   if (range === '1D') {
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return formatMarketTime(date);
   }
 
   if (['5D', '1M', '3M', '6M'].includes(range)) {
-    return date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+    return formatMarketDate(date);
   }
 
-  return date.toLocaleDateString('en-CA', { month: 'short', year: '2-digit' });
+  return formatMarketDate(date, { month: 'short', year: '2-digit' });
 }
 
 /**
@@ -131,10 +74,9 @@ function ReturnsTooltip({ active, payload, range }) {
 
   return (
     <div className="chart-tooltip returns-tooltip">
-      <strong>{new Date(point.timestamp).toLocaleString('en-CA', {
-        dateStyle: 'medium',
-        timeStyle: range === '1D' ? 'short' : undefined,
-      })}</strong>
+      <strong>{range === '1D'
+        ? formatMarketDateTime(point.timestamp, { dateStyle: 'medium' }, { timeStyle: 'short' })
+        : formatMarketDate(point.timestamp, { dateStyle: 'medium' })}</strong>
       <div className="chart-tooltip-row">
         <span>Portfolio value</span>
         <b>{formatCurrency(point.totalValue)}</b>
@@ -194,19 +136,12 @@ export default function PortfolioReturnsChart({ portfolio, locked = false }) {
   // The intraday domain mirrors the regular North American market session.
   const oneDayAxis = useMemo(() => {
     const lastPointTime = performance.points?.at(-1)?.timestamp;
-    const referenceDate = new Date(performance.marketUpdatedAt || lastPointTime || performance.updatedAt || Date.now());
-    const start = new Date(referenceDate);
-    start.setHours(9, 30, 0, 0);
-    const end = new Date(referenceDate);
-    end.setHours(16, 0, 0, 0);
-    const startTime = start.getTime();
-    const endTime = end.getTime();
-    const minute = 60 * 1000;
+    const session = getMarketSessionBounds(performance.marketUpdatedAt || lastPointTime || performance.updatedAt || Date.now());
 
     return {
-      domain: [startTime, endTime],
-      ticks: [startTime, startTime + 90 * minute, startTime + 180 * minute, startTime + 270 * minute, endTime],
-      endTime,
+      domain: [session.start, session.end],
+      ticks: session.ticks,
+      endTime: session.end,
     };
   }, [performance.marketUpdatedAt, performance.points, performance.updatedAt]);
 
@@ -214,14 +149,14 @@ export default function PortfolioReturnsChart({ portfolio, locked = false }) {
     const portfolioValue = Number(portfolio?.totalValue);
     const portfolioCash = Number(portfolio?.virtualCash);
     const portfolioInvestedValue = Number(portfolio?.investedValue);
-    const liveTimestamp = normalizeChartTimestamp(performance.marketUpdatedAt || performance.updatedAt || Date.now());
+    const liveTimestamp = normalizeMarketTimestamp(performance.marketUpdatedAt || performance.updatedAt || Date.now());
     const points = (performance.points || [])
       .map((point) => ({
         ...point,
         totalValue: Number(point.totalValue || 0),
         cash: Number(point.cash || 0),
         investedValue: Number(point.investedValue || 0),
-        chartTimestamp: normalizeChartTimestamp(point.timestamp),
+        chartTimestamp: normalizeMarketTimestamp(point.timestamp),
       }))
       .filter((point) => Number.isFinite(point.chartTimestamp) && Number.isFinite(point.totalValue));
     const livePoint = Number.isFinite(portfolioValue)
@@ -394,7 +329,7 @@ export default function PortfolioReturnsChart({ portfolio, locked = false }) {
 
       <div className="returns-chart-footer">
         <span>{locked ? 'Guest preview' : portfolio?.investedValue ? `${formatCurrency(portfolio.investedValue)} invested` : 'No open positions'}</span>
-        <span>{locked ? 'Account required for tracking' : (performance.marketUpdatedAt || performance.updatedAt) ? `Updated ${new Date(performance.marketUpdatedAt || performance.updatedAt).toLocaleTimeString('en-CA', { hour: 'numeric', minute: '2-digit' })}` : 'Updating'}</span>
+        <span>{locked ? 'Account required for tracking' : (performance.marketUpdatedAt || performance.updatedAt) ? `Updated ${formatMarketTime(performance.marketUpdatedAt || performance.updatedAt)}` : 'Updating'}</span>
       </div>
     </GlassCard>
   );

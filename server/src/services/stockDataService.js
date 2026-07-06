@@ -2,6 +2,12 @@
  * File purpose: Coordinates live and fallback stock quotes, charts, news, earnings, market movers, and company metadata.
  */
 import { demoNews, demoStocks, findStock, marketIndexes } from '../utils/demoData.js';
+import {
+  formatMarketDate,
+  formatMarketDateTime,
+  formatMarketTime,
+  getMarketSessionTimestamps,
+} from '../utils/marketTime.js';
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 const YAHOO_CHART_BASE_URL = 'https://query1.finance.yahoo.com/v8/finance/chart';
@@ -751,64 +757,20 @@ function seededNoise(seed, index, salt = 0) {
  */
 function formatChartLabel(date, range) {
   if (range === '1D') {
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return formatMarketTime(date);
   }
 
   if (range === '5D') {
-    return `${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    return formatMarketDateTime(date);
   }
 
   if (range === '1M') {
-    return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${date.toLocaleTimeString('en-US', { hour: 'numeric' })}`;
+    return formatMarketDateTime(date, { month: 'short', day: 'numeric' }, { hour: 'numeric' });
   }
 
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return formatMarketDate(date);
 }
 
-// Builds regular-session timestamps so fallback charts follow the same market clock as live data.
-/**
- * Returns the market session timestamps needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
- * @param {Date} referenceDate - Date used to decide which market sessions are current.
- * @param {number} sessionCount - Number of regular trading sessions to include.
- * @param {number} intervalMinutes - Minutes between generated market points.
- * @returns {*} The requested market session timestamps result.
- */
-function getMarketSessionTimestamps(referenceDate, sessionCount, intervalMinutes) {
-  const latestSession = new Date(referenceDate);
-  const marketOpenMinutes = 9 * 60 + 30;
-  const marketCloseMinutes = 16 * 60;
-  const currentMinutes = latestSession.getHours() * 60 + latestSession.getMinutes();
-
-  while (latestSession.getDay() === 0 || latestSession.getDay() === 6 || currentMinutes < marketOpenMinutes) {
-    latestSession.setDate(latestSession.getDate() - 1);
-    if (latestSession.getDay() !== 0 && latestSession.getDay() !== 6) break;
-  }
-
-  const sessions = [];
-  const cursor = new Date(latestSession);
-  while (sessions.length < sessionCount) {
-    if (cursor.getDay() !== 0 && cursor.getDay() !== 6) sessions.unshift(new Date(cursor));
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  return sessions.flatMap((session, sessionIndex) => {
-    const isCurrentSession = sessionIndex === sessions.length - 1
-      && session.toDateString() === new Date(referenceDate).toDateString()
-      && currentMinutes >= marketOpenMinutes
-      && currentMinutes < marketCloseMinutes;
-    const sessionEndMinutes = isCurrentSession ? currentMinutes : marketCloseMinutes;
-    const timestamps = [];
-
-    for (let minute = marketOpenMinutes; minute <= sessionEndMinutes; minute += intervalMinutes) {
-      const point = new Date(session);
-      point.setHours(Math.floor(minute / 60), minute % 60, 0, 0);
-      timestamps.push(point);
-    }
-
-    return timestamps;
-  });
-}
 
 /**
  * Constructs the quote anchored chart data from its source values.

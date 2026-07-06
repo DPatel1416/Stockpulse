@@ -5,6 +5,14 @@ import { isDatabaseConnected } from '../config/db.js';
 import PortfolioSnapshot from '../models/PortfolioSnapshot.js';
 import Transaction from '../models/Transaction.js';
 import { demoStore } from '../utils/demoStore.js';
+import {
+  atMarketMinute,
+  firstTradingDayOfYear,
+  getActiveTradingDay,
+  isRegularMarketTime,
+  normalizeToMarketTime,
+  subtractTradingDays,
+} from '../utils/marketTime.js';
 import { getChart } from './stockDataService.js';
 
 const RANGE_ALIASES = new Set(['1D', '5D', '1M', '30D', '3M', '6M', '1Y', '5Y', 'YTD']);
@@ -35,139 +43,6 @@ function toUserId(user) {
   return String(user._id || user.id);
 }
 
-/**
- * Checks whether a date falls on Saturday or Sunday.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
- * @param {Date} date - Date being inspected or adjusted.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
- */
-function isWeekend(date) {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-}
-
-/**
- * Creates a copy of a date positioned at a specific regular-session minute.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @param {number} minuteOfDay - Minutes elapsed since midnight in local market time.
- * @returns {Date} A new date positioned at the requested market minute.
- */
-function atMarketMinute(date, minuteOfDay) {
-  const result = new Date(date);
-  result.setHours(Math.floor(minuteOfDay / 60), minuteOfDay % 60, 0, 0);
-  return result;
-}
-
-/**
- * Finds the nearest earlier weekday trading date.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @returns {Date} The nearest earlier weekday trading date.
- */
-function previousTradingDay(date) {
-  const result = new Date(date);
-
-  do {
-    result.setDate(result.getDate() - 1);
-  } while (isWeekend(result));
-
-  return result;
-}
-
-/**
- * Finds the nearest later weekday trading date.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @returns {Date} The nearest later weekday trading date.
- */
-function nextTradingDay(date) {
-  const result = new Date(date);
-
-  do {
-    result.setDate(result.getDate() + 1);
-  } while (isWeekend(result));
-
-  return result;
-}
-
-/**
- * Moves backward by a requested number of weekdays while skipping weekends.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} date - Date being inspected or adjusted.
- * @param {number} daysBack - Number of weekday trading sessions to move backward.
- * @returns {Date} The date reached after skipping the requested number of trading days.
- */
-function subtractTradingDays(date, daysBack) {
-  const result = new Date(date);
-  let remaining = daysBack;
-
-  while (remaining > 0) {
-    result.setDate(result.getDate() - 1);
-    if (!isWeekend(result)) remaining -= 1;
-  }
-
-  return result;
-}
-
-/**
- * Returns the active trading day needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
- * @param {Date} now - Reference time used to make the calculation deterministic.
- * @returns {*} The requested active trading day result.
- */
-function getActiveTradingDay(now = new Date()) {
-  if (isWeekend(now)) return previousTradingDay(now);
-  if (now < atMarketMinute(now, MARKET_OPEN_MINUTES)) return previousTradingDay(now);
-  return now;
-}
-
-/**
- * Converts the supplied value to a valid market time.
- * Normalization at one boundary prevents later code from handling many input shapes.
- * @param {*} value - Value to inspect, transform, or display.
- * @returns {Date} A valid timestamp clamped to a regular market session.
- */
-function normalizeToMarketTime(value) {
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return normalizeToMarketTime(new Date());
-
-  if (isWeekend(date)) {
-    return atMarketMinute(previousTradingDay(date), MARKET_CLOSE_MINUTES);
-  }
-
-  const open = atMarketMinute(date, MARKET_OPEN_MINUTES);
-  const close = atMarketMinute(date, MARKET_CLOSE_MINUTES);
-
-  if (date < open) return atMarketMinute(previousTradingDay(date), MARKET_CLOSE_MINUTES);
-  if (date > close) return close;
-  return date;
-}
-
-/**
- * Checks whether a timestamp falls within a weekday regular market session.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
- * @param {*} value - Value to inspect, transform, or display.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
- */
-function isRegularMarketTime(value) {
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime()) || isWeekend(date)) return false;
-
-  const minuteOfDay = date.getHours() * 60 + date.getMinutes();
-  return minuteOfDay >= MARKET_OPEN_MINUTES && minuteOfDay <= MARKET_CLOSE_MINUTES;
-}
-
-/**
- * Finds the first weekday trading date in the current year.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
- * @param {Date} now - Reference time used to make the calculation deterministic.
- * @returns {Date} The first weekday trading date of the year.
- */
-function firstTradingDayOfYear(now = new Date()) {
-  const firstDay = new Date(now.getFullYear(), 0, 1);
-  return isWeekend(firstDay) ? nextTradingDay(firstDay) : firstDay;
-}
 
 /**
  * Returns the range start needed by the calling screen or service.

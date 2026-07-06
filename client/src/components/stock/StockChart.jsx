@@ -17,6 +17,7 @@ import {
 import { ChartCandlestick, ChartSpline, LoaderCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { formatCompactNumber, formatCurrency, formatPercent, getChangeClass } from '../../utils/format';
+import { formatMarketDate, formatMarketTime, getMarketSessionBounds, MARKET_TIME_ZONE } from '../../utils/marketTime';
 import StockLogo from './StockLogo';
 
 const ranges = ['1D', '5D', '1M', '3M', '6M', '1Y', '5Y'];
@@ -90,6 +91,7 @@ const formatUpdatedAt = (value) => {
   }
 
   return `Last updated ${date.toLocaleString('en-US', {
+    timeZone: MARKET_TIME_ZONE,
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -211,17 +213,11 @@ export default function StockChart({ data = [], range, onRangeChange, showVolume
 
   const oneDayAxis = useMemo(() => {
     const latestTimestamp = normalizedData.at(-1)?.chartTimestamp;
-    const referenceDate = new Date(latestTimestamp || lastUpdatedAt || Date.now());
-    const start = new Date(referenceDate);
-    start.setHours(9, 30, 0, 0);
-    const end = new Date(referenceDate);
-    end.setHours(16, 0, 0, 0);
-    const startTime = start.getTime();
-    const endTime = end.getTime();
+    const session = getMarketSessionBounds(latestTimestamp || lastUpdatedAt || Date.now());
 
     return {
-      domain: [startTime, endTime],
-      ticks: [0, 90, 180, 270, 330, 390].map((minutes) => startTime + minutes * 60 * 1000),
+      domain: [session.start, session.end],
+      ticks: session.ticks,
     };
   }, [lastUpdatedAt, normalizedData]);
 
@@ -236,7 +232,7 @@ export default function StockChart({ data = [], range, onRangeChange, showVolume
     const dayAnchor = {
       ...firstPoint,
       isDayAnchor: true,
-      label: '9:30 AM',
+      label: formatMarketTime(dayStart),
       timestamp: new Date(dayStart).toISOString(),
       chartTimestamp: dayStart,
       open: anchorPrice,
@@ -261,7 +257,7 @@ export default function StockChart({ data = [], range, onRangeChange, showVolume
 
     const sessions = new Map();
     chartData.forEach((point) => {
-      const sessionKey = new Date(point.chartTimestamp).toDateString();
+      const sessionKey = formatMarketDate(point.chartTimestamp, { year: 'numeric', month: '2-digit', day: '2-digit' });
       const sessionPoints = sessions.get(sessionKey) || [];
       sessionPoints.push(point);
       sessions.set(sessionKey, sessionPoints);
@@ -390,12 +386,12 @@ export default function StockChart({ data = [], range, onRangeChange, showVolume
               allowDataOverflow={range === '1D'}
               tick={{ fill: axisColor, fontSize: 11, fontWeight: 600 }}
               tickFormatter={range === '1D'
-                ? (value) => new Date(value).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+                ? (value) => formatMarketTime(value)
                 : range === '5D'
                   ? (value) => {
                     const point = chartData[Math.round(Number(value))];
                     return point
-                      ? new Date(point.chartTimestamp).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+                      ? formatMarketDate(point.chartTimestamp, { weekday: 'short', month: 'short', day: 'numeric' })
                       : '';
                   }
                 : undefined}

@@ -8,6 +8,28 @@ import { catchAsync } from '../utils/catchAsync.js';
 import { createDemoUser, findDemoUserByEmail, getOrCreateDemoUser } from '../utils/demoStore.js';
 import { signToken } from '../utils/tokens.js';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Normalizes email input before it is compared or stored.
+ * Keeping email casing consistent prevents duplicate accounts that differ only by capitalization.
+ * @param {*} value - Raw email value supplied by a request body.
+ * @returns {string} Trimmed lowercase email text.
+ */
+function normalizeEmail(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+/**
+ * Checks whether an email has the basic shape required by StockPulse forms.
+ * This avoids over-engineering auth while still rejecting obvious invalid input.
+ * @param {*} value - Raw or normalized email value supplied by a request body.
+ * @returns {boolean} True when the email shape is valid.
+ */
+function isValidEmail(value) {
+  return EMAIL_PATTERN.test(normalizeEmail(value));
+}
+
 /**
  * Converts the user into a stable response-safe object.
  * A serializer exposes a stable shape without leaking database-specific details.
@@ -42,21 +64,26 @@ function getUserId(user) {
  */
 export const register = catchAsync(async (req, res) => {
   const { name, email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
 
-  if (!name || !email || !password) {
+  if (!name || !normalizedEmail || !password) {
     return res.status(400).json({ message: 'Name, email, and password are required.' });
+  }
+
+  if (!isValidEmail(normalizedEmail)) {
+    return res.status(400).json({ message: 'Enter a valid email address.' });
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
   let user;
 
   if (isDatabaseConnected()) {
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) return res.status(409).json({ message: 'Email is already registered.' });
-    user = await User.create({ name, email, passwordHash, virtualCash: 10000 });
+    user = await User.create({ name, email: normalizedEmail, passwordHash, virtualCash: 10000 });
   } else {
-    if (findDemoUserByEmail(email)) return res.status(409).json({ message: 'Email is already registered.' });
-    user = createDemoUser({ name, email, passwordHash });
+    if (findDemoUserByEmail(normalizedEmail)) return res.status(409).json({ message: 'Email is already registered.' });
+    user = createDemoUser({ name, email: normalizedEmail, passwordHash });
   }
 
   res.status(201).json({ token: signToken(String(user._id || user.id)), user: serializeUser(user) });
@@ -71,16 +98,21 @@ export const register = catchAsync(async (req, res) => {
  */
 export const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
 
-  if (!email || !password) {
+  if (!normalizedEmail || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  let user = isDatabaseConnected() ? await User.findOne({ email }) : findDemoUserByEmail(email);
+  if (!isValidEmail(normalizedEmail)) {
+    return res.status(400).json({ message: 'Enter a valid email address.' });
+  }
+
+  let user = isDatabaseConnected() ? await User.findOne({ email: normalizedEmail }) : findDemoUserByEmail(normalizedEmail);
 
   // Offline demo mode creates a user on first login so reviewers can start immediately.
   if (!user && !isDatabaseConnected()) {
-    user = createDemoUser({ name: 'Demo Student', email, passwordHash: await bcrypt.hash(password, 12) });
+    user = createDemoUser({ name: 'Demo Student', email: normalizedEmail, passwordHash: await bcrypt.hash(password, 12) });
   }
 
   const isValidPassword = user ? await bcrypt.compare(password, user.passwordHash) : false;
