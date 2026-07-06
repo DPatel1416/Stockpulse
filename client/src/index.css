@@ -4002,6 +4002,43 @@ select option {
 .portfolio-transactions-card {
   min-height: 260px;
 }
+.transaction-filter-bar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--glass-fill-soft) 82%, transparent);
+}
+
+.transaction-date-filter {
+  display: grid;
+  flex: 0 1 190px;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.transaction-filter-input {
+  min-height: 36px;
+  border-radius: 12px;
+}
+
+.transaction-filter-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+
+.transaction-filter-summary .button {
+  min-height: 32px;
+  padding: 0 10px;
+}
 
 .transaction-activity strong,
 .transaction-activity small {
@@ -8094,5 +8131,169 @@ body {
 
   .portfolio-page .portfolio-returns-card .returns-chart-canvas .recharts-responsive-container {
     min-height: 280px;
+  }
+}
+/* Keep the password visibility control contained inside the rounded input surface. */
+.password-input-control {
+  border-radius: 16px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.password-input-control .input:focus {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 72%, transparent), inset 0 1px 0 var(--glass-highlight);
+}
+
+.password-visibility-toggle {
+  right: 6px;
+  width: 34px;
+  height: 34px;
+  background-clip: padding-box;
+  box-shadow: none;
+}
+
+.password-visibility-toggle:hover,
+.password-visibility-toggle:focus-visible,
+.password-visibility-toggle[aria-pressed='true'] {
+  box-shadow: none;
+  filter: none;
+}
+
+@media (max-width: 885px) {
+  .password-input-control {
+    border-radius: 12px;
+  }
+
+  .password-input-control .input {
+    padding-right: 43px;
+  }
+
+  .password-visibility-toggle {
+    right: 4px;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+  }
+}
+
+/* Mobile portfolio transactions use fixed row cards instead of a shifting horizontal table. */
+@media (max-width: 570px) {
+  .portfolio-page .portfolio-transactions-card {
+    height: 315px;
+    min-height: 315px;
+    max-height: 315px;
+  }
+
+  .portfolio-page .portfolio-transactions-card > .card-body {
+    height: 100%;
+    min-height: 0;
+    padding: 14px;
+  }
+  .portfolio-page .portfolio-transactions-card .transaction-filter-bar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 9px;
+    padding: 9px;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-date-filter {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-filter-summary {
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .portfolio-page .portfolio-transactions-card .portfolio-six-row-scroll {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 5px;
+    scrollbar-gutter: stable;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table,
+  .portfolio-page .portfolio-transactions-card .transaction-table tbody {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table thead {
+    display: none;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table tbody {
+    display: grid;
+    gap: 8px;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 10px;
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 13px;
+    background: color-mix(in srgb, var(--glass-fill-soft) 82%, transparent);
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table td {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    font-size: 0.72rem;
+    white-space: normal;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-table td::before {
+    color: var(--muted);
+    font-size: 0.56rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    content: attr(data-label);
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-activity {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-activity small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-type {
+    justify-self: start;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-amount {
+    justify-items: end;
+    align-self: end;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .portfolio-page .portfolio-transactions-card .transaction-amount::before {
+    justify-self: end;
   }
 }

@@ -28,6 +28,7 @@ import {
 
 const colors = ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185'];
 const allocationLogoMinPercent = 0.045;
+const recentTransactionLimit = 10;
 const guestPortfolio = {
   virtualCash: null,
   availableBuyingPower: null,
@@ -167,48 +168,105 @@ function SelectedStockChart({ stock, points }) {
 }
 
 /**
+ * Converts a transaction date into the yyyy-mm-dd value used by date inputs.
+ * Matching against the input value keeps the filter simple and independent from browser locale text.
+ * @param {*} value - Transaction date value from the portfolio ledger.
+ * @returns {string} Local date string in yyyy-mm-dd format, or empty string when invalid.
+ */
+function getTransactionDateInputValue(value) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+/**
+ * Orders transactions from newest to oldest before the table limits or filters them.
+ * Sorting here keeps the backend free from presentation-only filtering rules.
+ * @param {Array<object>} transactions - Portfolio transaction records.
+ * @returns {Array<object>} Newest-first transaction records.
+ */
+function sortTransactionsNewestFirst(transactions) {
+  return [...transactions].sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt));
+}
+/**
  * Renders the transaction table React component.
  * Keeping this interface in a focused component makes its behavior easier to reuse and understand.
  * @param {*} props - Properties used to configure the component and its displayed content.
  * @returns {JSX.Element} The rendered component interface.
  */
 function TransactionTable({ transactions }) {
-  return (
-    <div className="table-wrap scroll-panel portfolio-six-row-scroll">
-      <table className="data-table transaction-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Activity</th>
-            <th>Type</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.length ? transactions.map((transaction) => {
-            const direction = getTransactionDirection(transaction);
+  const [selectedDate, setSelectedDate] = useState('');
+  const sortedTransactions = sortTransactionsNewestFirst(transactions);
+  const shouldShowDateFilter = sortedTransactions.length > recentTransactionLimit;
+  const filteredTransactions = selectedDate
+    ? sortedTransactions.filter((transaction) => getTransactionDateInputValue(transaction.createdAt) === selectedDate)
+    : sortedTransactions.slice(0, recentTransactionLimit);
+  const emptyMessage = selectedDate ? 'No transactions found for that date.' : 'No orders yet.';
 
-            return (
-              <tr key={transaction.id || transaction.createdAt}>
-                <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
-                <td className="transaction-activity">
-                  <strong>{getTransactionLabel(transaction)}</strong>
-                  <small className="muted">{getTransactionDetail(transaction)}</small>
-                </td>
-                <td><span className="transaction-type">{getTransactionTypeLabel(transaction)}</span></td>
-                <td className={`transaction-amount ${direction === 'IN' ? 'positive' : 'negative'}`}>
-                  {direction === 'IN' ? '+' : '-'}{formatCurrency(transaction.total)}
-                </td>
-              </tr>
-            );
-          }) : (
+  return (
+    <>
+      {shouldShowDateFilter && (
+        <div className="transaction-filter-bar" aria-label="Transaction date filter">
+          <label className="transaction-date-filter">
+            <span className="input-label">Filter by date</span>
+            <input
+              className="input transaction-filter-input"
+              type="date"
+              value={selectedDate}
+              onChange={(event) => setSelectedDate(event.target.value)}
+            />
+          </label>
+          <div className="transaction-filter-summary">
+            <span className="muted">
+              {selectedDate
+                ? `${filteredTransactions.length} transaction${filteredTransactions.length === 1 ? '' : 's'} found`
+                : `Showing latest ${Math.min(recentTransactionLimit, sortedTransactions.length)} of ${sortedTransactions.length}`}
+            </span>
+            {selectedDate && <Button variant="ghost" onClick={() => setSelectedDate('')}>Clear</Button>}
+          </div>
+        </div>
+      )}
+      <div className="table-wrap scroll-panel portfolio-six-row-scroll">
+        <table className="data-table transaction-table">
+          <thead>
             <tr>
-              <td className="muted" colSpan="4">No orders yet.</td>
+              <th>Date</th>
+              <th>Activity</th>
+              <th>Type</th>
+              <th>Amount</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredTransactions.length ? filteredTransactions.map((transaction) => {
+              const direction = getTransactionDirection(transaction);
+
+              return (
+                <tr key={transaction.id || transaction.createdAt}>
+                  <td data-label="Date">{new Date(transaction.createdAt).toLocaleDateString()}</td>
+                  <td className="transaction-activity" data-label="Activity">
+                    <strong>{getTransactionLabel(transaction)}</strong>
+                    <small className="muted">{getTransactionDetail(transaction)}</small>
+                  </td>
+                  <td data-label="Type"><span className="transaction-type">{getTransactionTypeLabel(transaction)}</span></td>
+                  <td className={`transaction-amount ${direction === 'IN' ? 'positive' : 'negative'}`} data-label="Amount">
+                    {direction === 'IN' ? '+' : '-'}{formatCurrency(transaction.total)}
+                  </td>
+                </tr>
+              );
+            }) : (
+              <tr>
+                <td className="muted" colSpan="4">{emptyMessage}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
