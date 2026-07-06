@@ -521,8 +521,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="page-stack">
-      <GlassCard variant="glow">
+    <div className="page-stack dashboard-page">
+      <GlassCard className="dashboard-hero-card" variant="glow">
         <div className="content-grid" style={{ alignItems: 'center' }}>
           <div className="span-8 hero-copy">
             <h1 className="page-title">StockPulse</h1>
@@ -585,7 +585,7 @@ export default function Dashboard() {
         <div className="page-stack dashboard-main-column">
           <GlassCard className="market-activity-card">
             <div className="section-title market-activity-title">
-              <h2>Top Active Stocks by Volume</h2>
+              <h2><span className="desktop-heading-label">Top Active Stocks by Volume</span><span className="mobile-heading-label">Market Movers</span></h2>
               <Select
                 className="industry-select"
                 id="industry-filter"

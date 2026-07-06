@@ -2,7 +2,7 @@
  * File purpose: Defines the reusable Trade Ticket React component and its focused user interaction.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, ChevronDown, ShieldCheck } from 'lucide-react';
+import { Check, ChevronDown, ShieldCheck, X } from 'lucide-react';
 import { api } from '../../services/api';
 import { formatCurrency } from '../../utils/format';
 import { StockIdentity } from '../stock/StockLogo';
@@ -31,6 +31,8 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
   const [isReviewing, setIsReviewing] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 570px)').matches);
+  const [isMobileOrderOpen, setIsMobileOrderOpen] = useState(false);
   const estimatedPrice = orderType === 'LIMIT' ? Number(limitPrice || 0) : Number(stock?.price || 0);
   const total = useMemo(() => Number(quantity || 0) * estimatedPrice, [estimatedPrice, quantity]);
   const currentHolding = portfolio?.holdings?.find((item) => item.ticker === stock?.ticker);
@@ -59,6 +61,55 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
   }, []);
 
   /**
+   * Tracks whether the compact phone launcher should replace the full inline ticket.
+   * Keeping the breakpoint in sync with CSS prevents duplicate forms and repeated input IDs.
+   * @returns {void|*} No value is required; viewport state is updated when the media query changes.
+   */
+  useEffect(() => {
+    const mobileQuery = window.matchMedia('(max-width: 570px)');
+
+    /**
+     * Applies the current phone breakpoint and closes the modal when the viewport becomes wider.
+     * @param {MediaQueryListEvent} event - Browser media-query event containing the new match state.
+     * @returns {void} The responsive ticket state is updated in place.
+     */
+    function updateMobileViewport(event) {
+      setIsMobileViewport(event.matches);
+      if (!event.matches) setIsMobileOrderOpen(false);
+    }
+
+    setIsMobileViewport(mobileQuery.matches);
+    mobileQuery.addEventListener?.('change', updateMobileViewport);
+    return () => mobileQuery.removeEventListener?.('change', updateMobileViewport);
+  }, []);
+
+  /**
+   * Locks background scrolling and supports Escape while the phone order modal is open.
+   * @returns {void|Function} A cleanup function restores the previous page scroll behavior.
+   */
+  useEffect(() => {
+    if (!isMobileOrderOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+
+    /**
+     * Closes the phone order modal when the learner presses Escape.
+     * @param {KeyboardEvent} event - Keyboard event emitted by the browser.
+     * @returns {void} No value is returned after handling the key.
+     */
+    function closeMobileOrderOnEscape(event) {
+      if (event.key === 'Escape') setIsMobileOrderOpen(false);
+    }
+
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('mobile-order-open');
+    window.addEventListener('keydown', closeMobileOrderOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.classList.remove('mobile-order-open');
+      window.removeEventListener('keydown', closeMobileOrderOnEscape);
+    };
+  }, [isMobileOrderOpen]);
+  /**
    * Chooses market or limit execution before opening the confirmation step.
    * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
    * @param {'BUY'|'SELL'} nextSide - Order side selected for the next review step.
@@ -71,6 +122,16 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
     setOrderMenuSide(null);
   }
 
+  /**
+   * Opens the complete order workflow from a compact Buy or Sell phone action.
+   * @param {'BUY'|'SELL'} nextSide - Order side selected from the phone launcher.
+   * @returns {void} The selected side is stored and the mobile order dialog is opened.
+   */
+  function openMobileOrder(nextSide) {
+    setSide(nextSide);
+    setOrderMenuSide(null);
+    setIsMobileOrderOpen(true);
+  }
   /**
    * Handles the symbol submit interaction and coordinates its related state changes.
    * A dedicated handler keeps event side effects separate from presentation code.
@@ -144,6 +205,7 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
       }
       onTradeComplete?.(result.portfolio);
       setIsReviewing(false);
+      setIsMobileOrderOpen(false);
     } catch (error) {
       showToast(error.message || 'Trade could not be completed.', 'error');
     } finally {
@@ -151,9 +213,9 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
     }
   }
 
-  return (
-    <>
-      <GlassCard className="order-ticket-card" variant="glow">
+  const orderForm = (
+    <div className="trade-ticket-full-form">
+
         <div className="section-title">
           <div>
             <h2>Order Ticket</h2>
@@ -233,7 +295,40 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
           </div>
           <Button onClick={handleReview}>Review order</Button>
         </div>
-      </GlassCard>
+
+    </div>
+  );
+
+  return (
+    <>
+      {isMobileViewport ? (
+        <GlassCard className="order-ticket-card mobile-order-launcher-card" variant="glow">
+          <div className="mobile-order-launcher-heading">
+            {stock && <StockIdentity stock={stock} size={32} />}
+            <span><small className="muted">Current price</small><strong>{formatCurrency(stock?.price || 0)}</strong></span>
+          </div>
+          <div className="mobile-order-launcher-actions" aria-label="Choose an order side">
+            <button className="mobile-order-launcher-button buy" type="button" onClick={() => openMobileOrder('BUY')}>Buy</button>
+            <button className="mobile-order-launcher-button sell" type="button" onClick={() => openMobileOrder('SELL')}>Sell</button>
+          </div>
+        </GlassCard>
+      ) : (
+        <GlassCard className="order-ticket-card" variant="glow">{orderForm}</GlassCard>
+      )}
+
+      {isMobileViewport && isMobileOrderOpen && (
+        <div className="modal-backdrop mobile-order-modal-backdrop" role="presentation" onMouseDown={() => setIsMobileOrderOpen(false)}>
+          <div className="modal-card mobile-order-modal-card" role="dialog" aria-modal="true" aria-label={`${side.toLowerCase()} order ticket`} onMouseDown={(event) => event.stopPropagation()}>
+            <GlassCard className="mobile-order-modal-surface" bodyClassName="mobile-order-modal-body" variant="glow">
+              <div className="mobile-order-modal-controls">
+                <span><strong>{side} {stock?.ticker}</strong><small className="muted">Complete the order details</small></span>
+                <Button variant="ghost" iconOnly aria-label="Close order ticket" onClick={() => setIsMobileOrderOpen(false)}><X size={18} /></Button>
+              </div>
+              {orderForm}
+            </GlassCard>
+          </div>
+        </div>
+      )}
 
       <ConfirmModal
         open={isReviewing}

@@ -222,7 +222,7 @@ function HoldingsCard({ portfolio, onOpenHolding, onOpenTrade }) {
   if (!portfolio.holdings.length) {
     return (
       <EmptyState
-        className="portfolio-records-card"
+        className="portfolio-records-card portfolio-empty-holdings-card"
         title="No holdings yet"
         message="Open the Trade view to build your first position."
         actionLabel="Place your order"
@@ -252,12 +252,12 @@ function HoldingsCard({ portfolio, onOpenHolding, onOpenTrade }) {
           <tbody>
             {portfolio.holdings.map((holding) => (
               <tr key={holding.ticker} onClick={() => onOpenHolding(holding.ticker)} style={{ cursor: 'pointer' }}>
-                <td><StockIdentity stock={holding} company={holding.companyName} size={30} compact /></td>
-                <td>{holding.shares}</td>
-                <td>{formatCurrency(holding.averageCost)}</td>
-                <td>{formatCurrency(holding.currentPrice)}</td>
-                <td>{formatCurrency(holding.marketValue)}</td>
-                <td className={getChangeClass(holding.profitLoss)}>{formatCurrency(holding.profitLoss)} ({formatPercent(holding.profitLossPercent)})</td>
+                <td className="holding-identity"><StockIdentity stock={holding} company={holding.companyName} size={30} compact /></td>
+                <td className="holding-shares" data-label="Shares">{holding.shares}</td>
+                <td className="holding-average" data-label="Avg cost">{formatCurrency(holding.averageCost)}</td>
+                <td className="holding-price" data-label="Price">{formatCurrency(holding.currentPrice)}</td>
+                <td className="holding-value" data-label="Value">{formatCurrency(holding.marketValue)}</td>
+                <td className={`holding-profit ${getChangeClass(holding.profitLoss)}`} data-label="Profit / loss">{formatCurrency(holding.profitLoss)} ({formatPercent(holding.profitLossPercent)})</td>
               </tr>
             ))}
           </tbody>
@@ -583,15 +583,15 @@ export default function Portfolio() {
   if (!portfolio) return <Skeleton rows={8} />;
 
   return (
-    <div className="page-stack">
-      <GlassCard variant="glow">
+    <div className="page-stack portfolio-page">
+      <GlassCard className="portfolio-hero-card" variant="glow">
         <div className="section-title">
           <div>
             <span className="chip">{isAuthenticated ? 'Virtual account' : 'Guest portfolio preview'}</span>
             <h1 className="page-title">Portfolio</h1>
             <p className="muted">Track performance, manage holdings, place orders, and review account activity.</p>
           </div>
-          <Button onClick={() => openInsight({ screen: 'Portfolio', portfolio })}>
+          <Button className="portfolio-hero-action" aria-label="Summarize portfolio" onClick={() => openInsight({ screen: 'Portfolio', portfolio })}>
             <Brain size={18} />
             <span style={{ marginLeft: 8 }}>Summarize</span>
           </Button>

@@ -3,7 +3,7 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { Activity, BadgeCheck, CalendarClock, Plus, Star, Target, Trash2, TrendingDown, TrendingUp } from 'lucide-react';
+import { Activity, BadgeCheck, CalendarClock, Plus, Sparkles, Star, Target, Trash2, TrendingDown, TrendingUp } from 'lucide-react';
 import EmptyState from '../components/ui/EmptyState';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
@@ -290,19 +290,19 @@ export default function Watchlist() {
     .sort((first, second) => String(first.date).localeCompare(String(second.date)))[0];
 
   return (
-    <div className="page-stack">
-      <GlassCard variant="glow">
+    <div className="page-stack watchlist-page">
+      <GlassCard className="watchlist-hero-card" variant="glow">
         <div className="section-title">
           <div>
             <span className="chip">Saved tickers</span>
             <h1 className="page-title">Watchlist</h1>
             <p className="muted">Monitor prices, volume, news, and earnings for stocks you are learning about.</p>
           </div>
-          <Button onClick={() => openInsight({ screen: 'Watchlist', tickers: items.map((item) => item.ticker) })}>Ask AI</Button>
+          <Button className="watchlist-hero-action" aria-label="Ask AI about this watchlist" onClick={() => openInsight({ screen: 'Watchlist', tickers: items.map((item) => item.ticker) })}><Sparkles size={17} /><span>Ask AI</span></Button>
         </div>
         <form className="watchlist-add-form" onSubmit={addStock}>
           <Input label="Add stock" name="watchlist-ticker" placeholder="Ticker symbol" value={ticker} onChange={(event) => setTicker(event.target.value)} />
-          <Button type="submit"><Plus size={18} /> <span style={{ marginLeft: 8 }}>Add</span></Button>
+          <Button type="submit" aria-label="Add stock to watchlist"><Plus size={18} /> <span style={{ marginLeft: 8 }}>Add</span></Button>
         </form>
       </GlassCard>
 

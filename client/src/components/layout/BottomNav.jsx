@@ -29,18 +29,18 @@ export default function BottomNav() {
     <>
       <nav className="bottom-nav" aria-label="Mobile primary navigation">
         {links.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to}>
+          <NavLink key={to} to={to} aria-label={label} title={label}>
             <Icon size={18} />
             <span>{label}</span>
           </NavLink>
         ))}
         {user ? (
-          <button className={settingsOpen ? 'active' : ''} type="button" aria-label="Open account settings" onClick={() => setSettingsOpen(true)}>
+          <button className={settingsOpen ? 'active' : ''} type="button" aria-label="Open account settings" title="Account" onClick={() => setSettingsOpen(true)}>
             <UserRound size={18} />
             <span>Account</span>
           </button>
         ) : (
-          <NavLink to="/login">
+          <NavLink to="/login" aria-label="Log in" title="Log in">
             <LogIn size={18} />
             <span>Log in</span>
           </NavLink>

@@ -269,12 +269,12 @@ export default function StockDetails() {
 
   return (
     <div className={`page-stack stock-detail-page ${stockToneClass}`}>
-      <GlassCard variant="glow">
+      <GlassCard className="stock-detail-hero-card" variant="glow">
         <div className="section-title">
-          <Button variant="ghost" iconOnly aria-label="Back to dashboard" onClick={() => navigate('/')}>
+          <Button className="stock-hero-back-action" variant="ghost" iconOnly aria-label="Back to dashboard" onClick={() => navigate('/')}>
             <ArrowLeft size={18} />
           </Button>
-          <Button className={`star-action ${isInWatchlist ? 'saved' : ''}`} variant="ghost" onClick={toggleWatchlist}>
+          <Button className={`star-action stock-hero-watch-action ${isInWatchlist ? 'saved' : ''}`} variant="ghost" onClick={toggleWatchlist}>
             <Star size={17} />
             <span style={{ marginLeft: 8 }}>{isInWatchlist ? 'Saved' : isAuthenticated ? 'Watchlist' : 'Save temporarily'}</span>
           </Button>
@@ -283,7 +283,10 @@ export default function StockDetails() {
           <div className="span-8">
             <div className="stock-detail-heading">
               <StockLogo stock={stock} size={58} />
-              <h1 className="page-title">{stock.company}</h1>
+              <div className="stock-detail-title-copy">
+                <span className="stock-detail-symbol">{stock.ticker}</span>
+                <h1 className="page-title">{stock.company}</h1>
+              </div>
             </div>
             <p className="muted">Study price, volume, earnings, news, and order workflows.</p>
           </div>
