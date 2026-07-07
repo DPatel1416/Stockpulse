@@ -22,7 +22,7 @@ function getSystemTheme() {
  */
 function getInitialTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY);
-  return savedTheme || 'system';
+  return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
 }
 
 /**

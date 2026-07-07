@@ -3,7 +3,7 @@
  */
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { BarChart3, KeyRound, X } from 'lucide-react';
+import { BarChart3, KeyRound, ShieldCheck, Sparkles, TrendingUp, X } from 'lucide-react';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import Input from '../components/ui/Input';
@@ -92,29 +92,59 @@ export default function Login() {
 
   return (
     <main className="auth-screen">
-      <GlassCard className="auth-card" bodyClassName="auth-card-body" variant="glow">
-        <div className="auth-logo-lockup" aria-label="StockPulse">
-          <span className="brand-mark"><BarChart3 size={22} /></span>
-          <h1>StockPulse</h1>
-          <p className="muted">Log in to save watchlists and simulated trades.</p>
-        </div>
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <Input label="Email" name="email" type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} required />
-          <PasswordInput label="Password" name="password" autoComplete="current-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required />
-          <button className="auth-forgot-password" type="button" onClick={handleForgotPassword}>
-            Forgot password?
-          </button>
-          <Button type="submit" disabled={isAuthenticating}>{isAuthenticating ? 'Logging in...' : 'Log in'}</Button>
-        </form>
-        <Button className="auth-wide-action google-auth-button" variant="secondary" disabled title="Google sign-in is coming soon">
-          <span className="google-auth-mark" aria-hidden="true">G</span>
-          Sign in with Google
-          <small>Coming soon</small>
-        </Button>
-        <Button className="auth-wide-action" variant="ghost" onClick={handleGuestAccess} disabled={isAuthenticating}>
-          Continue as guest
-        </Button>
-        <p className="muted">New here? <Link className="positive" to="/register">Create an account</Link></p>
+      <GlassCard className="auth-card auth-card-shell" bodyClassName="auth-card-body auth-card-grid" variant="glow">
+        <section className="auth-visual-panel" aria-hidden="true">
+          <div className="auth-visual-top">
+            <span className="brand-mark auth-brand-mark"><BarChart3 size={22} /></span>
+            <div>
+              <strong>StockPulse Learn</strong>
+              <small>Virtual trading workspace</small>
+            </div>
+          </div>
+          <div className="auth-market-card">
+            <span className="auth-market-kicker"><Sparkles size={14} /> Student trading lab</span>
+            <strong>$10,000</strong>
+            <small>Practice with virtual cash, live-style charts, watchlists, and portfolio tools before risking real money.</small>
+            <div className="auth-mini-chart">
+              <span style={{ '--height': '42%' }} />
+              <span style={{ '--height': '58%' }} />
+              <span style={{ '--height': '48%' }} />
+              <span style={{ '--height': '72%' }} />
+              <span style={{ '--height': '63%' }} />
+              <span style={{ '--height': '86%' }} />
+              <span style={{ '--height': '78%' }} />
+            </div>
+          </div>
+          <div className="auth-proof-grid">
+            <span><TrendingUp size={15} /> Market charts</span>
+            <span><ShieldCheck size={15} /> Saved progress</span>
+          </div>
+        </section>
+
+        <section className="auth-form-panel">
+          <div className="auth-logo-lockup" aria-label="StockPulse">
+            <span className="brand-mark"><BarChart3 size={22} /></span>
+            <h1>Welcome back</h1>
+            <p className="muted">Log in to save watchlists, trades, and portfolio progress.</p>
+          </div>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <Input label="Email" name="email" type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} required />
+            <PasswordInput label="Password" name="password" autoComplete="current-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required />
+            <button className="auth-forgot-password" type="button" onClick={handleForgotPassword}>
+              Forgot password?
+            </button>
+            <Button type="submit" disabled={isAuthenticating}>{isAuthenticating ? 'Logging in...' : 'Log in'}</Button>
+          </form>
+          <Button className="auth-wide-action google-auth-button" variant="secondary" disabled title="Google sign-in is coming soon">
+            <span className="google-auth-mark" aria-hidden="true">G</span>
+            Sign in with Google
+            <small>Coming soon</small>
+          </Button>
+          <Button className="auth-wide-action" variant="ghost" onClick={handleGuestAccess} disabled={isAuthenticating}>
+            Continue as guest
+          </Button>
+          <p className="muted">New here? <Link className="positive" to="/register">Create an account</Link></p>
+        </section>
       </GlassCard>
       {showForgotPassword && (
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setShowForgotPassword(false)}>
