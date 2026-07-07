@@ -11,7 +11,7 @@ import PasswordInput from '../components/ui/PasswordInput';
 import { useToasts } from '../components/ui/Toast';
 import { useAuth } from '../context/AuthContext';
 import { rememberAccessChoice } from '../utils/accessChoice';
-import { isValidEmail } from '../utils/validation';
+import { isStrongPassword, isValidEmail, PASSWORD_REQUIREMENT_MESSAGE } from '../utils/validation';
 
 // Register creates a virtual portfolio with a $10,000 opening cash balance.
 /**
@@ -36,6 +36,11 @@ export default function Register() {
 
     if (!isValidEmail(form.email)) {
       showToast('Enter a valid email address.', 'error');
+      return;
+    }
+
+    if (!isStrongPassword(form.password)) {
+      showToast(PASSWORD_REQUIREMENT_MESSAGE, 'error');
       return;
     }
 
@@ -104,6 +109,7 @@ export default function Register() {
             <Input label="Name" name="name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
             <Input label="Email" name="email" type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} required />
             <PasswordInput label="Password" name="password" autoComplete="new-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} required />
+            <p className="muted auth-password-rule">Use at least 8 characters, one uppercase letter, and one special character.</p>
             <PasswordInput label="Confirm password" name="confirmPassword" autoComplete="new-password" value={form.confirmPassword} onChange={(event) => setForm({ ...form, confirmPassword: event.target.value })} required />
             <Button type="submit" disabled={isAuthenticating}>{isAuthenticating ? 'Creating...' : 'Create account'}</Button>
           </form>

@@ -9,6 +9,8 @@ import { createDemoUser, findDemoUserByEmail, getOrCreateDemoUser } from '../uti
 import { signToken } from '../utils/tokens.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+const PASSWORD_REQUIREMENT_MESSAGE = 'Password must be at least 8 characters and include one uppercase letter and one special character.';
 
 /**
  * Normalizes email input before it is compared or stored.
@@ -28,6 +30,16 @@ function normalizeEmail(value) {
  */
 function isValidEmail(value) {
   return EMAIL_PATTERN.test(normalizeEmail(value));
+}
+
+/**
+ * Checks whether a password meets StockPulse's minimum account security rule.
+ * This runs on the server because frontend validation alone can be bypassed.
+ * @param {*} value - Raw password supplied by a request body.
+ * @returns {boolean} True when the password is long enough and includes required character types.
+ */
+function isStrongPassword(value) {
+  return PASSWORD_PATTERN.test(String(value || ''));
 }
 
 /**
@@ -72,6 +84,10 @@ export const register = catchAsync(async (req, res) => {
 
   if (!isValidEmail(normalizedEmail)) {
     return res.status(400).json({ message: 'Enter a valid email address.' });
+  }
+
+  if (!isStrongPassword(password)) {
+    return res.status(400).json({ message: PASSWORD_REQUIREMENT_MESSAGE });
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
@@ -176,8 +192,8 @@ export const changePassword = catchAsync(async (req, res) => {
     return res.status(400).json({ message: 'Current password and new password are required.' });
   }
 
-  if (newPassword.length < 8) {
-    return res.status(400).json({ message: 'New password must be at least 8 characters.' });
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({ message: PASSWORD_REQUIREMENT_MESSAGE });
   }
 
   const user = isDatabaseConnected() ? await User.findById(getUserId(req.user)) : req.user;

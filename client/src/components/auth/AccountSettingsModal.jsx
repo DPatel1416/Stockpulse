@@ -9,6 +9,7 @@ import GlassCard from '../ui/GlassCard';
 import Input from '../ui/Input';
 import PasswordInput from '../ui/PasswordInput';
 import { useToasts } from '../ui/Toast';
+import { isStrongPassword, PASSWORD_REQUIREMENT_MESSAGE } from '../../utils/validation';
 
 const emptyPasswordForm = {
   currentPassword: '',
@@ -108,8 +109,8 @@ export default function AccountSettingsModal({ open, onClose }) {
   async function handlePasswordSubmit(event) {
     event.preventDefault();
 
-    if (passwordForm.newPassword.length < 8) {
-      showToast('New password must be at least 8 characters.', 'error');
+    if (!isStrongPassword(passwordForm.newPassword)) {
+      showToast(PASSWORD_REQUIREMENT_MESSAGE, 'error');
       return;
     }
 
@@ -217,6 +218,7 @@ export default function AccountSettingsModal({ open, onClose }) {
                 onChange={(event) => setPasswordForm({ ...passwordForm, newPassword: event.target.value })}
                 required
               />
+              <p className="muted auth-password-rule">Use at least 8 characters, one uppercase letter, and one special character.</p>
               <PasswordInput
                 label="Confirm new password"
                 name="confirmPassword"
@@ -296,6 +298,7 @@ export default function AccountSettingsModal({ open, onClose }) {
                   onChange={(event) => setPasswordForm({ ...passwordForm, newPassword: event.target.value })}
                   required
                 />
+                <p className="muted auth-password-rule">Use at least 8 characters, one uppercase letter, and one special character.</p>
                 <PasswordInput
                   id="mobile-confirm-password"
                   label="Confirm new password"
