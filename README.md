@@ -1,6 +1,6 @@
 # StockPulse
 
-StockPulse is a full-stack educational stock learning dashboard built from the PRD in `StockPulse_Full_PRD_Codex_Master_Prompt.docx`. It combines a liquid-glass React UI, stock search, watchlists, charts, news, earnings, paper trading, portfolio analytics, and mock AI insights.
+StockPulse is a full-stack educational stock learning dashboard. It combines a liquid-glass React UI, stock search, watchlists, charts, news, earnings, paper trading, portfolio analytics, and mock AI insights.
 
 This project is for educational paper trading only. It does not provide financial advice and does not place real trades.
 
