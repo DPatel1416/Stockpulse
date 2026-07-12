@@ -20,9 +20,9 @@
   --glass-blur: blur(22px) saturate(138%);
   --text: #e5edf8;
   --muted: #94a3b8;
-  --accent: #22d3ee;
-  --accent-strong: #38bdf8;
-  --purple: #a78bfa;
+  --accent: #8ea2ff;
+  --accent-strong: #6366f1;
+  --purple: #7c3aed;
   --green: #34d399;
   --red: #fb7185;
   --amber: #fbbf24;
@@ -50,8 +50,8 @@
   --glass-blur: blur(24px) saturate(125%);
   --text: #172435;
   --muted: #607185;
-  --accent: #0284c7;
-  --accent-strong: #06b6d4;
+  --accent: #8ea2ff;
+  --accent-strong: #6366f1;
   --purple: #7c3aed;
   --green: #059669;
   --red: #dc2626;
@@ -1000,9 +1000,9 @@ a {
   place-items: center;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(34, 211, 238, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.18);
   border-radius: 14px;
-  background: rgba(34, 211, 238, 0.09);
+  background: rgba(99, 102, 241, 0.09);
   color: var(--accent);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
@@ -1080,10 +1080,10 @@ a {
 }
 
 .chip:hover {
-  border-color: rgba(34, 211, 238, 0.28);
+  border-color: rgba(99, 102, 241, 0.28);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.11), transparent 52%),
-    rgba(34, 211, 238, 0.12);
+    rgba(99, 102, 241, 0.12);
 }
 
 .stock-logo {
@@ -1252,10 +1252,10 @@ a {
 
 .chart-range-button:hover,
 .chart-range-button.active {
-  border-color: rgba(34, 211, 238, 0.4);
+  border-color: rgba(99, 102, 241, 0.4);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 52%),
-    rgba(34, 211, 238, 0.14);
+    rgba(99, 102, 241, 0.14);
   color: var(--text);
 }
 
@@ -1456,8 +1456,8 @@ a {
 }
 
 .status-checking {
-  border-color: rgba(34, 211, 238, 0.42);
-  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(99, 102, 241, 0.42);
+  background: rgba(99, 102, 241, 0.12);
   color: var(--accent);
 }
 
@@ -1469,6 +1469,7 @@ a {
   padding: 0 16px;
   border: 1px solid var(--glass-stroke);
   border-radius: 16px;
+  background-clip: padding-box;
   font-weight: 700;
   box-shadow: inset 0 1px 0 var(--glass-highlight);
   backdrop-filter: blur(14px) saturate(140%);
@@ -1481,12 +1482,13 @@ a {
 }
 
 .button.primary {
-  border-color: rgba(125, 211, 252, 0.42);
+  border-color: color-mix(in srgb, var(--accent-strong) 40%, var(--glass-stroke));
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 36%),
-    linear-gradient(135deg, var(--accent), var(--accent-strong));
-  color: #04111f;
-  box-shadow: 0 12px 34px rgba(34, 211, 238, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.055) 42%, rgba(255, 255, 255, 0.02) 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 56%, transparent), color-mix(in srgb, var(--accent-strong) 38%, transparent)),
+    color-mix(in srgb, var(--accent-strong) 18%, var(--glass-fill-strong));
+  color: #f8fbff;
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -14px 28px rgba(15, 23, 42, 0.12);
 }
 
 .button.secondary,
@@ -1545,7 +1547,7 @@ a {
 
 .input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.13), inset 0 1px 0 var(--glass-highlight);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.13), inset 0 1px 0 var(--glass-highlight);
 }
 
 .password-input-control {
@@ -1654,7 +1656,7 @@ a {
 .select-trigger:focus-visible {
   border-color: var(--accent);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.13), inset 0 1px 0 var(--glass-highlight);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.13), inset 0 1px 0 var(--glass-highlight);
 }
 
 .select-menu {
@@ -1800,7 +1802,7 @@ a {
 }
 
 .data-table tbody tr:hover {
-  background: rgba(34, 211, 238, 0.06);
+  background: rgba(99, 102, 241, 0.06);
 }
 
 .table-wrap {
@@ -1885,7 +1887,7 @@ a {
     linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 38%),
     linear-gradient(135deg, var(--accent), var(--purple));
   color: white;
-  box-shadow: 0 12px 28px rgba(34, 211, 238, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .nav-list {
@@ -1931,10 +1933,10 @@ a {
 
 .nav-link.active,
 .nav-link:hover {
-  border-color: rgba(34, 211, 238, 0.14);
+  border-color: rgba(99, 102, 241, 0.14);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 50%),
-    rgba(34, 211, 238, 0.12);
+    rgba(99, 102, 241, 0.12);
   color: var(--text);
   box-shadow: inset 0 1px 0 var(--glass-highlight);
 }
@@ -1998,6 +2000,14 @@ a {
     inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
+:root.light .button.primary {
+  border-color: rgba(79, 70, 229, 0.36);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08) 44%, rgba(255, 255, 255, 0.03) 72%),
+    linear-gradient(180deg, rgba(99, 102, 241, 0.92), rgba(79, 70, 229, 0.84));
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42), inset 0 -12px 24px rgba(30, 41, 59, 0.12);
+}
 :root.light .chip:hover,
 :root.light .chart-range-button:hover,
 :root.light .chart-range-button.active,
@@ -2009,10 +2019,10 @@ a {
 :root.light .nav-link.active,
 :root.light .suggestion-item.active,
 :root.light .suggestion-item:hover {
-  border-color: rgba(2, 132, 199, 0.22);
+  border-color: rgba(99, 102, 241, 0.22);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent 50%),
-    rgba(2, 132, 199, 0.045);
+    rgba(99, 102, 241, 0.045);
 }
 
 :root.light .input {
@@ -2020,7 +2030,7 @@ a {
 }
 
 :root.light .input:focus {
-  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
 :root.light .select-trigger,
@@ -2054,9 +2064,9 @@ a {
 
 :root.light .suggestion-item.active,
 :root.light .suggestion-item:hover {
-  border-color: rgba(2, 132, 199, 0.2);
+  border-color: rgba(99, 102, 241, 0.2);
   background:
-    linear-gradient(135deg, rgba(2, 132, 199, 0.11), transparent 50%),
+    linear-gradient(135deg, rgba(99, 102, 241, 0.11), transparent 50%),
     rgba(255, 255, 255, 0.82);
 }
 
@@ -2234,10 +2244,10 @@ select option {
 }
 
 .news-row:hover {
-  border-color: rgba(34, 211, 238, 0.22);
+  border-color: rgba(99, 102, 241, 0.22);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 45%),
-    rgba(34, 211, 238, 0.1);
+    rgba(99, 102, 241, 0.1);
 }
 
 .news-row-copy > strong,
@@ -2774,10 +2784,10 @@ select option {
 }
 
 .ticker-tape-item:hover {
-  border-color: rgba(34, 211, 238, 0.26);
+  border-color: rgba(99, 102, 241, 0.26);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 50%),
-    rgba(34, 211, 238, 0.1);
+    rgba(99, 102, 241, 0.1);
 }
 
 @keyframes ticker-scroll {
@@ -3362,6 +3372,7 @@ select option {
   padding: 11px;
   border: 1px solid color-mix(in srgb, var(--glass-stroke) 82%, transparent);
   border-radius: 16px;
+  background-clip: padding-box;
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--accent) 5%, transparent), transparent 48%),
     color-mix(in srgb, var(--glass-fill-soft) 84%, transparent);
@@ -4417,10 +4428,10 @@ select option {
 }
 
 .market-earnings-row:hover {
-  border-color: rgba(34, 211, 238, 0.24);
+  border-color: rgba(99, 102, 241, 0.24);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 46%),
-    rgba(34, 211, 238, 0.1);
+    rgba(99, 102, 241, 0.1);
 }
 
 .market-earnings-row > span {
@@ -4535,6 +4546,7 @@ select option {
   padding: 12px;
   border: 1px solid var(--glass-stroke);
   border-radius: 16px;
+  background-clip: padding-box;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 46%),
     var(--glass-fill-soft);
@@ -4545,10 +4557,10 @@ select option {
 }
 
 .mover-row:hover {
-  border-color: rgba(34, 211, 238, 0.22);
+  border-color: rgba(99, 102, 241, 0.22);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 46%),
-    rgba(34, 211, 238, 0.1);
+    rgba(99, 102, 241, 0.1);
 }
 
 .mover-row > span {
@@ -4670,7 +4682,7 @@ select option {
   color: var(--text);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 46%),
-    rgba(34, 211, 238, 0.13);
+    rgba(99, 102, 241, 0.13);
   box-shadow: inset 0 1px 0 var(--glass-highlight);
 }
 
@@ -4914,10 +4926,10 @@ select option {
 :root.light .glass-card .watchlist-context-item:hover,
 :root.light .glass-card .market-earnings-row:hover,
 :root.light .glass-card .mover-row:hover {
-  border-color: rgba(2, 132, 199, 0.16);
+  border-color: rgba(99, 102, 241, 0.16);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 48%),
-    rgba(2, 132, 199, 0.035);
+    rgba(99, 102, 241, 0.035);
 }
 
 :root.light .glass-card .glass-card::after {
@@ -6244,6 +6256,7 @@ body {
     width: calc(100% - 14px);
     padding: 6px;
     border-radius: 16px;
+  background-clip: padding-box;
   }
 
   .bottom-nav a,
@@ -7281,6 +7294,7 @@ body {
   .bottom-nav a,
   .bottom-nav > button {
     border-radius: 16px;
+  background-clip: padding-box;
   }
 
   .dashboard-page .desktop-heading-label {
@@ -8142,6 +8156,7 @@ body {
 /* Keep the password visibility control contained inside the rounded input surface. */
 .password-input-control {
   border-radius: 16px;
+  background-clip: padding-box;
   isolation: isolate;
   overflow: hidden;
 }
@@ -8985,7 +9000,7 @@ body {
 .public-shell:has(.cinematic-auth-screen) {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 14% 10%, rgba(56, 189, 248, 0.18), transparent 27%),
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 27%),
     radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.22), transparent 33%),
     radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
     #02030a;
@@ -9003,9 +9018,9 @@ body {
   --glass-stroke: rgba(129, 176, 255, 0.2);
   --glass-stroke-strong: rgba(143, 190, 255, 0.32);
   --glass-highlight: rgba(255, 255, 255, 0.12);
-  --accent: #38bdf8;
-  --accent-strong: #8b5cf6;
-  --purple: #a855f7;
+  --accent: #8ea2ff;
+  --accent-strong: #6366f1;
+  --purple: #7c3aed;
   position: relative;
   min-height: min(760px, calc(100vh - 98px));
   padding: clamp(20px, 3.2vw, 42px) clamp(16px, 4vw, 56px) 12px;
@@ -9070,7 +9085,7 @@ body {
     radial-gradient(circle at 42% 12%, rgba(202, 233, 255, 0.75) 0 1px, transparent 2px),
     radial-gradient(circle at 76% 16%, rgba(202, 233, 255, 0.45) 0 1px, transparent 2px),
     radial-gradient(circle at 58% 7%, rgba(168, 85, 247, 0.38), transparent 20%),
-    radial-gradient(circle at 18% 88%, rgba(56, 189, 248, 0.14), transparent 31%),
+    radial-gradient(circle at 18% 88%, rgba(99, 102, 241, 0.14), transparent 31%),
     linear-gradient(180deg, rgba(5, 10, 24, 0.95), rgba(7, 12, 30, 0.45) 52%, rgba(2, 5, 14, 0.95));
 }
 
@@ -9138,15 +9153,15 @@ body {
   border: 1px solid rgba(125, 180, 255, 0.18);
   border-radius: 16px;
   background: rgba(9, 17, 36, 0.38);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 26px rgba(56, 189, 248, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 26px rgba(99, 102, 241, 0.12);
 }
 
 .cinematic-logo-bars i {
   display: block;
   width: 7px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #38bdf8, #8b5cf6);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.55);
 }
 
 .cinematic-logo-bars i:nth-child(1) { height: 24px; }
@@ -9243,8 +9258,8 @@ body {
 }
 
 .cinematic-feature-grid svg {
-  color: #38bdf8;
-  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.32));
+  color: #6366f1;
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.32));
 }
 
 .cinematic-feature-grid strong {
@@ -9309,18 +9324,18 @@ body {
   margin-top: 8px;
   border-radius: 15px;
   background:
-    linear-gradient(180deg, transparent 0 32%, rgba(56, 189, 248, 0.08) 32% 33%, transparent 33% 66%, rgba(56, 189, 248, 0.06) 66% 67%, transparent 67%),
-    linear-gradient(135deg, rgba(56, 189, 248, 0.11), rgba(139, 92, 246, 0.08));
+    linear-gradient(180deg, transparent 0 32%, rgba(99, 102, 241, 0.08) 32% 33%, transparent 33% 66%, rgba(99, 102, 241, 0.06) 66% 67%, transparent 67%),
+    linear-gradient(135deg, rgba(99, 102, 241, 0.11), rgba(139, 92, 246, 0.08));
   overflow: hidden;
 }
 
 .cinematic-line-chart::before {
   position: absolute;
   inset: 20% 8% 24%;
-  background: linear-gradient(100deg, transparent 0 7%, #38bdf8 8% 22%, #8b5cf6 24% 42%, #38bdf8 44% 64%, #a855f7 66% 86%, transparent 88%);
+  background: linear-gradient(100deg, transparent 0 7%, #6366f1 8% 22%, #8b5cf6 24% 42%, #6366f1 44% 64%, #a855f7 66% 86%, transparent 88%);
   clip-path: polygon(0 76%, 17% 48%, 35% 62%, 54% 26%, 74% 41%, 100% 8%, 100% 18%, 74% 51%, 54% 36%, 35% 72%, 17% 58%, 0 86%);
   content: '';
-  filter: drop-shadow(0 0 11px rgba(56, 189, 248, 0.6));
+  filter: drop-shadow(0 0 11px rgba(99, 102, 241, 0.6));
 }
 
 .cinematic-line-chart i {
@@ -9331,7 +9346,7 @@ body {
   height: 6px;
   border-radius: 999px;
   background: #e0f7ff;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.76);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.76);
   transform: translate(-50%, -50%);
 }
 
@@ -9393,7 +9408,7 @@ body {
   height: 138px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 48%, rgba(56, 189, 248, 0.18), transparent 44%),
+    radial-gradient(circle at 50% 48%, rgba(99, 102, 241, 0.18), transparent 44%),
     linear-gradient(145deg, rgba(10, 18, 41, 0.95), rgba(4, 8, 21, 0.82));
   color: #f8fbff;
   box-shadow: inset 0 0 0 1px rgba(158, 207, 255, 0.18), 0 0 42px rgba(139, 92, 246, 0.38);
@@ -9403,10 +9418,10 @@ body {
   position: absolute;
   inset: 12px;
   border: 3px solid transparent;
-  border-top-color: #38bdf8;
+  border-top-color: #6366f1;
   border-right-color: #8b5cf6;
   border-radius: inherit;
-  box-shadow: 0 0 24px rgba(56, 189, 248, 0.36), inset 0 0 24px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.36), inset 0 0 24px rgba(139, 92, 246, 0.2);
   animation: authOrbFloat 6s ease-in-out infinite;
 }
 
@@ -9476,9 +9491,9 @@ body {
 }
 
 .cinematic-auth-switch button.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.28), rgba(139, 92, 246, 0.3));
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(139, 92, 246, 0.3));
   color: #f8fbff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 8px 26px rgba(56, 189, 248, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 8px 26px rgba(99, 102, 241, 0.12);
 }
 
 .cinematic-auth-flip {
@@ -9546,7 +9561,7 @@ body {
   border: 0;
   background: linear-gradient(100deg, #1fa8ff, #6d5dfc 50%, #a855f7);
   color: #ffffff;
-  box-shadow: 0 16px 42px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  box-shadow: 0 16px 42px rgba(99, 102, 241, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .cinematic-primary-action:hover:not(:disabled) {
@@ -9618,8 +9633,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 11px;
-  background: linear-gradient(145deg, rgba(56, 189, 248, 0.72), rgba(139, 92, 246, 0.7));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 0 28px rgba(56, 189, 248, 0.16);
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.72), rgba(139, 92, 246, 0.7));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 0 28px rgba(99, 102, 241, 0.16);
 }
 
 .public-shell:has(.cinematic-auth-screen) .site-footer-wordmark strong {
@@ -10577,7 +10592,7 @@ body {
 
 :root.light .public-shell:has(.cinematic-auth-screen) {
   background:
-    radial-gradient(circle at 14% 10%, rgba(56, 189, 248, 0.18), transparent 26%),
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 26%),
     radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.18), transparent 32%),
     radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
     #02030a;
@@ -10611,7 +10626,7 @@ body {
     radial-gradient(circle at 42% 12%, rgba(225, 244, 255, 0.78) 0 1px, transparent 2px),
     radial-gradient(circle at 76% 16%, rgba(202, 233, 255, 0.48) 0 1px, transparent 2px),
     radial-gradient(circle at 58% 7%, rgba(168, 85, 247, 0.4), transparent 20%),
-    radial-gradient(circle at 18% 88%, rgba(56, 189, 248, 0.15), transparent 31%),
+    radial-gradient(circle at 18% 88%, rgba(99, 102, 241, 0.15), transparent 31%),
     linear-gradient(180deg, rgba(5, 10, 24, 0.96), rgba(7, 12, 30, 0.5) 52%, rgba(2, 5, 14, 0.96));
 }
 
@@ -10653,8 +10668,8 @@ body {
 }
 
 :root.light .cinematic-field .input:focus {
-  border-color: rgba(56, 189, 248, 0.78);
-  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  border-color: rgba(99, 102, 241, 0.78);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 :root.light .cinematic-field .input-label,
@@ -10673,7 +10688,7 @@ body {
 }
 
 :root.light .cinematic-auth-switch button.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.34), rgba(139, 92, 246, 0.36));
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.34), rgba(139, 92, 246, 0.36));
   color: #f8fbff;
 }
 
@@ -10780,7 +10795,7 @@ body {
   border: 1px solid rgba(125, 211, 252, 0.22);
   border-radius: 18px;
   background:
-    linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(139, 92, 246, 0.1)),
+    linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.1)),
     rgba(4, 9, 22, 0.55);
   color: rgba(238, 247, 255, 0.92);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -10790,7 +10805,7 @@ body {
 .auth-verification-state {
   border-color: rgba(45, 212, 191, 0.28);
   background:
-    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(56, 189, 248, 0.1)),
+    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(99, 102, 241, 0.1)),
     rgba(4, 9, 22, 0.58);
 }
 
@@ -10833,8 +10848,8 @@ body {
 }
 
 .auth-verification-state svg {
-  color: #67e8f9;
-  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.32));
+  color: #6366f1;
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.32));
 }
 
 .auth-verification-state .button {
@@ -10845,7 +10860,7 @@ body {
 :root.light .public-shell:has(.cinematic-auth-screen),
 .public-shell:has(.cinematic-auth-screen) {
   background:
-    radial-gradient(circle at 14% 10%, rgba(56, 189, 248, 0.18), transparent 27%),
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 27%),
     radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.22), transparent 33%),
     radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
     #02030a;
@@ -10864,9 +10879,9 @@ body {
   --glass-stroke: rgba(129, 176, 255, 0.2);
   --glass-stroke-strong: rgba(143, 190, 255, 0.32);
   --glass-highlight: rgba(255, 255, 255, 0.12);
-  --accent: #38bdf8;
-  --accent-strong: #8b5cf6;
-  --purple: #a855f7;
+  --accent: #8ea2ff;
+  --accent-strong: #6366f1;
+  --purple: #7c3aed;
   color: #eff7ff;
 }
 
@@ -10885,7 +10900,7 @@ body {
     radial-gradient(circle at 42% 12%, rgba(202, 233, 255, 0.75) 0 1px, transparent 2px),
     radial-gradient(circle at 76% 16%, rgba(202, 233, 255, 0.45) 0 1px, transparent 2px),
     radial-gradient(circle at 58% 7%, rgba(168, 85, 247, 0.38), transparent 20%),
-    radial-gradient(circle at 18% 88%, rgba(56, 189, 248, 0.14), transparent 31%),
+    radial-gradient(circle at 18% 88%, rgba(99, 102, 241, 0.14), transparent 31%),
     linear-gradient(180deg, rgba(5, 10, 24, 0.95), rgba(7, 12, 30, 0.45) 52%, rgba(2, 5, 14, 0.95));
 }
 
@@ -10929,12 +10944,12 @@ body {
   border: 1px solid rgba(125, 180, 255, 0.28);
   border-radius: 17px;
   background:
-    radial-gradient(circle at 32% 22%, rgba(56, 189, 248, 0.2), transparent 42%),
+    radial-gradient(circle at 32% 22%, rgba(99, 102, 241, 0.2), transparent 42%),
     linear-gradient(145deg, rgba(11, 25, 52, 0.86), rgba(4, 9, 22, 0.72));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.16),
     inset 0 -10px 24px rgba(2, 8, 23, 0.34),
-    0 0 30px rgba(56, 189, 248, 0.18);
+    0 0 30px rgba(99, 102, 241, 0.18);
 }
 
 .cinematic-logo-bars i {
@@ -10943,7 +10958,7 @@ body {
   width: 7px;
   border-radius: 999px;
   background: linear-gradient(180deg, #69dcff 0%, #2fb6ff 48%, #8b5cf6 100%);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.65), 0 0 26px rgba(139, 92, 246, 0.22);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.65), 0 0 26px rgba(139, 92, 246, 0.22);
 }
 
 .cinematic-logo-bars i::before,
@@ -11002,7 +11017,7 @@ body {
   --glass-stroke: rgba(129, 176, 255, 0.2);
   --glass-highlight: rgba(255, 255, 255, 0.12);
   background:
-    radial-gradient(circle at 14% 10%, rgba(56, 189, 248, 0.18), transparent 27%),
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 27%),
     radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.22), transparent 33%),
     radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
     #02030a !important;
@@ -11035,7 +11050,7 @@ body {
   border-color: rgba(125, 211, 252, 0.5) !important;
   background: linear-gradient(100deg, #1fa8ff, #6d5dfc 50%, #a855f7) !important;
   color: #04111f !important;
-  box-shadow: 0 16px 42px rgba(56, 189, 248, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 16px 42px rgba(99, 102, 241, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
 }
 
 :root.light .public-shell:has(.cinematic-auth-screen) .input,
@@ -11048,8 +11063,8 @@ body {
 
 :root.light .public-shell:has(.cinematic-auth-screen) .input:focus,
 :root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field .input:focus {
-  border-color: rgba(56, 189, 248, 0.78) !important;
-  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(99, 102, 241, 0.78) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
 :root.light .public-shell:has(.cinematic-auth-screen) .input-label,
@@ -11062,9 +11077,9 @@ body {
 :root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle:hover,
 :root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle:focus-visible,
 :root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle[aria-pressed='true'] {
-  border-color: rgba(56, 189, 248, 0.28) !important;
-  background: rgba(56, 189, 248, 0.08) !important;
-  color: #38bdf8 !important;
+  border-color: rgba(99, 102, 241, 0.28) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: #6366f1 !important;
 }
 
 :root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-switch {
@@ -11077,7 +11092,7 @@ body {
 }
 
 :root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-switch button.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.28), rgba(139, 92, 246, 0.3)) !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(139, 92, 246, 0.3)) !important;
   color: #f8fbff !important;
 }
 
@@ -11085,7 +11100,7 @@ body {
 :root.light .public-shell:has(.cinematic-auth-screen) .auth-verification-state {
   border-color: rgba(45, 212, 191, 0.28) !important;
   background:
-    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(56, 189, 248, 0.1)),
+    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(99, 102, 241, 0.1)),
     rgba(4, 9, 22, 0.58) !important;
   color: rgba(238, 247, 255, 0.92) !important;
 }

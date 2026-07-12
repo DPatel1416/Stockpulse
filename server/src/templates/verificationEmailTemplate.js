@@ -55,13 +55,37 @@ export function renderVerificationEmail({ name, verificationUrl }) {
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;border:1px solid rgba(142,190,255,.22);border-radius:28px;background:linear-gradient(145deg,rgba(12,24,50,.88),rgba(5,10,24,.88));box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden;">
             <tr>
               <td style="padding:34px 32px 18px;">
-                <div style="display:inline-flex;align-items:center;gap:12px;">
-                  <span style="display:inline-block;width:42px;height:42px;border-radius:15px;background:linear-gradient(135deg,#38bdf8,#8b5cf6);box-shadow:0 0 28px rgba(56,189,248,.28);"></span>
-                  <span style="display:inline-block;vertical-align:top;">
-                    <strong style="display:block;font-size:22px;line-height:1;color:#f8fbff;">StockPulse</strong>
-                    <span style="display:block;margin-top:4px;color:#a78bfa;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;">Learn</span>
-                  </span>
-                </div>
+                <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                  <tr>
+                    <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;border:1px solid rgba(255,255,255,.22);border-radius:15px;background:#6366f1;box-shadow:0 0 28px rgba(99,102,241,.24);">
+                      <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 auto;">
+                        <tr>
+                          <td width="4" height="26" bgcolor="#f8fbff" style="width:4px;height:26px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
+                          <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
+                          <td valign="bottom">
+                            <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                              <tr valign="bottom">
+                                <td width="5" height="10" bgcolor="#f8fbff" style="width:5px;height:10px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
+                                <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
+                                <td width="5" height="19" bgcolor="#f8fbff" style="width:5px;height:19px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
+                                <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
+                                <td width="5" height="13" bgcolor="#f8fbff" style="width:5px;height:13px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
+                              </tr>
+                              <tr>
+                                <td colspan="5" height="4" bgcolor="#f8fbff" style="height:4px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td width="12" style="width:12px;font-size:0;line-height:0;">&nbsp;</td>
+                    <td valign="middle">
+                      <strong style="display:block;font-size:22px;line-height:1;color:#f8fbff;">StockPulse</strong>
+                      <span style="display:block;margin-top:4px;color:#aab7ff;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;">Learn</span>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>

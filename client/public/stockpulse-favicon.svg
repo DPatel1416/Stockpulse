@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="StockPulse">
+  <defs>
+    <linearGradient id="stockpulse-mark-bg" x1="8" y1="7" x2="57" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8ea2ff"/>
+      <stop offset="0.55" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="stockpulse-mark-sheen" x1="15" y1="10" x2="42" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="52" height="52" rx="17" fill="url(#stockpulse-mark-bg)"/>
+  <rect x="7" y="7" width="50" height="50" rx="16" fill="url(#stockpulse-mark-sheen)"/>
+  <rect x="7" y="7" width="50" height="50" rx="16" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5"/>
+  <path d="M19 17v29h29" fill="none" stroke="#f8fbff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 42V32" fill="none" stroke="#f8fbff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M36 42V23" fill="none" stroke="#f8fbff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M44 42V29" fill="none" stroke="#f8fbff" stroke-width="4" stroke-linecap="round"/>
+</svg>

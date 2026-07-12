@@ -26,7 +26,7 @@ import {
   getTransactionTypeLabel,
 } from '../utils/transactions';
 
-const colors = ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#fb7185'];
+const colors = ['#6366f1', '#8b5cf6', '#34d399', '#fbbf24', '#fb7185'];
 const allocationLogoMinPercent = 0.045;
 const recentTransactionLimit = 10;
 const guestPortfolio = {
