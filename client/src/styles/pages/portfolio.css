@@ -714,9 +714,9 @@
   gap: 8px;
   width: min(230px, calc(100% - 10px));
   padding: 8px;
-  border: 1px solid color-mix(in srgb, var(--purple) 28%, var(--glass-stroke));
+  border: 1px solid var(--glass-stroke-strong);
   border-radius: 11px;
-  background: color-mix(in srgb, var(--surface-strong) 90%, var(--purple) 10%);
+  background: color-mix(in srgb, var(--surface-strong) 96%, var(--glass-fill-soft));
   box-shadow: 0 16px 36px rgba(2, 6, 23, 0.24), inset 0 1px 0 var(--card-edge-light);
   backdrop-filter: blur(22px) saturate(135%);
   -webkit-backdrop-filter: blur(22px) saturate(135%);
@@ -747,8 +747,8 @@
 
 .trade-order-menu button:hover,
 .trade-order-menu button:focus-visible {
-  border-color: color-mix(in srgb, var(--purple) 46%, var(--glass-stroke));
-  background: color-mix(in srgb, var(--purple) 13%, var(--glass-fill-soft));
+  border-color: var(--glass-stroke-strong);
+  background: var(--glass-fill-strong);
   color: var(--text);
   outline: none;
 }
@@ -772,7 +772,15 @@
 
 .trade-order-menu svg {
   flex: 0 0 auto;
-  color: var(--purple);
+  color: var(--text);
+}
+
+.trade-order-menu.buy svg {
+  color: var(--green);
+}
+
+.trade-order-menu.sell svg {
+  color: var(--red);
 }
 
 .order-ticket-card {

@@ -82,11 +82,12 @@ function normalizeLimitPriceInput(payload) {
 }
 
 /**
- * Returns the execution quote needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
+ * Returns the freshest executable quote available for a paper order.
+ * A very short cache prevents duplicate provider calls during one order sweep while still keeping fills tied to live price.
  * @param {*} ticker - Stock ticker symbol used to identify a company.
- * @param {*} options1 - Input value for options1.
- * @returns {Promise<*>} A promise resolving to the requested execution quote result.
+ * @param {object} options - Quote lookup options.
+ * @param {boolean} options.forceFresh - Whether to bypass the short in-memory quote cache.
+ * @returns {Promise<{stock: object, provider: string, demo: boolean}>} Current quote and provider metadata.
  */
 async function getExecutionQuote(ticker, { forceFresh = false } = {}) {
   const cachedQuote = executionQuoteCache.get(ticker);
@@ -114,7 +115,7 @@ async function getExecutionQuote(ticker, { forceFresh = false } = {}) {
  * @param {'BUY'|'SELL'} side - Order side that determines cash and share movement.
  * @param {number} marketPrice - Current executable stock price.
  * @param {number} limitPrice - Requested maximum buy price or minimum sell price.
- * @returns {Promise<object>} A promise resolving to the serialized cancelled order.
+ * @returns {boolean} True when the limit order should fill at the current quote.
  */
 export function shouldFillLimitOrder(side, marketPrice, limitPrice) {
   return side === 'BUY' ? marketPrice <= limitPrice : marketPrice >= limitPrice;
@@ -122,10 +123,10 @@ export function shouldFillLimitOrder(side, marketPrice, limitPrice) {
 
 /**
  * Calculates cash and shares reserved by currently pending limit orders.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * Reservations prevent users from overcommitting the same cash or shares across multiple open orders.
  * @param {Array<object>} orders - Pending orders to inspect or summarize.
- * @param {string|null} tickerToExclude - Ticker omitted from reservation totals.
- * @returns {*} The summarize reservations result.
+ * @param {string|null} tickerToExclude - Order id omitted while recalculating reservations.
+ * @returns {{cash: number, shares: object}} Cash and per-ticker share quantities already reserved.
  */
 function summarizeReservations(orders, tickerToExclude = null) {
   return orders.reduce((summary, order) => {
@@ -188,12 +189,12 @@ function getDemoOrders(userId) {
 
 /**
  * Validates the available resources before any state or persistence is changed.
- * Central validation prevents different callers from accepting conflicting inputs.
+ * Marketable limit orders reserve the executable quote price, while non-marketable limits reserve the user's limit price.
  * @param {string} userId - Stable identifier of the account owner.
  * @param {object} order - Normalized market or limit order being processed.
  * @param {number} quotePrice - Current quote used to test a pending limit.
  * @param {string|null} excludedOrderId - Order omitted while recalculating reservations.
- * @returns {Promise<*>} A promise resolving to the validate available resources result.
+ * @returns {Promise<void>} A promise that resolves when cash and share availability are valid.
  */
 async function validateAvailableResources(userId, order, quotePrice, excludedOrderId = null) {
   const fillsAtQuote = order.orderType === 'MARKET' || shouldFillLimitOrder(order.side, quotePrice, order.limitPrice);
@@ -238,12 +239,12 @@ async function validateAvailableResources(userId, order, quotePrice, excludedOrd
 
 /**
  * Applies a filled order atomically to MongoDB-backed cash, holdings, and transactions.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * Filled marketable limits use the current quote, not the user's limit, so users receive price improvement when available.
  * @param {string} userId - Stable identifier of the account owner.
  * @param {object} order - Normalized market or limit order being processed.
  * @param {object} quote - Current provider quote and its source metadata.
  * @param {object} orderDocument - MongoDB order document being serialized or filled.
- * @returns {Promise<*>} A promise resolving to the execute mongo fill result.
+ * @returns {Promise<*>} A promise resolving to the executed trade record.
  */
 async function executeMongoFill(userId, order, quote, orderDocument = null) {
   const user = await User.findById(userId);
@@ -313,12 +314,12 @@ async function executeMongoFill(userId, order, quote, orderDocument = null) {
 
 /**
  * Applies a filled order to the in-memory demo portfolio.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * The demo path mirrors MongoDB fill rules so offline/local behavior matches production as closely as possible.
  * @param {string} userId - Stable identifier of the account owner.
  * @param {object} order - Normalized market or limit order being processed.
  * @param {object} quote - Current provider quote and its source metadata.
  * @param {object|null} storedOrder - Existing pending order being filled.
- * @returns {*} The execute demo fill result.
+ * @returns {object} Executed trade record.
  */
 function executeDemoFill(userId, order, quote, storedOrder = null) {
   const user = findDemoUserById(userId);
@@ -686,7 +687,7 @@ export async function getOpenOrdersForUser(user) {
  * Ownership is checked inside the service so callers cannot cancel another user's order.
  * @param {*} user - Authenticated user whose data is being read or changed.
  * @param {string} orderId - Identifier of the pending order.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * @returns {Promise<object>} Serialized cancelled order.
  */
 export async function cancelOrderForUser(user, orderId) {
   const userId = toUserId(user);

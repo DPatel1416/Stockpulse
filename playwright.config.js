@@ -32,7 +32,8 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
       env: {
-        VITE_API_URL: 'http://127.0.0.1:5000/api',
+        // The client API layer reads VITE_API_BASE_URL, so E2E runs must set the same variable used in production.
+        VITE_API_BASE_URL: 'http://127.0.0.1:5000/api',
       },
     },
   ],

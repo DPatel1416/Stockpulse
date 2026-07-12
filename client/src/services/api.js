@@ -54,7 +54,7 @@ function getToken() {
 
 /**
  * Sends an API request and uses an approved local fallback only when the server cannot be reached.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * HTTP errors still surface to the UI; fallbacks only cover connection failures for local/demo resilience.
  * @param {string} path - API path appended to the configured server URL.
  * @param {*} options - Named settings that adjust the operation.
  * @param {Function|undefined} fallbackResolver - Local resolver used only when the API cannot be reached.
@@ -113,8 +113,8 @@ function getLocalWatchlist() {
 
 /**
  * Returns the local portfolio needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
- * @returns {*} The requested local portfolio result.
+ * Local portfolio storage mirrors the server response shape so the UI can keep working during API outages.
+ * @returns {object} Portfolio summary assembled from browser storage.
  */
 function getLocalPortfolio() {
   const portfolio = readJson(STORAGE_KEYS.portfolio, initialPortfolio);
@@ -335,13 +335,13 @@ function normalizeLocalPerformanceTrade(transaction, rangeStart, rangeEnd) {
 }
 
 /**
- * Constructs the local performance series from its source values.
- * A named builder keeps multi-step construction logic testable and reusable.
+ * Constructs the browser-only performance series from stored demo portfolio data.
+ * This rewinds the browser-only portfolio, reapplies trades, and prices each point from deterministic demo history.
  * @param {*} portfolio - Current portfolio values, holdings, transactions, and orders.
  * @param {*} range - Requested chart or performance time range.
  * @param {Date} rangeStart - Inclusive beginning of the requested performance range.
  * @param {Date} rangeEnd - Inclusive end of the requested performance range.
- * @returns {*} The constructed local performance series result.
+ * @returns {Array<object>} Timestamped local portfolio-value points.
  */
 function buildLocalPerformanceSeries(portfolio, range, rangeStart, rangeEnd) {
   const trades = (portfolio.transactions || [])
@@ -524,7 +524,7 @@ function saveLocalPortfolio(portfolio) {
  * @param {'BUY'|'SELL'} side - Order side that determines cash and share movement.
  * @param {number} marketPrice - Current executable stock price.
  * @param {number} limitPrice - Requested maximum buy price or minimum sell price.
- * @returns {Promise<object>} A promise resolving to the cancelled order and updated portfolio.
+ * @returns {boolean} True when the local limit order should fill at the current demo quote.
  */
 function shouldFillLocalLimit(side, marketPrice, limitPrice) {
   return side === 'BUY' ? marketPrice <= limitPrice : marketPrice >= limitPrice;
@@ -532,11 +532,11 @@ function shouldFillLocalLimit(side, marketPrice, limitPrice) {
 
 /**
  * Applies a filled browser-only order to local cash, holdings, and transaction history.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * Executions use the current quote, not the limit price, to match realistic price-improvement behavior.
  * @param {*} portfolio - Current portfolio values, holdings, transactions, and orders.
  * @param {object} order - Normalized market or limit order being processed.
  * @param {object} stock - Normalized stock quote and company details.
- * @returns {*} The fill local order result.
+ * @returns {object} Executed browser-only trade record.
  */
 function fillLocalOrder(portfolio, order, stock) {
   const quantity = Number(order.quantity);
@@ -587,10 +587,10 @@ function fillLocalOrder(portfolio, order, stock) {
 }
 
 /**
- * Processes the local limit orders through the required business-rule sequence.
- * A named workflow makes the sequence of business rules explicit.
+ * Processes pending local limit orders whenever the browser fallback portfolio is read.
+ * Filled orders are removed from the open list so reserved cash and shares are released correctly.
  * @param {*} portfolio - Current portfolio values, holdings, transactions, and orders.
- * @returns {*} The process local limit orders result.
+ * @returns {boolean} True when at least one open local order changed state.
  */
 function processLocalLimitOrders(portfolio) {
   let changed = false;
@@ -613,9 +613,9 @@ function processLocalLimitOrders(portfolio) {
 
 /**
  * Validates and executes a browser-only paper trade at the current demo quote.
- * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+ * Non-marketable limits are stored as open orders; market and marketable limit orders fill immediately.
  * @param {object} order - Normalized market or limit order being processed.
- * @returns {*} The execute local trade result.
+ * @returns {object} Trade or pending-order result shaped like the server response.
  */
 function executeLocalTrade(order) {
   const portfolio = readJson(STORAGE_KEYS.portfolio, initialPortfolio);
@@ -674,7 +674,7 @@ function executeLocalTrade(order) {
  * Cancels a browser-only pending order and releases its reserved cash or shares.
  * Keeping local cancellation here mirrors the server API when the backend is unavailable.
  * @param {string} orderId - Identifier of the pending order.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * @returns {object} Cancelled order plus the refreshed local portfolio.
  */
 function cancelLocalTradeOrder(orderId) {
   const portfolio = readJson(STORAGE_KEYS.portfolio, initialPortfolio);

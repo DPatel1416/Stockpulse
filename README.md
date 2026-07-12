@@ -1,179 +1,233 @@
-# StockPulse
+# StockPulse Learn
 
-StockPulse is a full-stack educational stock learning dashboard. It combines a liquid-glass React UI, stock search, watchlists, charts, news, earnings, paper trading, portfolio analytics, and mock AI insights.
+StockPulse Learn is a full-stack educational paper-trading platform. It helps users practice market research, watchlist management, stock analysis, simulated order placement, and portfolio tracking without risking real money.
 
-This project is for educational paper trading only. It does not provide financial advice and does not place real trades.
+This project is for educational use only. It does not provide financial advice, brokerage services, tax advice, legal advice, or real trading.
 
-## Features
+## Main Features
 
-- Responsive React + Vite client with dark, light, and system theme support.
-- Premium liquid-glass dashboard, sidebar, bottom mobile navigation, and AI insight panel.
-- Dashboard with market summary cards, top active stocks, watchlist preview, portfolio snapshot, news, and earnings.
-- Stock detail pages with charts, range filters, volume insight, stats, news, earnings, and quick paper trading.
-- Watchlist, paper trading simulator, portfolio analytics, and beginner-friendly Learn page.
-- Express REST API with controllers, routes, middleware, MongoDB models, JWT auth, and mock data fallback.
-- Paper-trading rules: each user starts with exactly `$10,000` virtual cash, buy orders validate cash, sell orders validate shares, and every simulated trade is recorded.
-- AI endpoint returns educational mock responses when `OPENAI_API_KEY` is missing.
+- Cinematic React login/register experience with guest access and responsive mobile layouts.
+- Email verification for new accounts using Resend when email delivery is configured.
+- JWT-based authentication with protected watchlist, portfolio, account, and trading APIs.
+- Guest browsing mode for public exploration without saving data to MongoDB.
+- Dashboard with market status, portfolio snapshot, top gainers/losers, active stocks, news, earnings, and watchlist previews.
+- Stock search page with ticker/company suggestions, detailed chart ranges, line/candle views, company news, earnings, price targets, ratings, and trade actions.
+- Watchlist page with favorite stocks, current prices, watchlist news, analyst price targets, and firm ratings.
+- Portfolio page with virtual cash, holdings, recent transactions, pending limit orders, portfolio return chart, and buy/sell order tickets.
+- Learn page with beginner-friendly investing lessons, practice cards, reference library, and responsive mobile scrolling.
+- Liquid-glass design system split across modular CSS files.
+- Automated tests for client utilities/components, backend auth and portfolio logic, plus Playwright E2E smoke tests.
 
-## Tech Stack
+## Technology Stack
 
-- Client: React, Vite, React Router, Recharts, Lucide React, Tailwind-ready CSS.
-- Server: Node.js, Express, MongoDB/Mongoose, JWT, bcrypt.
-- Data: external market APIs can be added in `server/src/services/stockDataService.js`; mock data is used by default.
+- Frontend: React, Vite, React Router, Recharts, Lucide React, Vitest, React Testing Library, Playwright.
+- Backend: Node.js, Express, MongoDB/Mongoose, JWT, bcryptjs, Resend email delivery, Vitest, Supertest.
+- Market data: Finnhub when configured, Yahoo Finance fallback logic in the backend, and deterministic demo fallbacks when live data is unavailable.
+- Deployment: Vercel for the frontend, Render for the backend, MongoDB Atlas for production database storage.
 
-## Folder Structure
+## Project Structure
 
 ```text
 stockpulse/
-  README.md
-  .gitignore
-  client/
-    package.json
-    index.html
-    vite.config.js
-    src/
-      main.jsx
-      App.jsx
-      index.css
-      routes/
-      pages/
-      components/
-      context/
-      services/
-      utils/
-  server/
-    package.json
-    server.js
-    .env.example
-    src/
-      config/
-      controllers/
-      middleware/
-      models/
-      routes/
-      services/
-      utils/
+  package.json                 Root scripts for dev, lint, test, coverage, and E2E runs.
+  playwright.config.js          Playwright configuration for full-stack browser tests.
+  vercel.json                   Frontend SPA rewrite configuration for Vercel.
+  README.md                     Project setup and architecture summary.
+  client/                       React/Vite frontend application.
+    src/main.jsx                Frontend entry point and provider mounting.
+    src/App.jsx                 Route shell, layout composition, guest modal, footer, and AI panel.
+    src/pages/                  Page-level screens such as Login, Dashboard, StockDetails, Portfolio, Watchlist, and Learn.
+    src/components/             Reusable UI, layout, legal, stock, auth, AI, and trading components.
+    src/context/                Auth, guest-session, and theme providers.
+    src/services/api.js         Frontend API client and browser-only fallback behavior.
+    src/utils/                  Validation, formatting, market-time, access-choice, and transaction helpers.
+    src/styles/                 Modular CSS split by globals, layout, pages, components, and responsive rules.
+    src/test/                   Vitest and Testing Library setup.
+  server/                       Express backend application.
+    server.js                   Backend entry point, database startup, and limit-order polling.
+    src/app.js                  Express app, middleware, routes, health/catalog endpoints, and error handler.
+    src/config/db.js            MongoDB connection with in-memory demo fallback.
+    src/controllers/            Request handlers for auth, market, stocks, watchlist, portfolio, trades, and AI.
+    src/routes/                 Route definitions for each API area.
+    src/middleware/             JWT authentication and centralized error handling.
+    src/models/                 Mongoose schemas for users, holdings, orders, watchlist, transactions, and snapshots.
+    src/services/               Market data, email, order execution, and portfolio performance logic.
+    src/utils/                  Token, demo-store, email-verification, market-time, and async wrapper helpers.
+    src/templates/              Reusable HTML email templates.
+    test/                       Backend Vitest/Supertest tests and setup.
 ```
 
-## Setup
+## Local Setup
 
-1. Install dependencies:
+Install dependencies from the project root:
 
 ```bash
+npm install
 npm install --prefix client
 npm install --prefix server
 ```
 
-2. Configure the server environment:
-
-```bash
-cp server/.env.example server/.env
-```
-
-3. Run the API:
-
-```bash
-npm run dev --prefix server
-```
-
-4. Run the client:
-
-```bash
-npm run dev --prefix client
-```
-
-The client runs at `http://127.0.0.1:5173`. The API runs at `http://localhost:5000`.
-
-## Environment Variables
+Create `server/.env` manually. Do not commit this file.
 
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/stockpulse
-JWT_SECRET=replace_with_long_secret
-STOCK_API_KEY=your_market_data_api_key
-STOCK_API_PROVIDER=finnhub
-OPENAI_API_KEY=optional_openai_key
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=replace_with_a_long_random_secret_at_least_32_characters
 CLIENT_URL=http://localhost:5173
 API_PUBLIC_URL=http://localhost:5000
 RESEND_API_KEY=your_resend_api_key
-RESEND_FROM_EMAIL=StockPulse Learn <onboarding@resend.dev>
-```
-
-If `MONGO_URI`, `STOCK_API_KEY`, or `OPENAI_API_KEY` are missing or unavailable, the app still runs with demo storage and mock market/AI responses. `RESEND_API_KEY` is required for real verification email delivery; without it, the server logs a warning and prints a local verification link for development testing.
-
-### Finnhub Setup
-
-To use Finnhub live market data, set these values in `server/.env`:
-
-```env
-STOCK_API_PROVIDER=finnhub
-STOCK_API_KEY=your_finnhub_api_key_here
-```
-
-Then restart the server. StockPulse uses Finnhub for quotes, company profiles, chart candles, market news, company news, and earnings calendar data. If Finnhub rate-limits a request or a specific endpoint has no data, that route falls back to demo data instead of breaking the page.
-
-### Resend Email Verification Setup
-
-StockPulse uses Resend for account verification emails. Create a Resend API key, add a verified sender/domain in Resend, then set these values in `server/.env`:
-
-```env
-RESEND_API_KEY=your_resend_api_key_here
 RESEND_FROM_EMAIL=StockPulse Learn <verify@your-domain.com>
-CLIENT_URL=http://localhost:5173
-API_PUBLIC_URL=http://localhost:5000
+STOCK_API_PROVIDER=finnhub
+STOCK_API_KEY=your_finnhub_api_key
+CANADIAN_MARKET_EXCHANGE=TO,TSX,CA
+OPENAI_API_KEY=optional_openai_key
+LIMIT_ORDER_POLL_MS=15000
 ```
 
-For Render, set the same variables in the backend service environment. Use your deployed URLs, for example:
+Create `client/.env.local` only when the frontend needs a custom API URL:
 
 ```env
-CLIENT_URL=https://stockpulse07.vercel.app
-API_PUBLIC_URL=https://stockpulse-6w4m.onrender.com
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-The verification email links point to the backend `/api/auth/verify-email` endpoint, which validates the token and redirects users back to `/login` on the client.
+Run both apps together:
+
+```bash
+npm run dev
+```
+
+Or run each side separately:
+
+```bash
+npm run dev --prefix server
+npm run dev --prefix client
+```
+
+Default local URLs:
+
+- Frontend: `http://127.0.0.1:5173`
+- Backend API: `http://localhost:5000/api`
+
+## Environment Variables
+
+### Frontend
+
+- `VITE_API_BASE_URL`: API base URL used by the React client. Set this on Vercel for production, for example `https://your-render-service.onrender.com/api`.
+
+### Backend
+
+- `PORT`: Backend server port. Render usually injects this automatically.
+- `MONGO_URI`: MongoDB connection string. If missing or unavailable, the app falls back to in-memory demo storage.
+- `JWT_SECRET`: Secret used to sign JWTs. The server refuses to start without this value and warns if it is shorter than 32 characters.
+- `CLIENT_URL`: Frontend origin allowed by CORS and used for auth redirects.
+- `API_PUBLIC_URL`: Public backend origin used to build email verification links.
+- `SERVER_PUBLIC_URL` or `RENDER_EXTERNAL_URL`: Fallback public backend origin for verification links.
+- `RESEND_API_KEY`: Resend API key for verification emails. Without it, email delivery is skipped and a local verification link is logged for development.
+- `RESEND_FROM_EMAIL`: Verified sender used by Resend.
+- `STOCK_API_PROVIDER`: Market data provider name. The implemented live provider path expects `finnhub`.
+- `STOCK_API_KEY`: Finnhub key for live quotes, profiles, charts, news, earnings, market status, and activity data.
+- `CANADIAN_MARKET_EXCHANGE`: Optional exchange list used for Canadian market-status checks.
+- `OPENAI_API_KEY`: Currently only controls whether the AI response reports demo mode; real OpenAI calls are not implemented in the current controller.
+- `LIMIT_ORDER_POLL_MS`: Polling interval for the pending limit-order sweep. The server enforces a minimum of 5000 ms.
+- `NODE_ENV`: Controls test/development behavior and logging.
 
 ## API Summary
 
-- `POST /api/auth/register` creates an unverified user with `$10,000` virtual cash and sends a verification email.
-- `GET /api/auth/verify-email?token=...` verifies the email token and redirects back to login.
-- `POST /api/auth/resend-verification` sends a fresh verification email for an unverified account.
-- `POST /api/auth/login` authenticates verified users and returns a JWT.
-- `POST /api/auth/demo` creates or resumes a demo API session.
-- `GET /api/auth/me` returns the current authenticated user.
-- `GET /api/market/summary` returns index summary cards.
-- `GET /api/market/news` returns global market news.
-- `GET /api/market/earnings` returns global earnings events.
-- `GET /api/stocks/suggest?query=apple` returns ticker/company suggestions.
-- `GET /api/stocks/search/:ticker` returns profile and quote data.
-- `GET /api/stocks/:ticker/chart?range=1M` returns chart points.
-- `GET /api/stocks/:ticker/news` returns related news.
-- `GET /api/stocks/:ticker/earnings` returns earnings data.
-- `GET /api/market/active` returns top active stocks.
-- `GET /api/watchlist` returns the protected watchlist.
-- `POST /api/watchlist` adds a ticker.
-- `DELETE /api/watchlist/:ticker` removes a ticker.
-- `GET /api/portfolio` returns cash, holdings, P/L, and transactions.
-- `POST /api/trades` executes a simulated trade.
-- `GET /api/trades` returns transaction history.
-- `POST /api/ai/insight` returns an educational AI-style response.
+| Method | Endpoint | Auth | Purpose |
+| --- | --- | --- | --- |
+| GET | `/api` | No | Route catalog for the API. |
+| GET | `/health` | No | Health check for deployment monitoring. |
+| POST | `/api/auth/register` | No | Create an unverified user and send a verification email. |
+| POST | `/api/auth/login` | No | Log in a verified user and return a JWT. |
+| POST | `/api/auth/validate-email` | No | Check basic email format/availability. |
+| GET/POST | `/api/auth/verify-email` | No | Verify an email token and redirect or return JSON. |
+| POST | `/api/auth/resend-verification` | No | Send a fresh verification email to an unverified account. |
+| POST | `/api/auth/demo` | No | Start or resume a demo API session. |
+| GET | `/api/auth/me` | Yes | Return the authenticated user. |
+| PATCH | `/api/auth/me` | Yes | Update account display name. |
+| PATCH | `/api/auth/password` | Yes | Change password for a logged-in user. |
+| GET | `/api/market/status` | No | Return US and Canadian market status. |
+| GET | `/api/market/summary` | No | Return market summary/index data. |
+| GET | `/api/market/active` | No | Return top active, top gainers, and top losers. |
+| GET | `/api/market/news` | No | Return global market news. |
+| GET | `/api/market/earnings` | No | Return upcoming market earnings. |
+| GET | `/api/stocks/suggest` | No | Return ticker/company search suggestions. |
+| GET | `/api/stocks/search/:ticker` | No | Return normalized profile and quote data. |
+| GET | `/api/stocks/:ticker/chart` | No | Return normalized OHLC chart points for a range. |
+| GET | `/api/stocks/:ticker/news` | No | Return ticker-specific news. |
+| GET | `/api/stocks/:ticker/earnings` | No | Return ticker earnings data. |
+| GET | `/api/stocks/:ticker/price-targets` | No | Return analyst price targets and ratings. |
+| GET | `/api/watchlist` | Yes | Return the user's watchlist. |
+| POST | `/api/watchlist` | Yes | Add a stock to the watchlist. |
+| DELETE | `/api/watchlist/:ticker` | Yes | Remove a stock from the watchlist. |
+| GET | `/api/portfolio` | Yes | Return portfolio summary, holdings, transactions, and open orders. |
+| GET | `/api/portfolio/performance` | Yes | Return portfolio value history for chart ranges. |
+| GET | `/api/trades` | Yes | Return trade history/open order data. |
+| POST | `/api/trades` | Yes | Place a market or limit paper-trading order. |
+| PATCH | `/api/trades/:orderId` | Yes | Update a pending limit order. |
+| DELETE | `/api/trades/:orderId` | Yes | Cancel a pending limit order. |
+| POST | `/api/ai/insight` | No | Return an educational AI-style explanation. |
 
-## Mock Data Fallback
+## Authentication Notes
 
-The client and server both include demo data so the portfolio demo works without paid APIs. Live API integration should be added behind the `stockDataService` methods so controllers and UI components do not change.
+Registration creates a user with `isVerified = false`, stores a hashed verification token, and sends the plain token only inside the verification email. Login is blocked until the email is verified. JWTs are stored by the client after login and sent in the `Authorization: Bearer <token>` header for protected routes.
 
-## Testing
+Guest access is handled separately on the frontend. Guest users can explore public pages and temporary watchlist-style interactions, but trading and saved portfolio data require login.
 
-Run backend verification tests:
+The forgot-password UI is currently a future-update modal. OTP/password-reset flow is not implemented in the current codebase.
+
+## Paper-Trading Notes
+
+Authenticated users start with `$10,000` virtual cash. Market orders fill immediately at the current quote. Limit orders fill immediately only when the quote satisfies the limit condition; otherwise they stay pending. Pending buy orders reserve cash and pending sell orders reserve shares so users cannot overcommit resources. A background sweep checks pending limit orders and fills them when live/demo quotes satisfy the order.
+
+## Testing and Verification
+
+Run the main checks from the project root:
 
 ```bash
-npm test --prefix server
-```
-
-The auth tests mock Resend by replacing `fetch`, so no real email is sent during tests. They cover registration, email verification, invalid tokens, expired tokens, resend verification, login before verification, and login after verification.
-
-Run frontend checks:
-
-```bash
-npm run lint --prefix client
+npm run lint
+npm test
+npm run test:e2e
 npm run build --prefix client
 ```
+
+Useful focused checks:
+
+```bash
+npm run test --prefix client
+npm run test --prefix server
+npm run test:coverage
+```
+
+The test suite mocks external APIs where needed so tests do not depend on live Resend or market-data access.
+
+## Deployment
+
+### Frontend on Vercel
+
+- Deploy the `client` app through Vercel.
+- Set `VITE_API_BASE_URL` to the Render backend API URL, ending in `/api`.
+- `client/vercel.json` rewrites all routes to `index.html` so React Router works on refresh.
+
+### Backend on Render
+
+- Deploy the `server` app through Render.
+- Use `npm install --prefix server` as the install command if Render builds from the repo root.
+- Use `npm start --prefix server` or run `node server.js` from the `server` directory as the start command.
+- Configure `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`, `API_PUBLIC_URL`, Resend variables, and market-data variables in Render.
+- Keep `CLIENT_URL` pointed at the Vercel domain so CORS allows browser requests.
+
+### MongoDB Atlas
+
+- Use a MongoDB Atlas connection string in `MONGO_URI`.
+- Allow Render's outbound network access in Atlas network settings.
+- If MongoDB is unavailable, the API starts in in-memory demo mode, but data will not persist.
+
+## Security Notes
+
+- Passwords are hashed with bcrypt before storage.
+- JWTs are signed on the backend and validated by protected middleware.
+- Email verification tokens are hashed before being stored.
+- Secrets belong only in `.env`, Vercel, or Render environment settings.
+- Do not commit `server/.env`, API keys, MongoDB connection strings, or JWT secrets.
+- This is an educational paper-trading app, not a production brokerage system.

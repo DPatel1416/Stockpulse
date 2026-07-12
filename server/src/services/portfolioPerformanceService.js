@@ -77,11 +77,11 @@ function snapshotValues(portfolio) {
 
 /**
  * Checks whether enough time or value change has occurred to save another snapshot.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
+ * This avoids writing duplicate points while still capturing meaningful portfolio changes.
  * @param {object|null} latest - Most recently recorded value.
  * @param {*} values - Collection of values used by the calculation.
  * @param {Date} now - Reference time used to make the calculation deterministic.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * @returns {boolean} True when another snapshot should be stored.
  */
 function shouldRecordSnapshot(latest, values, now) {
   if (!latest) return true;
@@ -269,14 +269,14 @@ function normalizeTrade(transaction) {
 }
 
 /**
- * Loads the historical series and prepares it for the current workflow.
- * Separating loading from rendering keeps asynchronous state easier to follow.
+ * Loads historical market series for all tickers currently needed by the portfolio chart.
+ * Each ticker is fetched in small batches and filtered to regular market hours to avoid weekend and after-hours artifacts.
  * @param {Array<string>} tickers - Ticker symbols to resolve into stock records.
  * @param {*} range - Requested chart or performance time range.
  * @param {Date} rangeStart - Inclusive beginning of the requested performance range.
  * @param {Date} rangeEnd - Inclusive end of the requested performance range.
  * @param {*} portfolio - Current portfolio values, holdings, transactions, and orders.
- * @returns {Promise<*>} A promise resolving to the loaded historical series result.
+ * @returns {Promise<Map<string, Array<object>>>} Price histories grouped by ticker.
  */
 async function loadHistoricalSeries(tickers, range, rangeStart, rangeEnd, portfolio) {
   const chartRange = CHART_RANGE_ALIASES[range] || range;
@@ -325,13 +325,13 @@ async function loadHistoricalSeries(tickers, range, rangeStart, rangeEnd, portfo
 }
 
 /**
- * Returns the historical timeline needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
+ * Builds the timestamps used to reprice the portfolio over the requested range.
+ * The timeline combines market candle timestamps with trade times so portfolio value changes at the right moments.
  * @param {Map<string, Array<object>>} histories - Historical price series grouped by ticker.
  * @param {Array<object>} trades - Chronological trade records used to rebuild account state.
  * @param {Date} rangeStart - Inclusive beginning of the requested performance range.
  * @param {Date} rangeEnd - Inclusive end of the requested performance range.
- * @returns {*} The requested historical timeline result.
+ * @returns {Array<Date>} Sorted timeline timestamps.
  */
 function getHistoricalTimeline(histories, trades, rangeStart, rangeEnd) {
   const longestSeries = [...histories.values()].reduce(
@@ -389,14 +389,14 @@ function getOpeningAccountState(portfolio, trades) {
 }
 
 /**
- * Constructs the market performance points from its source values.
- * A named builder keeps multi-step construction logic testable and reusable.
+ * Constructs market-priced portfolio performance points from trades and historical prices.
+ * The algorithm rewinds current holdings, reapplies trades chronologically, and reprices shares with the latest candle.
  * @param {*} portfolio - Current portfolio values, holdings, transactions, and orders.
  * @param {Map<string, Array<object>>} histories - Historical price series grouped by ticker.
  * @param {Array<object>} trades - Chronological trade records used to rebuild account state.
  * @param {Date} rangeStart - Inclusive beginning of the requested performance range.
  * @param {Date} rangeEnd - Inclusive end of the requested performance range.
- * @returns {*} The constructed market performance points result.
+ * @returns {Array<object>} Timestamped portfolio-value points for the selected range.
  */
 function buildMarketPerformancePoints(portfolio, histories, trades, rangeStart, rangeEnd) {
   const timeline = getHistoricalTimeline(histories, trades, rangeStart, rangeEnd);

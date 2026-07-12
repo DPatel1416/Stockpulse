@@ -221,7 +221,7 @@ export default function StockChart({ data = [], range, onRangeChange, showVolume
     };
   }, [lastUpdatedAt, normalizedData]);
 
-  // Keep the complete day visible and let real intraday data advance into the empty future space.
+  // Keep the full 9:30-4:00 session visible while real intraday data advances into the remaining empty space.
   const chartData = useMemo(() => {
     if (range !== '1D' || !normalizedData.length) return normalizedData;
 

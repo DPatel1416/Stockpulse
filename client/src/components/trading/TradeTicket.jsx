@@ -149,8 +149,8 @@ export default function TradeTicket({ stock, portfolio, onTradeComplete, onTicke
 
   /**
    * Validates the order before any state or persistence is changed.
-   * Central validation prevents different callers from accepting conflicting inputs.
-   * @returns {*} The validate order result.
+   * The same checks protect both desktop and mobile forms before the API performs the authoritative validation.
+   * @returns {string|null} Validation error text, or null when the order can be reviewed.
    */
   function validateOrder() {
     const shareCount = Number(quantity);

@@ -55,37 +55,7 @@ export function renderVerificationEmail({ name, verificationUrl }) {
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;border:1px solid rgba(142,190,255,.22);border-radius:28px;background:linear-gradient(145deg,rgba(12,24,50,.88),rgba(5,10,24,.88));box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden;">
             <tr>
               <td style="padding:34px 32px 18px;">
-                <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                  <tr>
-                    <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;border:1px solid rgba(255,255,255,.22);border-radius:15px;background:#6366f1;box-shadow:0 0 28px rgba(99,102,241,.24);">
-                      <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 auto;">
-                        <tr>
-                          <td width="4" height="26" bgcolor="#f8fbff" style="width:4px;height:26px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
-                          <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
-                          <td valign="bottom">
-                            <table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                              <tr valign="bottom">
-                                <td width="5" height="10" bgcolor="#f8fbff" style="width:5px;height:10px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
-                                <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
-                                <td width="5" height="19" bgcolor="#f8fbff" style="width:5px;height:19px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
-                                <td width="4" style="width:4px;font-size:0;line-height:0;">&nbsp;</td>
-                                <td width="5" height="13" bgcolor="#f8fbff" style="width:5px;height:13px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
-                              </tr>
-                              <tr>
-                                <td colspan="5" height="4" bgcolor="#f8fbff" style="height:4px;border-radius:4px;background:#f8fbff;font-size:0;line-height:0;">&nbsp;</td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td width="12" style="width:12px;font-size:0;line-height:0;">&nbsp;</td>
-                    <td valign="middle">
-                      <strong style="display:block;font-size:22px;line-height:1;color:#f8fbff;">StockPulse</strong>
-                      <span style="display:block;margin-top:4px;color:#aab7ff;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;">Learn</span>
-                    </td>
-                  </tr>
-                </table>
+                <strong style="display:block;color:#f8fbff;font-size:22px;line-height:1.2;">StockPulse Learn</strong>
               </td>
             </tr>
             <tr>
@@ -95,14 +65,13 @@ export function renderVerificationEmail({ name, verificationUrl }) {
               </td>
             </tr>
             <tr>
-              <td style="padding:18px 32px 8px;">
-                <a href="${safeUrl}" style="display:inline-block;width:100%;max-width:320px;padding:15px 20px;border-radius:999px;background:linear-gradient(100deg,#38bdf8,#7c5cff 58%,#a855f7);color:#03101f;text-align:center;text-decoration:none;font-size:16px;font-weight:800;box-shadow:0 18px 42px rgba(56,189,248,.24);">Verify email</a>
+              <td align="center" style="padding:18px 24px 10px;">
+                <a href="${safeUrl}" style="display:block;box-sizing:border-box;width:100%;max-width:320px;padding:15px 18px;border-radius:999px;background:linear-gradient(100deg,#38bdf8,#7c5cff 58%,#a855f7);color:#03101f;text-align:center;text-decoration:none;font-size:16px;font-weight:800;box-shadow:0 18px 42px rgba(56,189,248,.24);">Verify email</a>
               </td>
             </tr>
             <tr>
-              <td style="padding:18px 32px 30px;">
-                <p style="margin:0 0 10px;color:#91a4be;font-size:13px;line-height:1.55;">This verification link expires in ${expirationText}. If the button does not work, copy and paste this backup link into your browser:</p>
-                <p style="margin:0;padding:14px;border:1px solid rgba(142,190,255,.18);border-radius:16px;background:rgba(255,255,255,.045);color:#7dd3fc;font-size:12px;line-height:1.55;word-break:break-all;">${safeUrl}</p>
+              <td style="padding:12px 32px 30px;">
+                <p style="margin:0;color:#91a4be;font-size:13px;line-height:1.55;text-align:center;">This verification link expires in ${expirationText}.</p>
               </td>
             </tr>
             <tr>

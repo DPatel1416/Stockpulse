@@ -133,7 +133,7 @@ export default function PortfolioReturnsChart({ portfolio, locked = false }) {
     };
   }, [locked, range, portfolio]);
 
-  // The intraday domain mirrors the regular North American market session.
+  // The intraday domain mirrors the regular market session, independent of the user's browser timezone.
   const oneDayAxis = useMemo(() => {
     const lastPointTime = performance.points?.at(-1)?.timestamp;
     const session = getMarketSessionBounds(performance.marketUpdatedAt || lastPointTime || performance.updatedAt || Date.now());
@@ -176,6 +176,7 @@ export default function PortfolioReturnsChart({ portfolio, locked = false }) {
 
     const normalizedPoints = [...dedupedByTime.values()].sort((first, second) => first.chartTimestamp - second.chartTimestamp);
 
+    // Longer ranges use an index axis so skipped weekends and market closures do not create misleading flat gaps.
     if (range !== '1D' || !normalizedPoints.length) {
       const baseline = Number(normalizedPoints[0]?.totalValue || 0);
       return normalizedPoints.map((point, index) => ({

@@ -110,9 +110,9 @@ const marketStatusConfigs = [
 
 // stockDataService is the only place controllers should know about market data providers.
 /**
- * Checks whether a Finnhub API key is available for live provider requests.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * Checks whether Finnhub is configured as the live market-data provider.
+ * Routes use this gate before calling Finnhub so missing keys fall back cleanly to demo data.
+ * @returns {boolean} True when Finnhub is configured as the live stock-data provider.
  */
 function shouldUseFinnhub() {
   const provider = String(process.env.STOCK_API_PROVIDER || 'finnhub').toLowerCase();
@@ -482,9 +482,9 @@ function getStockFallback(ticker) {
 
 /**
  * Checks whether a company label came from generated demo data.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
+ * This prevents placeholder company names from leaking into live-looking watchlist rows.
  * @param {string} company - Company name associated with the ticker.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * @returns {boolean} True when the company label is a demo placeholder.
  */
 function isDemoCompanyName(company) {
   return String(company || '').includes('Demo Company');
@@ -639,11 +639,12 @@ async function getRecentVolume(symbol, fallbackVolume) {
 }
 
 /**
- * Returns the finnhub stock needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
+ * Loads a normalized quote/profile pair from Finnhub.
+ * The freshQuote option is used by trading flows so execution checks are not based on stale cache data.
  * @param {*} ticker - Stock ticker symbol used to identify a company.
- * @param {*} options1 - Input value for options1.
- * @returns {Promise<*>} A promise resolving to the requested finnhub stock result.
+ * @param {object} options - Quote options for live stock lookup.
+ * @param {boolean} options.freshQuote - Whether to bypass cached quotes for the quote request.
+ * @returns {Promise<object>} Normalized stock profile and quote data from Finnhub.
  */
 async function getFinnhubStock(ticker, { freshQuote = false } = {}) {
   const normalizedTicker = String(ticker || 'AAPL').toUpperCase();
@@ -774,10 +775,10 @@ function formatChartLabel(date, range) {
 
 /**
  * Constructs the quote anchored chart data from its source values.
- * A named builder keeps multi-step construction logic testable and reusable.
+ * This is the final offline fallback: generated points end at the current quote so demo charts stay plausible.
  * @param {object} stock - Normalized stock quote and company details.
  * @param {*} range - Requested chart or performance time range.
- * @returns {*} The constructed quote anchored chart data result.
+ * @returns {Array<object>} Generated OHLC chart points anchored to the latest quote.
  */
 function buildQuoteAnchoredChartData(stock, range) {
   const pointsByRange = { '1D': 27, '5D': 70, '1M': 90, '3M': 66, '6M': 48, '1Y': 56, '5Y': 72, MAX: 72 };
@@ -889,11 +890,11 @@ function mapCandles(candles, range) {
 }
 
 /**
- * Transforms the yahoo candles from its provider shape into the app's shared shape.
- * Keeping this transformation named makes the source-to-result relationship easier to inspect.
+ * Transforms Yahoo candles from provider shape into StockPulse's shared OHLC shape.
+ * Yahoo's adjusted close is applied back across OHLC values so split-adjusted ranges do not distort long charts.
  * @param {object} chart - Raw provider chart payload.
  * @param {*} range - Requested chart or performance time range.
- * @returns {*} The normalized yahoo candles result.
+ * @returns {Array<object>|null} Normalized chart points or null when the payload is unusable.
  */
 function mapYahooCandles(chart, range) {
   const timestamps = chart?.timestamp;
@@ -964,9 +965,9 @@ async function getYahooChart(ticker, range) {
 
 /**
  * Checks whether a ticker contains only the supported symbol characters.
- * Keeping the condition in one predicate makes branching rules consistent and self-contained.
+ * This avoids showing logo/news metadata for text that is clearly not a ticker.
  * @param {*} ticker - Stock ticker symbol used to identify a company.
- * @returns {boolean} True when the condition is satisfied; otherwise false.
+ * @returns {boolean} True when the ticker shape is supported.
  */
 function isValidTickerSymbol(ticker) {
   return /^(?=.*[A-Z])[A-Z0-9.-]{1,12}$/.test(String(ticker || '').trim().toUpperCase());
@@ -1312,11 +1313,12 @@ export async function getStockSuggestions(query) {
 }
 
 /**
- * Searches available data for the requested stock.
- * Centralizing search behavior keeps provider and fallback rules consistent.
+ * Searches live Finnhub data first and falls back to local demo stocks when the provider is unavailable.
+ * The returned object always contains a normalized stock so the React pages can keep rendering.
  * @param {*} ticker - Stock ticker symbol used to identify a company.
- * @param {*} options1 - Input value for options1.
- * @returns {Promise<*>} A promise resolving to the matching stock result.
+ * @param {object} options - Search options.
+ * @param {boolean} options.freshQuote - Whether to bypass cached quotes for order execution or price refreshes.
+ * @returns {Promise<object>} Matching stock response with provider/demo metadata.
  */
 export async function searchStock(ticker, { freshQuote = false } = {}) {
   if (shouldUseFinnhub()) {
@@ -1355,8 +1357,8 @@ export async function searchStock(ticker, { freshQuote = false } = {}) {
 }
 
 /**
- * Returns the chart needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
+ * Returns normalized OHLC chart points using the best available provider.
+ * The order is Finnhub candles, real Yahoo Finance history, then quote-anchored generated demo data.
  * @param {*} ticker - Stock ticker symbol used to identify a company.
  * @param {*} range - Requested chart or performance time range.
  * @returns {Promise<object>} A promise resolving to normalized chart metadata and price points.
@@ -1627,9 +1629,9 @@ export async function getMarketEarnings() {
 }
 
 /**
- * Returns the top active stocks needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
- * @returns {Promise<*>} A promise resolving to the requested top active stocks result.
+ * Returns top active stocks, daily gainers, and daily losers for the dashboard.
+ * Volume leaders come from the curated active universe, while daily gainers/losers prefer Yahoo screeners when available.
+ * @returns {Promise<object>} Market activity groups for the dashboard.
  */
 export async function getTopActiveStocks() {
   if (shouldUseFinnhub()) {
