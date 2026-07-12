@@ -1,0 +1,74 @@
+﻿/* ======================================================
+   Email Verification Notices
+====================================================== */
+/* Email verification notices live inside the cinematic auth card and reuse the same glass vocabulary. */
+.auth-verification-inline,
+.auth-verification-state {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.1)),
+    rgba(4, 9, 22, 0.55);
+  color: rgba(238, 247, 255, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.auth-verification-inline.success,
+.auth-verification-state {
+  border-color: rgba(45, 212, 191, 0.28);
+  background:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(99, 102, 241, 0.1)),
+    rgba(4, 9, 22, 0.58);
+}
+
+.auth-verification-inline strong,
+.auth-verification-state strong {
+  color: #f8fbff;
+  font-size: 0.86rem;
+}
+
+.auth-verification-inline span,
+.auth-verification-state span {
+  color: rgba(203, 216, 236, 0.78);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.auth-verification-inline button,
+.auth-verification-link {
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  color: #7dd3fc;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 850;
+  padding: 0;
+}
+
+.auth-verification-inline button:disabled,
+.auth-verification-link:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.auth-verification-state {
+  justify-items: center;
+  text-align: center;
+  padding: 18px;
+}
+
+.auth-verification-state svg {
+  color: #6366f1;
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.32));
+}
+
+.auth-verification-state .button {
+  width: 100%;
+  margin-top: 4px;
+}
+

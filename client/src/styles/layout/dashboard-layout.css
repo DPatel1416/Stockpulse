@@ -1,0 +1,64 @@
+﻿/* ======================================================
+   Application Shell And Page Layout
+====================================================== */
+.app-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.main-stage {
+  position: relative;
+  width: min(100%, 1520px);
+  margin: 0 auto;
+  padding: 12px 24px;
+}
+
+.page-stack {
+  display: grid;
+  gap: 22px;
+}
+
+.guest-session-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -4px 0 18px;
+  padding: 7px 11px;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--glass-stroke));
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--glass-fill-soft));
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+}
+
+.guest-session-notice svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.guest-session-notice strong {
+  color: var(--text);
+}
+
+.guest-session-notice.has-changes {
+  border-color: color-mix(in srgb, var(--amber) 28%, var(--glass-stroke));
+  background: color-mix(in srgb, var(--amber) 6%, var(--glass-fill-soft));
+}
+
+.guest-session-notice.has-changes svg {
+  color: var(--amber);
+}
+
+.public-shell {
+  display: grid;
+  grid-template-rows: minmax(min-content, 1fr) auto;
+  min-height: 100vh;
+}
+
+

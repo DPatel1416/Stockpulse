@@ -10,6 +10,7 @@ import {
   register,
   resendVerification,
   updateProfile,
+  validateEmail,
   verifyEmail,
 } from '../controllers/authController.js';
 import { requireAuth } from '../middleware/auth.js';
@@ -18,6 +19,7 @@ const router = Router();
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/validate-email', validateEmail);
 router.get('/verify-email', verifyEmail);
 router.post('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);
@@ -27,3 +29,4 @@ router.patch('/me', requireAuth, updateProfile);
 router.patch('/password', requireAuth, changePassword);
 
 export default router;
+

@@ -1,0 +1,304 @@
+﻿/* ======================================================
+   Mobile Dashboard Simplification
+====================================================== */
+/* Phone dashboard: prioritize market activity and remove secondary information panels. */
+@media (max-width: 570px) {
+  .dashboard-page {
+    gap: 10px;
+  }
+
+  .dashboard-page .dashboard-sidebar,
+  .dashboard-page .dashboard-bottom-grid {
+    display: none;
+  }
+
+  .dashboard-page .dashboard-grid,
+  .dashboard-page .dashboard-main-column {
+    gap: 0;
+  }
+
+  .dashboard-page .dashboard-hero-card > .card-body {
+    padding: 15px;
+  }
+
+  .dashboard-page .dashboard-hero-card .content-grid {
+    gap: 12px;
+  }
+
+  .dashboard-page .dashboard-hero-card .page-title {
+    margin: 2px 0 7px;
+    font-size: 2.55rem;
+    line-height: 1;
+  }
+
+  .dashboard-page .hero-description {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .dashboard-page .hero-pulse-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 12px;
+    padding-top: 8px;
+  }
+
+  .dashboard-page .hero-pulse-item {
+    min-height: 49px;
+    padding: 7px 8px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dashboard-page .hero-pulse-item:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .dashboard-page .hero-pulse-item:nth-child(n + 3) {
+    border-bottom: 0;
+  }
+
+  .dashboard-page .hero-pulse-icon {
+    width: 29px;
+    height: 29px;
+    border-radius: 10px;
+  }
+
+  .dashboard-page .hero-pulse-text {
+    gap: 1px;
+  }
+
+  .dashboard-page .hero-pulse-text small {
+    font-size: 0.61rem;
+  }
+
+  .dashboard-page .hero-pulse-text strong {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-page .hero-pulse-text > span:last-child {
+    display: none;
+  }
+
+  .dashboard-page .hero-portfolio-card {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .dashboard-page .hero-portfolio-card::before,
+  .dashboard-page .hero-portfolio-card::after {
+    display: none;
+  }
+
+  .dashboard-page .hero-portfolio-card > .card-body {
+    padding: 11px 0 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .dashboard-page .hero-portfolio-card .section-title {
+    margin-bottom: 7px;
+  }
+
+  .dashboard-page .hero-portfolio-card .section-title h2 {
+    font-size: 0.82rem;
+  }
+
+  .dashboard-page .portfolio-metrics-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .dashboard-page .portfolio-metric-row {
+    padding: 6px 9px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .dashboard-page .portfolio-metric-row:first-child {
+    padding-left: 0;
+  }
+
+  .dashboard-page .portfolio-metric-row:nth-child(2) {
+    border-left: 1px solid var(--border);
+  }
+
+  .dashboard-page .portfolio-metrics-list > .button {
+    grid-column: 1 / -1;
+    margin-top: 7px;
+  }
+
+  .dashboard-page .guest-account-prompt {
+    gap: 8px;
+    padding: 0;
+  }
+
+  .dashboard-page .guest-account-prompt p {
+    font-size: 0.76rem;
+    line-height: 1.4;
+  }
+
+  .dashboard-page .ticker-tape-card > .card-body {
+    padding: 6px 8px;
+  }
+
+  .dashboard-page .ticker-tape-track {
+    padding: 0 24px;
+  }
+
+  .dashboard-page .ticker-tape-item {
+    min-height: 29px;
+    padding: 0 8px;
+  }
+
+  .dashboard-page .market-activity-card > .card-body {
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .dashboard-page .market-activity-title {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 112px;
+    align-items: end;
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  .dashboard-page .market-activity-title h2 {
+    font-size: 0.88rem;
+    line-height: 1.25;
+  }
+
+  .dashboard-page .industry-select {
+    width: 112px;
+  }
+
+  .dashboard-page .industry-select .input-label {
+    font-size: 0.6rem;
+  }
+
+  .dashboard-page .industry-select .select-trigger {
+    min-height: 31px;
+  }
+
+  .dashboard-page .market-activity-stack {
+    gap: 9px;
+    padding-right: 0;
+    overflow: visible;
+  }
+
+  .dashboard-page .active-stocks-table {
+    overflow-x: hidden;
+  }
+
+  .dashboard-page .active-stocks-table .data-table {
+    table-layout: auto;
+  }
+
+  .dashboard-page .active-stocks-table th:nth-child(2),
+  .dashboard-page .active-stocks-table td:nth-child(2),
+  .dashboard-page .active-stocks-table th:nth-child(3),
+  .dashboard-page .active-stocks-table td:nth-child(3) {
+    display: none;
+  }
+
+  .dashboard-page .active-stocks-table .data-table th,
+  .dashboard-page .active-stocks-table .data-table td {
+    padding: 8px 4px;
+    font-size: 0.68rem;
+  }
+
+  .dashboard-page .active-stocks-table .data-table th {
+    font-size: 0.57rem;
+  }
+
+  .dashboard-page .active-stocks-table .ticker-chip-with-logo {
+    gap: 5px;
+    min-height: 27px;
+    padding: 0 6px;
+  }
+
+  .dashboard-page .active-stocks-table .star-action {
+    width: 30px;
+    min-height: 30px;
+    padding: 0;
+  }
+
+  .dashboard-page .mover-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .dashboard-page .mover-panel {
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .dashboard-page .mover-panel h3 {
+    margin-bottom: 7px;
+    font-size: 0.73rem;
+  }
+
+  .dashboard-page .mover-list {
+    gap: 6px;
+  }
+
+  .dashboard-page .mover-row {
+    align-items: center;
+    gap: 5px;
+    min-height: 39px;
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  .dashboard-page .mover-row .stock-identity {
+    gap: 5px;
+  }
+
+  .dashboard-page .mover-row .stock-identity small {
+    display: none;
+  }
+
+  .dashboard-page .mover-row > span:last-child {
+    gap: 2px;
+    font-size: 0.66rem;
+  }
+
+  .bottom-nav {
+    width: min(330px, calc(100% - 24px));
+    padding: 6px 8px;
+  }
+
+  .bottom-nav a,
+  .bottom-nav > button {
+    position: relative;
+    min-height: 40px;
+    margin: 0 2px;
+    border-radius: 12px;
+  }
+
+  .bottom-nav a span,
+  .bottom-nav > button span {
+    display: none;
+  }
+
+  .bottom-nav svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Responsive labels let phone layouts use concise headings without changing desktop copy. */
+.mobile-heading-label {
+  display: none;
+}
+

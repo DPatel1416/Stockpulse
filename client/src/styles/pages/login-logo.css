@@ -1,0 +1,76 @@
+﻿/* ======================================================
+   Cinematic Auth Logo Polish
+====================================================== */
+/* Restore the StockPulse hero mark to a polished glowing market-bar logo. */
+.cinematic-logo-bars {
+  position: relative;
+  grid-template-columns: repeat(3, 7px);
+  gap: 6px;
+  width: 48px;
+  height: 48px;
+  padding: 9px 10px;
+  border: 1px solid rgba(125, 180, 255, 0.28);
+  border-radius: 17px;
+  background:
+    radial-gradient(circle at 32% 22%, rgba(99, 102, 241, 0.2), transparent 42%),
+    linear-gradient(145deg, rgba(11, 25, 52, 0.86), rgba(4, 9, 22, 0.72));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -10px 24px rgba(2, 8, 23, 0.34),
+    0 0 30px rgba(99, 102, 241, 0.18);
+}
+
+.cinematic-logo-bars i {
+  position: relative;
+  align-self: center;
+  width: 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #69dcff 0%, #2fb6ff 48%, #8b5cf6 100%);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.65), 0 0 26px rgba(139, 92, 246, 0.22);
+}
+
+.cinematic-logo-bars i::before,
+.cinematic-logo-bars i::after {
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  border-radius: 999px;
+  background: rgba(184, 226, 255, 0.82);
+  content: '';
+  transform: translateX(-50%);
+}
+
+.cinematic-logo-bars i::before {
+  top: -6px;
+  height: 7px;
+}
+
+.cinematic-logo-bars i::after {
+  bottom: -6px;
+  height: 7px;
+}
+
+.cinematic-logo-bars i:nth-child(1) {
+  height: 22px;
+}
+
+.cinematic-logo-bars i:nth-child(2) {
+  height: 32px;
+  background: linear-gradient(180deg, #7dd3fc 0%, #6366f1 52%, #9b5cff 100%);
+}
+
+.cinematic-logo-bars i:nth-child(3) {
+  height: 26px;
+  background: linear-gradient(180deg, #8be9ff 0%, #4f7cff 46%, #a855f7 100%);
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .site-footer-wordmark strong,
+.public-shell:has(.cinematic-auth-screen) .site-footer-wordmark strong {
+  color: #eef7ff;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .site-footer-disclaimer,
+.public-shell:has(.cinematic-auth-screen) .site-footer-disclaimer {
+  color: rgba(205, 218, 238, 0.62);
+}
+

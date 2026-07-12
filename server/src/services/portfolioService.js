@@ -81,7 +81,7 @@ async function enrichHolding(holding) {
  * @param {*} options - Named settings that adjust the operation.
  * @returns {*} The constructed portfolio response result.
  */
-function buildPortfolioResponse({ demo, virtualCash, holdings, transactions, accounts = [], openOrders = [] }) {
+export function buildPortfolioResponse({ demo, virtualCash, holdings, transactions, accounts = [], openOrders = [] }) {
   const investedValue = holdings.reduce((sum, holding) => sum + holding.marketValue, 0);
   const costBasis = holdings.reduce((sum, holding) => sum + holding.averageCost * holding.shares, 0);
   const reservations = getOrderReservations(openOrders);
@@ -157,3 +157,4 @@ export async function getPortfolioForUser(user) {
     })),
   });
 }
+

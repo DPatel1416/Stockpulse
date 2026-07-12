@@ -1,0 +1,74 @@
+﻿/* ======================================================
+   Simplified Account Center Overrides
+====================================================== */
+/* Simplified account center: only the action cards remain visible until the user chooses an edit action. */
+.modal-card.account-settings-modal {
+  width: min(760px, calc(100vw - 24px));
+}
+
+.account-settings-body.account-settings-modern-body {
+  max-height: min(86vh, 620px);
+}
+
+.account-settings-card {
+  max-height: min(86vh, 620px);
+}
+
+.account-settings-grid {
+  display: none !important;
+}
+
+.account-settings-mobile-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 16px clamp(18px, 3vw, 26px) clamp(20px, 3vw, 28px);
+}
+
+.account-settings-action-card {
+  min-height: 82px;
+}
+
+.account-settings-mobile-sheet {
+  border-radius: inherit;
+}
+
+@media (max-width: 760px) {
+  .modal-card.account-settings-modal {
+    width: min(100%, calc(100vw - 16px));
+  }
+
+  .account-settings-body.account-settings-modern-body,
+  .account-settings-card {
+    max-height: min(78vh, 620px);
+  }
+
+  .account-settings-mobile-actions {
+    grid-template-columns: 1fr;
+    padding: 12px 14px 16px;
+  }
+
+  .account-settings-action-card {
+    min-height: 64px;
+  }
+}
+/* Account action sheets use viewport positioning so compact account modals never clip the password editor. */
+.account-settings-mobile-sheet {
+  position: fixed;
+  z-index: 130;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 4vw, 26px);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  backdrop-filter: blur(20px) saturate(135%);
+  -webkit-backdrop-filter: blur(20px) saturate(135%);
+}
+
+.account-settings-mobile-sheet-card {
+  width: min(100%, 410px);
+  max-height: min(88vh, 540px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+

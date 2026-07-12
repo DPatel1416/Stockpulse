@@ -14,3 +14,11 @@ build/
 .DS_Store
 .vscode/
 PROJECT_WALKTHROUGH.md
+
+# Test artifacts
+coverage/
+client/coverage/
+server/coverage/
+playwright-report/
+test-results/
+

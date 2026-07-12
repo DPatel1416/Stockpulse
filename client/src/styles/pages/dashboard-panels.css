@@ -1,0 +1,149 @@
+﻿/* ======================================================
+   Dashboard Activity And Side Panels
+====================================================== */
+@keyframes ticker-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card {
+    transition: none;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+
+  .hero-pulse-item {
+    transition: none;
+  }
+
+  .hero-pulse-item:hover {
+    transform: none;
+  }
+
+  .ticker-tape-track {
+    animation: none;
+  }
+
+  .portfolio-workspace-panel {
+    animation: none;
+  }
+}
+
+.market-activity-stack {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding-right: 6px;
+  overflow-y: auto;
+  scrollbar-color: rgba(148, 163, 184, 0.38) transparent;
+  scrollbar-width: thin;
+}
+
+.market-activity-stack .chip,
+.market-activity-stack .mover-row {
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.market-activity-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.industry-select {
+  width: min(280px, 100%);
+}
+
+.active-stocks-table {
+  height: auto;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.active-stocks-table .data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-strong);
+}
+
+.dashboard-sidebar {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--dashboard-sidebar-gap);
+  height: var(--dashboard-feature-height);
+  min-height: 0;
+}
+
+.dashboard-sidebar > .glass-card {
+  align-self: start;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+}
+
+.dashboard-side-card .card-body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+}
+
+.dashboard-side-card .section-title {
+  margin-bottom: 8px;
+}
+
+.watchlist-preview-card .card-body {
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: stretch;
+  padding: 14px;
+}
+
+.watchlist-preview-card .watchlist-preview-list {
+  --panel-max-height: none;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.watchlist-preview-card .section-title {
+  margin-bottom: 10px;
+}
+
+.portfolio-metrics-list {
+  display: grid;
+  gap: 10px;
+}
+
+.portfolio-metric-row {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    var(--glass-fill-soft);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.portfolio-metric-row strong {
+  font-size: 1.08rem;
+}
+
+.full-width-button {
+  width: 100%;
+}
+

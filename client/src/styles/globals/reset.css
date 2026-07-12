@@ -1,0 +1,42 @@
+﻿/* ======================================================
+   Base Reset And Document Defaults
+====================================================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background:
+    linear-gradient(118deg, rgba(34, 211, 238, 0.12), transparent 28%, transparent 70%, rgba(167, 139, 250, 0.1)),
+    linear-gradient(135deg, var(--bg), var(--bg-soft));
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+:root.light body {
+  background:
+    linear-gradient(128deg, rgba(14, 165, 233, 0.052), transparent 24%, transparent 72%, rgba(236, 72, 153, 0.032)),
+    linear-gradient(308deg, rgba(124, 58, 237, 0.032), transparent 26%, transparent 74%, rgba(5, 150, 105, 0.022)),
+    linear-gradient(135deg, var(--bg), var(--bg-soft));
+  background-attachment: fixed;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+

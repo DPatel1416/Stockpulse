@@ -1,0 +1,30 @@
+﻿/* ======================================================
+   Scrollable Content Panels
+====================================================== */
+.news-list.scroll-panel,
+.watchlist-preview-list.scroll-panel,
+.watchlist-earnings-list {
+  padding: 3px 8px 10px 3px;
+  border-radius: 18px;
+  clip-path: inset(0 round 18px);
+}
+
+.scroll-panel .glass-card,
+.scroll-panel .inline-earnings-card,
+.scroll-panel .news-row,
+.scroll-panel .watchlist-row,
+.scroll-panel .chip {
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-clip: padding-box;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.scroll-panel .glass-card:hover,
+.scroll-panel .news-row:hover,
+.scroll-panel .watchlist-row:hover,
+.scroll-panel .chip:hover {
+  transform: none;
+}
+

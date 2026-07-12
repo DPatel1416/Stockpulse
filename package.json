@@ -8,9 +8,14 @@
     "dev:client": "npm run dev --prefix client",
     "dev:server": "npm run dev --prefix server",
     "install:all": "npm install --prefix client && npm install --prefix server",
-    "lint": "npm run lint --prefix client"
+    "lint": "npm run lint --prefix client",
+    "test": "npm run test --prefix client && npm run test --prefix server",
+    "test:watch": "concurrently \"npm run test:watch --prefix client\" \"npm run test:watch --prefix server\"",
+    "test:coverage": "npm run test:coverage --prefix client && npm run test:coverage --prefix server",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "concurrently": "^9.2.1"
   }
 }

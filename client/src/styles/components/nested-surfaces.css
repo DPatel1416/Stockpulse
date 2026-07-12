@@ -1,0 +1,85 @@
+﻿/* ======================================================
+   Nested Glass Surface Overrides
+====================================================== */
+/* Nested surfaces stay visually inside their parent glass instead of creating another shadow layer. */
+:root.dark .glass-card .glass-card,
+:root.dark .glass-card .portfolio-metric-row,
+:root.dark .glass-card .news-row,
+:root.dark .glass-card .watchlist-row,
+:root.dark .glass-card .watchlist-context-item,
+:root.dark .glass-card .price-target-row,
+:root.dark .glass-card .analyst-firm-row,
+:root.dark .glass-card .inline-earnings-card,
+:root.dark .glass-card .market-earnings-row,
+:root.dark .glass-card .mover-panel,
+:root.dark .glass-card .mover-row,
+:root.dark .glass-card .order-estimate-card {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 44%, color-mix(in srgb, var(--purple) 3.5%, transparent)),
+    var(--glass-fill-soft);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root.dark .glass-card .glass-card:hover,
+:root.dark .glass-card .news-row:hover,
+:root.dark .glass-card .watchlist-row:hover,
+:root.dark .glass-card .watchlist-context-item:hover,
+:root.dark .glass-card .market-earnings-row:hover,
+:root.dark .glass-card .mover-row:hover {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 46%, color-mix(in srgb, var(--purple) 5%, transparent)),
+    color-mix(in srgb, var(--accent) 4%, var(--glass-fill-soft));
+}
+
+/* Light nested surfaces use a quiet boundary and no stacked shadow halo. */
+:root.light .glass-card .glass-card,
+:root.light .glass-card .portfolio-metric-row,
+:root.light .glass-card .news-row,
+:root.light .glass-card .watchlist-row,
+:root.light .glass-card .watchlist-context-item,
+:root.light .glass-card .price-target-row,
+:root.light .glass-card .analyst-firm-row,
+:root.light .glass-card .inline-earnings-card,
+:root.light .glass-card .market-earnings-row,
+:root.light .glass-card .mover-panel,
+:root.light .glass-card .mover-row,
+:root.light .glass-card .order-estimate-card,
+:root.light .glass-card .account-settings-form {
+  border-color: rgba(15, 23, 42, 0.07);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 48%),
+    rgba(255, 255, 255, 0.07);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root.light .glass-card .glass-card:hover,
+:root.light .glass-card .news-row:hover,
+:root.light .glass-card .watchlist-row:hover,
+:root.light .glass-card .watchlist-context-item:hover,
+:root.light .glass-card .market-earnings-row:hover,
+:root.light .glass-card .mover-row:hover {
+  border-color: rgba(99, 102, 241, 0.16);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 48%),
+    rgba(99, 102, 241, 0.035);
+}
+
+:root.light .glass-card .glass-card::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .market-earnings-track {
+    animation: none;
+  }
+
+  .portfolio-view-tabs::before,
+  .portfolio-view-tabs button {
+    transition: none;
+  }
+}
+

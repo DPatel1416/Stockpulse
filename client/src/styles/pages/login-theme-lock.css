@@ -1,0 +1,80 @@
+﻿/* ======================================================
+   Cinematic Auth Theme Lock
+====================================================== */
+/* Auth pages intentionally keep the cinematic dark identity in both light and dark app themes. */
+:root.light .public-shell:has(.cinematic-auth-screen),
+.public-shell:has(.cinematic-auth-screen) {
+  background:
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 27%),
+    radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.22), transparent 33%),
+    radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
+    #02030a;
+  color: #eef7ff;
+}
+
+:root.light .cinematic-auth-screen,
+.cinematic-auth-screen {
+  --text: #eff7ff;
+  --muted: #98a7bd;
+  --surface: #02030a;
+  --surface-strong: #070d1d;
+  --glass-fill: rgba(7, 14, 31, 0.54);
+  --glass-fill-soft: rgba(12, 23, 48, 0.46);
+  --glass-fill-strong: rgba(8, 17, 36, 0.76);
+  --glass-stroke: rgba(129, 176, 255, 0.2);
+  --glass-stroke-strong: rgba(143, 190, 255, 0.32);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --accent: #8ea2ff;
+  --accent-strong: #6366f1;
+  --purple: #7c3aed;
+  color: #eff7ff;
+}
+
+:root.light .cinematic-auth-screen::before,
+.cinematic-auth-screen::before {
+  background:
+    radial-gradient(circle at 22% 18%, rgba(72, 205, 255, 0.16), transparent 22%),
+    radial-gradient(circle at 44% 34%, rgba(139, 92, 246, 0.18), transparent 26%),
+    radial-gradient(circle at 70% 16%, rgba(13, 23, 47, 0.9), transparent 42%),
+    linear-gradient(180deg, rgba(2, 3, 10, 0.2), #02030a 86%);
+}
+
+:root.light .cinematic-scenery,
+.cinematic-scenery {
+  background:
+    radial-gradient(circle at 42% 12%, rgba(202, 233, 255, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 16%, rgba(202, 233, 255, 0.45) 0 1px, transparent 2px),
+    radial-gradient(circle at 58% 7%, rgba(168, 85, 247, 0.38), transparent 20%),
+    radial-gradient(circle at 18% 88%, rgba(99, 102, 241, 0.14), transparent 31%),
+    linear-gradient(180deg, rgba(5, 10, 24, 0.95), rgba(7, 12, 30, 0.45) 52%, rgba(2, 5, 14, 0.95));
+}
+
+:root.light .cinematic-feature-grid article,
+:root.light .cinematic-preview-shell,
+:root.light .cinematic-auth-card,
+.cinematic-feature-grid article,
+.cinematic-preview-shell,
+.cinematic-auth-card {
+  border-color: rgba(122, 169, 255, 0.18);
+  background:
+    linear-gradient(145deg, rgba(13, 24, 51, 0.7), rgba(7, 12, 28, 0.46)),
+    rgba(5, 11, 26, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11), 0 24px 80px rgba(0, 0, 0, 0.26);
+}
+
+:root.light .cinematic-field .input,
+.cinematic-field .input {
+  border-color: rgba(129, 176, 255, 0.16);
+  background: rgba(4, 9, 22, 0.55);
+  color: #eff7ff;
+}
+
+:root.light .cinematic-google-button.button.secondary,
+:root.light .cinematic-guest-button.button.ghost,
+.cinematic-google-button.button.secondary,
+.cinematic-guest-button.button.ghost {
+  border-color: rgba(129, 176, 255, 0.18);
+  background: rgba(4, 9, 22, 0.52);
+  color: rgba(238, 247, 255, 0.94);
+}
+

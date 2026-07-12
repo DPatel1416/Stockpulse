@@ -1,0 +1,108 @@
+﻿/* ======================================================
+   Legacy Auth Page Base Styles
+====================================================== */
+.auth-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.public-shell .auth-screen {
+  min-height: 0;
+}
+
+.auth-card {
+  width: min(430px, 100%);
+}
+
+.auth-card-body {
+  display: grid;
+  gap: 16px;
+  padding: 32px;
+}
+
+.auth-logo-lockup {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.auth-logo-lockup .brand-mark {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+}
+
+.auth-card-body h1,
+.auth-card-body p {
+  margin: 0;
+}
+
+.auth-card-body h1 {
+  line-height: 1.05;
+}
+
+.auth-form {
+  display: grid;
+  gap: 15px;
+  padding-top: 4px;
+}
+
+.auth-password-rule {
+  margin: -6px 0 2px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+.auth-forgot-password {
+  justify-self: end;
+  margin-top: -6px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 750;
+  padding: 2px 0;
+}
+
+.auth-forgot-password:hover,
+.auth-forgot-password:focus-visible {
+  color: var(--accent-strong);
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.auth-wide-action {
+  width: 100%;
+}
+
+.google-auth-button {
+  position: relative;
+  gap: 9px;
+}
+
+.google-auth-button small {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.google-auth-mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+

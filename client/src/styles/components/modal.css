@@ -1,0 +1,102 @@
+﻿/* ======================================================
+   Legal And Guest Choice Modals
+====================================================== */
+.legal-modal-backdrop {
+  z-index: 80;
+}
+
+.legal-modal-card {
+  width: min(640px, 100%);
+}
+
+.legal-modal-body {
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+}
+
+.legal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legal-modal-body h2 {
+  margin: 2px 0 0;
+}
+
+.legal-modal-body p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.legal-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.guest-choice-backdrop {
+  z-index: 75;
+}
+
+.guest-choice-modal {
+  width: min(560px, 100%);
+}
+
+.guest-choice-body {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.guest-choice-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+}
+
+.guest-choice-heading > div {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.guest-choice-heading h2,
+.guest-choice-body > p {
+  margin: 0;
+}
+
+.guest-choice-body > p {
+  line-height: 1.65;
+}
+
+.guest-choice-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.guest-choice-actions .button {
+  justify-content: center;
+}
+
+.guest-choice-register {
+  justify-self: center;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.guest-choice-register:hover,
+.guest-choice-register:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+

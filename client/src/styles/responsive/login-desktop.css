@@ -1,0 +1,162 @@
+﻿/* ======================================================
+   Cinematic Auth Desktop Alignment
+====================================================== */
+/* Final desktop auth alignment pass: hero and auth cards share one measured frame at 100% zoom. */
+@media (min-width: 1021px) {
+  .cinematic-auth-screen {
+    display: grid;
+    min-height: calc(100dvh - 78px);
+    padding: clamp(18px, 2.2vw, 32px) clamp(16px, 3vw, 42px) 6px;
+    place-items: center;
+  }
+
+  .cinematic-auth-stage {
+    grid-template-columns: minmax(0, 690px) minmax(330px, 370px);
+    align-items: stretch;
+    gap: clamp(24px, 3.5vw, 52px);
+    width: min(1120px, 100%);
+    height: clamp(600px, calc(100dvh - 128px), 760px);
+  }
+
+  .cinematic-hero-panel,
+  .cinematic-auth-card {
+    align-self: stretch;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .cinematic-hero-panel {
+    align-content: space-between;
+    gap: 14px;
+    padding: clamp(22px, 2.4vw, 32px);
+    border-radius: 30px;
+  }
+
+  .cinematic-hero-copy h1 {
+    max-width: 650px;
+    font-size: clamp(3rem, 4.8vw, 4.65rem);
+    line-height: 0.98;
+  }
+
+  .cinematic-hero-copy p {
+    max-width: 610px;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .cinematic-feature-grid {
+    max-width: 100%;
+  }
+
+  .cinematic-feature-grid article {
+    min-height: 104px;
+    padding: 14px;
+  }
+
+  .cinematic-preview-shell {
+    width: min(520px, 78%);
+    margin-top: 0;
+  }
+
+  .cinematic-line-chart {
+    height: 72px;
+  }
+
+  .cinematic-bottom-note {
+    margin-top: 0;
+  }
+
+  .cinematic-auth-card {
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    gap: clamp(10px, 1.1vw, 14px);
+    width: 100%;
+    max-width: none;
+    padding: clamp(20px, 2vw, 26px);
+    border-radius: 30px;
+  }
+
+  .cinematic-auth-orb {
+    width: 94px;
+    height: 94px;
+  }
+
+  .cinematic-auth-orb svg:not(.google-auth-logo) {
+    width: 26px;
+    height: 26px;
+  }
+
+  .cinematic-auth-copy h2 {
+    font-size: 1.58rem;
+  }
+
+  .cinematic-auth-copy p {
+    max-width: 28ch;
+    font-size: 0.78rem;
+  }
+
+  .cinematic-auth-switch button {
+    min-height: 31px;
+  }
+
+  .cinematic-auth-flip {
+    align-self: stretch;
+    min-height: 0;
+  }
+
+  .cinematic-auth-face {
+    align-content: start;
+    gap: 9px;
+  }
+
+  .cinematic-field .input {
+    min-height: 40px;
+  }
+
+  .cinematic-primary-action {
+    min-height: 42px;
+  }
+
+  .cinematic-google-button,
+  .cinematic-guest-button {
+    min-height: 38px;
+  }
+
+  .cinematic-divider {
+    margin: 0;
+  }
+}
+
+.google-auth-logo {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.cinematic-google-button .google-auth-logo {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.18));
+}
+
+@media (max-width: 1020px) {
+  .cinematic-auth-stage {
+    height: auto;
+  }
+
+  .cinematic-auth-card {
+    max-width: 390px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .cinematic-auth-card {
+    max-width: 390px;
+  }
+
+  .google-auth-logo {
+    width: 17px;
+    height: 17px;
+  }
+}
+

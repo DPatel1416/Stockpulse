@@ -268,6 +268,18 @@ export const login = catchAsync(async (req, res) => {
   res.json({ token: signToken(String(user._id || user.id)), user: serializeUser(user) });
 });
 
+
+/**
+ * Validates the basic format of an email address without creating or reading an account.
+ * This endpoint lets clients check obvious input mistakes while keeping account existence private.
+ * @param {*} req - Express request containing the email value in the body.
+ * @param {*} res - Express response used to send the validation result.
+ * @returns {Promise<*>} A promise resolving to the validation response.
+ */
+export const validateEmail = catchAsync(async (req, res) => {
+  const normalizedEmail = normalizeEmail(req.body.email);
+  res.json({ email: normalizedEmail, valid: isValidEmail(normalizedEmail) });
+});
 /**
  * Validates a one-time email verification token and marks the matching account as verified.
  * The stored token hash is removed on success so the same email link cannot be reused.

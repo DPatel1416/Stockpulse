@@ -1,0 +1,148 @@
+﻿/* ======================================================
+   Cinematic Register Mode Density
+====================================================== */
+/* Register mode has more fields than login, so it uses a denser card layout instead of clipping the submit button. */
+.cinematic-auth-card[data-mode='register'] {
+  overflow: hidden;
+}
+
+.cinematic-auth-card[data-mode='register'] .cinematic-auth-flip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cinematic-auth-card[data-mode='register'] .register-face {
+  min-height: 0;
+  padding-right: 3px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 180, 255, 0.34) transparent;
+}
+
+.cinematic-auth-card[data-mode='register'] .register-face::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cinematic-auth-card[data-mode='register'] .register-face::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(125, 180, 255, 0.34);
+}
+
+.cinematic-auth-card[data-mode='register'] .register-face::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (min-width: 1021px) {
+  .cinematic-auth-card[data-mode='register'] {
+    gap: 8px;
+    padding: clamp(18px, 1.7vw, 22px);
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-orb {
+    width: 72px;
+    height: 72px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-orb svg:not(.google-auth-logo) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .orb-ring {
+    inset: 7px;
+    border-width: 2px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-copy {
+    gap: 2px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-card-kicker {
+    font-size: 0.58rem;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-copy h2 {
+    font-size: 1.3rem;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-copy p {
+    max-width: 28ch;
+    font-size: 0.7rem;
+    line-height: 1.28;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-switch button {
+    min-height: 28px;
+    font-size: 0.68rem;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .register-face {
+    gap: 7px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .input-shell {
+    gap: 5px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-field > svg {
+    top: 28px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-field .input {
+    min-height: 34px;
+    border-radius: 13px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-field .input-label {
+    font-size: 0.62rem;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .password-visibility-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .password-visibility-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .auth-password-rule {
+    margin: -2px 0 0;
+    font-size: 0.61rem;
+    line-height: 1.25;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-primary-action,
+  .cinematic-auth-card[data-mode='register'] .cinematic-guest-button {
+    min-height: 35px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-mode-note {
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .cinematic-auth-card[data-mode='register'] {
+    max-height: calc(100dvh - 92px);
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-orb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .cinematic-auth-copy p {
+    display: none;
+  }
+
+  .cinematic-auth-card[data-mode='register'] .register-face {
+    gap: 8px;
+  }
+}
+

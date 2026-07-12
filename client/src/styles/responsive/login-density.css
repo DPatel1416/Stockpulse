@@ -1,0 +1,364 @@
+﻿/* ======================================================
+   Cinematic Auth 100 Percent Zoom Calibration
+====================================================== */
+/* 100% zoom calibration for the cinematic auth page: smaller real dimensions, no page-wide scale hacks. */
+.cinematic-auth-screen {
+  min-height: min(660px, calc(100dvh - 82px));
+  padding: clamp(14px, 2.2vw, 30px) clamp(12px, 3vw, 38px) 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.cinematic-auth-stage {
+  grid-template-columns: minmax(0, 1.02fr) minmax(318px, 0.7fr);
+  gap: clamp(18px, 3.4vw, 42px);
+  width: min(1040px, 100%);
+}
+
+.cinematic-hero-panel {
+  min-height: 540px;
+  gap: clamp(13px, 1.65vw, 20px);
+  padding: clamp(16px, 2vw, 24px);
+  border-radius: 28px;
+}
+
+.cinematic-logo-bars {
+  grid-template-columns: repeat(3, 6px);
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 14px;
+}
+
+.cinematic-logo-bars i {
+  width: 6px;
+}
+
+.cinematic-logo-bars i:nth-child(1) { height: 20px; }
+.cinematic-logo-bars i:nth-child(2) { height: 28px; }
+.cinematic-logo-bars i:nth-child(3) { height: 23px; }
+
+.cinematic-brand-lockup {
+  gap: 11px;
+}
+
+.cinematic-brand-lockup strong {
+  font-size: 1.06rem;
+}
+
+.cinematic-brand-lockup small {
+  font-size: 0.56rem;
+}
+
+.cinematic-hero-copy h1 {
+  margin-bottom: 11px;
+  font-size: clamp(2.55rem, 5vw, 4.2rem);
+  line-height: 0.96;
+}
+
+.cinematic-hero-copy p {
+  max-width: 520px;
+  font-size: clamp(0.86rem, 1.25vw, 1rem);
+  line-height: 1.52;
+}
+
+.cinematic-feature-grid {
+  gap: 9px;
+  max-width: 560px;
+}
+
+.cinematic-feature-grid article {
+  min-height: 94px;
+  padding: 12px;
+  border-radius: 15px;
+}
+
+.cinematic-feature-grid svg {
+  width: 19px;
+  height: 19px;
+}
+
+.cinematic-feature-grid strong {
+  font-size: 0.8rem;
+}
+
+.cinematic-feature-grid small {
+  font-size: 0.68rem;
+  line-height: 1.36;
+}
+
+.cinematic-preview-shell {
+  width: min(430px, 80%);
+  border-radius: 18px;
+}
+
+.cinematic-laptop-bar {
+  padding: 7px 10px;
+}
+
+.cinematic-laptop-bar span {
+  width: 7px;
+  height: 7px;
+}
+
+.cinematic-preview-grid {
+  grid-template-columns: minmax(0, 1.32fr) minmax(106px, 0.78fr);
+  gap: 10px;
+  padding: 13px;
+}
+
+.cinematic-preview-main strong {
+  font-size: 1.25rem;
+}
+
+.cinematic-line-chart {
+  height: 64px;
+  margin-top: 5px;
+  border-radius: 12px;
+}
+
+.cinematic-watchlist-mini span {
+  min-height: 25px;
+  padding: 5px 7px;
+  border-radius: 9px;
+}
+
+.cinematic-watchlist-mini b,
+.cinematic-watchlist-mini em,
+.cinematic-preview-main small,
+.cinematic-watchlist-mini small {
+  font-size: 0.66rem;
+}
+
+.cinematic-bottom-note {
+  font-size: 0.68rem;
+}
+
+.cinematic-auth-card {
+  gap: 12px;
+  width: min(100%, 370px);
+  padding: clamp(18px, 2vw, 24px);
+  border-radius: 26px;
+}
+
+.cinematic-auth-card::before {
+  height: 210px;
+}
+
+.cinematic-auth-orb {
+  width: 104px;
+  height: 104px;
+}
+
+.cinematic-auth-orb svg {
+  width: 28px;
+  height: 28px;
+}
+
+.orb-ring {
+  inset: 9px;
+  border-width: 2px;
+}
+
+.cinematic-card-kicker {
+  font-size: 0.62rem;
+}
+
+.cinematic-auth-copy {
+  gap: 4px;
+}
+
+.cinematic-auth-copy h2 {
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+}
+
+.cinematic-auth-copy p {
+  max-width: 30ch;
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.cinematic-auth-switch {
+  gap: 4px;
+  padding: 4px;
+}
+
+.cinematic-auth-switch button {
+  min-height: 30px;
+  font-size: 0.7rem;
+}
+
+.cinematic-auth-face {
+  gap: 9px;
+}
+
+.cinematic-field > svg {
+  left: 13px;
+  top: 33px;
+  width: 15px;
+  height: 15px;
+}
+
+.cinematic-field .input {
+  min-height: 40px;
+  padding-left: 38px;
+}
+
+.cinematic-field .input-label {
+  font-size: 0.7rem;
+}
+
+.cinematic-field .password-visibility-toggle {
+  width: 32px;
+  height: 32px;
+}
+
+.cinematic-field .password-visibility-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cinematic-forgot {
+  margin-top: -3px;
+  font-size: 0.74rem;
+}
+
+.cinematic-primary-action {
+  min-height: 42px;
+}
+
+.cinematic-google-button,
+.cinematic-guest-button {
+  min-height: 39px;
+}
+
+.cinematic-divider {
+  gap: 8px;
+  font-size: 0.66rem;
+}
+
+.cinematic-mode-note {
+  font-size: 0.76rem;
+}
+
+.cinematic-auth-card .auth-password-rule {
+  margin: -4px 0 0;
+  font-size: 0.68rem;
+}
+
+.public-shell:has(.cinematic-auth-screen) .site-footer {
+  margin-top: -8px;
+  padding-bottom: 8px;
+}
+
+.public-shell:has(.cinematic-auth-screen) .site-footer-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+}
+
+.public-shell:has(.cinematic-auth-screen) .site-footer-wordmark strong {
+  font-size: 0.76rem;
+}
+
+.public-shell:has(.cinematic-auth-screen) .site-footer-disclaimer {
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 1120px) {
+  .cinematic-auth-stage {
+    width: min(960px, 100%);
+    gap: clamp(16px, 2.8vw, 30px);
+  }
+
+  .cinematic-hero-copy h1 {
+    font-size: clamp(2.35rem, 4.6vw, 3.6rem);
+  }
+
+  .cinematic-auth-card {
+    width: min(100%, 356px);
+  }
+}
+
+@media (max-width: 1020px) {
+  .cinematic-auth-stage {
+    max-width: 540px;
+  }
+
+  .cinematic-hero-panel {
+    min-height: 430px;
+  }
+
+  .cinematic-preview-shell {
+    width: min(390px, 86%);
+  }
+
+  .cinematic-auth-card {
+    width: min(100%, 390px);
+  }
+}
+
+@media (max-width: 760px) {
+  .cinematic-auth-screen {
+    min-height: calc(100dvh - 76px);
+    padding: 14px 10px 4px;
+    overflow-y: auto;
+  }
+
+  .cinematic-auth-stage {
+    width: min(100%, 390px);
+  }
+
+  .cinematic-auth-card {
+    padding: 17px;
+    border-radius: 23px;
+  }
+
+  .cinematic-auth-orb {
+    width: 76px;
+    height: 76px;
+  }
+
+  .cinematic-auth-orb svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .cinematic-auth-copy h2 {
+    font-size: 1.42rem;
+  }
+
+  .cinematic-auth-copy p {
+    font-size: 0.78rem;
+  }
+
+  .cinematic-field > svg {
+    top: 32px;
+  }
+
+  .public-shell:has(.cinematic-auth-screen) .site-footer-disclaimer {
+    font-size: 0.54rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .cinematic-auth-stage {
+    width: min(100%, 360px);
+  }
+
+  .cinematic-auth-card {
+    padding: 15px;
+  }
+
+  .cinematic-auth-face {
+    gap: 8px;
+  }
+
+  .cinematic-auth-orb {
+    width: 68px;
+    height: 68px;
+  }
+}
+

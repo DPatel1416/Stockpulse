@@ -1,0 +1,544 @@
+﻿/* ======================================================
+   Mobile Workflow Refinements
+====================================================== */
+/* Phone workflow refinements across dashboard, stock, watchlist, portfolio, and learn pages. */
+@media (max-width: 570px) {
+  .bottom-nav {
+    border-radius: 28px;
+  }
+
+  .bottom-nav a,
+  .bottom-nav > button {
+    border-radius: 16px;
+  background-clip: padding-box;
+  }
+
+  .dashboard-page .desktop-heading-label {
+    display: none;
+  }
+
+  .dashboard-page .mobile-heading-label {
+    display: inline;
+  }
+
+  .dashboard-page .market-activity-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  .dashboard-page .industry-select,
+  .dashboard-page .active-stocks-table {
+    display: none;
+  }
+
+  .dashboard-page .market-activity-card > .card-body {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .dashboard-page .market-activity-title h2 {
+    font-size: 0.92rem;
+  }
+
+  .dashboard-page .hero-description {
+    -webkit-line-clamp: 1;
+  }
+
+  :root .dashboard-page .dashboard-hero-card .hero-portfolio-card {
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--glass-stroke));
+    border-radius: 14px;
+    background:
+      linear-gradient(120deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 58%),
+      color-mix(in srgb, var(--glass-fill-soft) 86%, transparent);
+    box-shadow: none;
+  }
+
+  .dashboard-page .dashboard-hero-card .hero-portfolio-card > .card-body {
+    padding: 10px 11px;
+    border-top: 0;
+  }
+
+  .dashboard-page .dashboard-hero-card .hero-portfolio-card .portfolio-metric-row {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .dashboard-page .mover-grid {
+    margin-top: 1px;
+  }
+
+  .mobile-order-launcher-card > .card-body {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .mobile-order-launcher-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-order-launcher-heading > span:last-child {
+    display: grid;
+    gap: 2px;
+    text-align: right;
+  }
+
+  .mobile-order-launcher-heading small,
+  .mobile-order-launcher-heading strong {
+    display: block;
+  }
+
+  .mobile-order-launcher-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .mobile-order-launcher-button {
+    min-height: 42px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--glass-fill-soft);
+    font-weight: 850;
+  }
+
+  .mobile-order-launcher-button.buy {
+    border-color: color-mix(in srgb, var(--green) 34%, var(--glass-stroke));
+    background: color-mix(in srgb, var(--green) 10%, var(--glass-fill-soft));
+    color: var(--green);
+  }
+
+  .mobile-order-launcher-button.sell {
+    border-color: color-mix(in srgb, var(--red) 34%, var(--glass-stroke));
+    background: color-mix(in srgb, var(--red) 10%, var(--glass-fill-soft));
+    color: var(--red);
+  }
+
+  .mobile-order-modal-backdrop {
+    z-index: 48;
+    align-items: center;
+    padding: max(12px, env(safe-area-inset-top, 0px)) 10px calc(82px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-order-modal-card {
+    width: min(360px, 100%);
+    max-height: calc(100vh - 108px);
+    max-height: calc(100dvh - 108px);
+  }
+
+  .mobile-order-modal-surface {
+    max-height: calc(100vh - 108px);
+    max-height: calc(100dvh - 108px);
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgb(8, 17, 32);
+  }
+
+  :root.light .mobile-order-modal-surface {
+    background: rgb(248, 250, 252);
+  }
+
+  body.mobile-order-open .bottom-nav,
+  body.mobile-order-open .floating-ai {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mobile-order-modal-body {
+    display: grid;
+    gap: 10px;
+    max-height: calc(100vh - 108px);
+    max-height: calc(100dvh - 108px);
+    padding: 15px 15px 18px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-bottom: 62px;
+  }
+  .mobile-order-modal-controls {
+    position: sticky;
+    top: -15px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: -15px -15px 0;
+    padding: 12px 15px 9px;
+    border-bottom: 1px solid var(--glass-stroke);
+    background: color-mix(in srgb, var(--surface-strong) 94%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+  }
+
+  .mobile-order-modal-controls > span {
+    display: grid;
+    gap: 2px;
+  }
+
+  .mobile-order-modal-controls small,
+  .mobile-order-modal-controls strong {
+    display: block;
+  }
+
+  .mobile-order-modal-body .trade-ticket-full-form > .section-title {
+    display: none;
+  }
+
+  .mobile-order-modal-body .trade-side-control {
+    margin-bottom: 10px;
+  }
+
+  .mobile-order-modal-body .trade-order-input-row {
+    gap: 8px;
+  }
+
+  .mobile-order-modal-body .order-ticket-identity {
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+  .mobile-order-modal-body .trade-ticket-full-form > div:last-child > .button.primary {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    min-height: 44px;
+    box-shadow: 0 -10px 24px color-mix(in srgb, var(--surface) 78%, transparent);
+  }
+
+  .portfolio-hero-card > .card-body,
+  .watchlist-hero-card > .card-body,
+  .learn-hero-card > .card-body {
+    padding: 14px;
+  }
+
+  .portfolio-hero-card .section-title,
+  .watchlist-hero-card .section-title {
+    margin-bottom: 9px;
+  }
+
+  .stock-detail-hero-card > .card-body {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto 36px;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .stock-detail-hero-card .section-title,
+  .stock-detail-hero-card .content-grid {
+    display: contents;
+  }
+
+  .stock-detail-hero-card .stock-hero-back-action,
+  .stock-detail-hero-card .content-grid > .span-8,
+  .stock-detail-hero-card .content-grid > .span-4,
+  .stock-detail-hero-card .stock-hero-watch-action {
+    grid-row: 1;
+  }
+
+  .stock-detail-hero-card .stock-hero-back-action {
+    grid-column: 1;
+  }
+
+  .stock-detail-hero-card .content-grid > .span-8 {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .stock-detail-hero-card .content-grid > .span-4 {
+    grid-column: 3;
+    min-width: 76px;
+    text-align: right;
+  }
+
+  .stock-detail-hero-card .stock-hero-watch-action {
+    grid-column: 4;
+  }
+
+  .stock-detail-hero-card .stock-detail-heading {
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .stock-detail-hero-card .stock-detail-heading .stock-logo {
+    --rendered-logo-size: 36px;
+    flex: 0 0 auto;
+  }
+
+  .stock-detail-hero-card .stock-detail-title-copy {
+    min-width: 0;
+  }
+
+  .stock-detail-hero-card .stock-detail-symbol {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--muted);
+    font-size: 0.61rem;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  .stock-detail-hero-card .page-title {
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    font-size: 1.08rem;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stock-detail-hero-card .content-grid .span-8 > p {
+    display: none;
+  }
+
+  .stock-detail-hero-card .stock-detail-price {
+    font-size: 1.08rem;
+    line-height: 1.15;
+  }
+
+  .stock-detail-hero-card .content-grid > .span-4 > span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.67rem;
+    white-space: nowrap;
+  }
+
+  .stock-detail-hero-card .star-action span {
+    display: none;
+  }
+
+  .stock-detail-hero-card .stock-hero-back-action,
+  .stock-detail-hero-card .star-action {
+    width: 36px;
+    min-height: 36px;
+    padding: 0;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--glass-fill-soft) 82%, transparent);
+  }
+  .stock-detail-page .chart-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0;
+  }
+
+  .stock-detail-page .chart-meta-column {
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .stock-detail-page .chart-meta-column + .chart-meta-column {
+    padding-left: 8px;
+    border-left: 1px solid var(--glass-stroke);
+  }
+
+  .stock-detail-page .chart-meta-column h3 {
+    margin-bottom: 3px;
+    font-size: 0.65rem;
+  }
+
+  .stock-detail-page .chart-meta-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+    padding: 5px 0;
+    font-size: 0.66rem;
+  }
+
+  .stock-detail-page .chart-meta-row span {
+    white-space: normal;
+  }
+
+  .stock-detail-page .chart-meta-row strong {
+    max-width: 100%;
+    font-size: 0.7rem;
+    text-align: left;
+  }
+
+  .portfolio-hero-card .section-title,
+  .watchlist-hero-card .section-title {
+    align-items: start;
+  }
+
+  .portfolio-hero-card .page-title,
+  .watchlist-hero-card .page-title,
+  .learn-hero-card .page-title {
+    margin: 4px 0 6px;
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+
+  .portfolio-hero-card .section-title p,
+  .watchlist-hero-card .section-title p,
+  .learn-hero-card > .card-body > p {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .portfolio-hero-action,
+  .watchlist-hero-action {
+    width: 36px;
+    min-height: 36px;
+    padding: 0;
+  }
+
+  .portfolio-hero-action span,
+  .watchlist-hero-action span {
+    display: none;
+  }
+
+  .watchlist-hero-card .watchlist-add-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    align-items: end;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .watchlist-hero-card .watchlist-add-form .button {
+    width: 38px;
+    min-height: 36px;
+    padding: 0;
+  }
+
+  .watchlist-hero-card .watchlist-add-form .button span {
+    display: none;
+  }
+
+  .learn-hero-card .learn-filter {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .portfolio-page .portfolio-holdings-card {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .portfolio-page .portfolio-holdings-card > .card-body {
+    height: auto;
+    padding: 14px;
+  }
+
+  .portfolio-page .portfolio-holdings-card .table-wrap {
+    flex: none;
+    width: 100%;
+    height: auto;
+    max-height: 672px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .portfolio-page .portfolio-holdings-card .data-table,
+  .portfolio-page .portfolio-holdings-card .data-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .portfolio-page .portfolio-holdings-card .data-table thead {
+    display: none;
+  }
+
+  .portfolio-page .portfolio-holdings-card .data-table tbody {
+    display: grid;
+    gap: 8px;
+  }
+
+  .portfolio-page .portfolio-holdings-card .data-table tr {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    padding: 9px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--glass-fill-soft) 82%, transparent);
+  }
+
+  .portfolio-page .portfolio-holdings-card .data-table td {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    font-size: 0.68rem;
+    white-space: normal;
+  }
+
+  .portfolio-page .portfolio-holdings-card .holding-identity {
+    grid-column: 1 / -1;
+  }
+
+  .portfolio-page .portfolio-holdings-card td[data-label]::before {
+    color: var(--muted);
+    font-size: 0.55rem;
+    font-weight: 750;
+    text-transform: uppercase;
+    content: attr(data-label);
+  }
+
+  .portfolio-page .portfolio-holdings-card .holding-profit {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 6px;
+    border-top: 1px solid var(--glass-stroke);
+    text-align: right;
+  }
+
+  .portfolio-page .portfolio-holdings-card .holding-profit::before {
+    flex: 1;
+    text-align: left;
+  }
+
+  .portfolio-page .portfolio-records-grid > .portfolio-empty-holdings-card {
+    height: 180px;
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 350px) {
+  .stock-detail-hero-card > .card-body {
+    grid-template-columns: 32px minmax(0, 1fr) 68px 32px;
+    gap: 6px;
+  }
+
+  .stock-detail-hero-card .stock-detail-heading {
+    gap: 6px;
+  }
+
+  .stock-detail-hero-card .stock-detail-heading .stock-logo {
+    --rendered-logo-size: 32px;
+  }
+
+  .stock-detail-hero-card .page-title {
+    font-size: 0.96rem;
+  }
+
+  .stock-detail-hero-card .content-grid > .span-4 {
+    min-width: 68px;
+  }
+
+  .stock-detail-hero-card .stock-detail-price {
+    font-size: 0.98rem;
+  }
+
+  .stock-detail-hero-card .stock-hero-back-action,
+  .stock-detail-hero-card .star-action {
+    width: 32px;
+    min-height: 32px;
+    border-radius: 10px;
+  }
+}
+

@@ -1,0 +1,535 @@
+﻿/* ======================================================
+   Stock Detail Page, News, Earnings, And Search Sidebar
+====================================================== */
+.stock-details-grid {
+  --stock-news-card-height: 760px;
+  align-items: start;
+}
+
+.stock-detail-page {
+  --stock-tone: var(--accent);
+  position: relative;
+  isolation: isolate;
+}
+
+.stock-detail-page.stock-tone-positive {
+  --stock-tone: var(--green);
+}
+
+.stock-detail-page.stock-tone-negative {
+  --stock-tone: var(--red);
+}
+
+.stock-detail-page > .glass-card,
+.stock-detail-page .stock-details-main > .glass-card,
+.stock-detail-page .stock-details-sidebar > .glass-card {
+  border-color: var(--glass-stroke);
+}
+
+.stock-detail-page > .glass-card::after,
+.stock-detail-page .stock-details-main > .glass-card::after,
+.stock-detail-page .stock-details-sidebar > .glass-card::after {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--stock-tone) 8%, transparent), transparent 42%),
+    linear-gradient(315deg, color-mix(in srgb, var(--purple) 5%, transparent), transparent 38%);
+  filter: blur(22px);
+  opacity: 0.78;
+  transform: scale(1.07);
+  transform-origin: center;
+}
+
+.stock-detail-page .chip,
+.stock-detail-page .chart-range-button.active,
+.stock-detail-page .chart-range-button:hover {
+  border-color: color-mix(in srgb, var(--stock-tone) 20%, var(--glass-stroke));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--stock-tone) 4.5%, transparent), transparent 52%),
+    var(--glass-fill-soft);
+}
+
+:root.light .stock-detail-page > .glass-card,
+:root.light .stock-detail-page .stock-details-main > .glass-card,
+:root.light .stock-detail-page .stock-details-sidebar > .glass-card {
+  border-color: rgba(15, 23, 42, 0.105);
+  box-shadow:
+    0 2px 8px rgba(71, 85, 105, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+:root.light .stock-detail-page > .glass-card::after,
+:root.light .stock-detail-page .stock-details-main > .glass-card::after,
+:root.light .stock-detail-page .stock-details-sidebar > .glass-card::after {
+  background:
+    linear-gradient(var(--light-refraction-a-angle), color-mix(in srgb, var(--stock-tone) 7%, transparent), transparent 42%),
+    linear-gradient(var(--light-refraction-b-angle), var(--light-refraction-b), transparent 40%);
+  filter: blur(26px);
+  opacity: 0.86;
+  transform: scale(1.09);
+}
+
+.stock-chart-title-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stock-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.stock-detail-chart-card.expanded {
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--glass-stroke));
+}
+
+.stock-detail-chart-card.expanded .stock-chart-canvas {
+  height: clamp(520px, 62vh, 760px);
+}
+
+.stock-detail-chart-card.expanded .chart-meta-grid {
+  display: none;
+}
+
+.stock-detail-chart-card .stock-chart-canvas {
+  height: 470px;
+}
+
+.stock-details-main,
+.stock-details-sidebar {
+  min-height: 0;
+  height: auto;
+}
+
+.stock-details-main {
+  display: grid;
+  grid-template-rows: minmax(0, var(--stock-news-card-height));
+  gap: var(--dashboard-sidebar-gap);
+}
+
+.stock-detail-earnings-card h2 {
+  margin: 0;
+}
+
+.stock-detail-earnings-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stock-detail-earnings-list > .muted {
+  margin: 0;
+}
+
+.stock-news-card {
+  min-height: 0;
+  height: var(--stock-news-card-height);
+  max-height: var(--stock-news-card-height);
+}
+
+.stock-news-card > .card-body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+}
+
+.stock-news-list {
+  display: grid;
+  align-content: start;
+  align-items: start;
+  gap: 12px;
+  grid-auto-rows: max-content;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 2px 10px 30px 2px;
+  scroll-padding-bottom: 30px;
+  scrollbar-color: rgba(148, 163, 184, 0.38) transparent;
+  scrollbar-width: thin;
+}
+
+.stock-news-list .glass-card {
+  min-height: max-content;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.stock-news-list .card-body {
+  padding: 0;
+}
+
+.news-card {
+  border-color: color-mix(in srgb, var(--glass-stroke) 82%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 2.5%, transparent), transparent 44%),
+    var(--glass-fill-soft);
+  background-clip: padding-box;
+}
+
+.news-card.is-linked {
+  cursor: pointer;
+}
+
+.news-card.is-linked:hover {
+  border-color: color-mix(in srgb, var(--accent) 19%, var(--glass-stroke));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 5%, transparent), transparent 46%),
+    color-mix(in srgb, var(--accent) 2%, var(--glass-fill-soft));
+}
+
+.news-card-link,
+.news-card-content {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 0;
+  color: inherit;
+}
+
+.news-card-link {
+  padding: 0;
+}
+
+.news-card-content {
+  gap: 8px;
+  padding: 12px 14px 16px;
+}
+
+.news-card-meta {
+  margin: 0;
+}
+
+.news-card-title {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.news-card-summary {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-height: 1.55;
+  white-space: normal;
+}
+
+.news-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 22px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.watchlist-earnings-list {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  grid-auto-rows: minmax(82px, max-content);
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  padding: 2px 10px 16px 0;
+}
+
+.watchlist-earnings-list .inline-earnings-card {
+  min-height: 82px;
+}
+
+.watchlist-earnings-list .inline-earnings-body {
+  display: grid;
+  align-items: center;
+  min-height: 80px;
+  padding: 12px;
+}
+
+.watchlist-earnings-list .inline-earnings-content {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.watchlist-earnings-list .inline-earnings-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.watchlist-earnings-list .inline-earnings-content p,
+.watchlist-earnings-list .inline-earnings-content small {
+  overflow: visible;
+  line-height: 1.35;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.market-earnings-card {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+}
+
+.market-earnings-card .card-body {
+  overflow: hidden;
+}
+
+.market-earnings-ticker {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  padding: 8px;
+  overflow: hidden;
+  border-radius: 18px;
+  clip-path: inset(0 round 18px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30px, #000 calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 30px, #000 calc(100% - 30px), transparent 100%);
+  scrollbar-width: none;
+}
+
+.market-earnings-ticker::-webkit-scrollbar {
+  display: none;
+}
+
+.market-earnings-ticker::before,
+.market-earnings-ticker::after {
+  display: none;
+}
+
+.market-earnings-track {
+  display: grid;
+  gap: 7px;
+  animation: earnings-scroll-down 24s linear infinite;
+  will-change: transform;
+}
+
+.market-earnings-ticker:hover .market-earnings-track {
+  animation-play-state: paused;
+}
+
+.market-earnings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 54px;
+  padding: 9px 11px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), transparent 46%),
+    rgba(148, 163, 184, 0.07);
+  color: var(--text);
+  text-align: left;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.market-earnings-row:hover {
+  border-color: rgba(99, 102, 241, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 46%),
+    rgba(99, 102, 241, 0.1);
+}
+
+.market-earnings-row > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.market-earnings-row > span:first-child {
+  overflow: hidden;
+}
+
+.market-earnings-row > span:last-child {
+  justify-items: end;
+  white-space: nowrap;
+}
+
+.market-earnings-row strong,
+.market-earnings-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inline-earnings-card {
+  border-color: rgba(148, 163, 184, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 45%),
+    rgba(15, 23, 42, 0.56);
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.18), inset 0 1px 0 var(--glass-highlight);
+}
+
+:root.light .inline-earnings-card {
+  border-color: rgba(15, 23, 42, 0.14);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.54), transparent 48%),
+    rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 24px rgba(71, 85, 105, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.inline-earnings-card .inline-earnings-body {
+  padding: 12px;
+}
+
+.inline-earnings-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-earnings-content > div {
+  min-width: 0;
+}
+
+.inline-earnings-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  flex: 0 0 auto;
+}
+
+.inline-earnings-content p {
+  margin: 1px 0;
+}
+
+.inline-earnings-content strong,
+.inline-earnings-content p,
+.inline-earnings-content small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inline-earnings-content small {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.mover-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.mover-panel {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 44%),
+    var(--glass-fill-soft);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.mover-panel h3 {
+  margin: 0 0 12px;
+}
+
+.mover-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mover-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 16px;
+  background-clip: padding-box;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 46%),
+    var(--glass-fill-soft);
+  color: var(--text);
+  text-align: left;
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.mover-row:hover {
+  border-color: rgba(99, 102, 241, 0.22);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 46%),
+    rgba(99, 102, 241, 0.1);
+}
+
+.mover-row > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mover-row > .stock-identity {
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.mover-row > .stock-identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mover-row > span:last-child {
+  justify-items: end;
+  white-space: nowrap;
+}
+
+.scroll-panel,
+.stock-news-list,
+.market-activity-stack,
+.watchlist-earnings-list,
+.market-earnings-ticker {
+  isolation: isolate;
+}
+
+.scroll-panel .glass-card,
+.scroll-panel .glass-card:hover,
+.scroll-panel .inline-earnings-card,
+.scroll-panel .news-row,
+.scroll-panel .watchlist-row,
+.scroll-panel .chip,
+.stock-news-list .glass-card,
+.stock-news-list .glass-card:hover,
+.watchlist-earnings-list .inline-earnings-card {
+  box-shadow: none;
+  filter: none;
+  text-shadow: none;
+}
+
+.ticker-tape-shell .ticker-tape-item,
+.market-earnings-ticker .market-earnings-row {
+  box-shadow: none;
+  filter: none;
+  text-shadow: none;
+}
+
+.scroll-panel .glass-card::after,
+.scroll-panel .inline-earnings-card::after,
+.stock-news-list .glass-card::after,
+.watchlist-earnings-list .inline-earnings-card::after {
+  display: none;
+}
+
+

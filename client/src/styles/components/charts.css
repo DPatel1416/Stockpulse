@@ -1,0 +1,378 @@
+﻿/* ======================================================
+   Stock Logos, Charts, Tooltips, And Status Chips
+====================================================== */
+.stock-logo {
+  --logo-size: 34px;
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: var(--logo-size);
+  height: var(--logo-size);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--glass-stroke) 88%, transparent);
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), transparent 52%),
+    color-mix(in srgb, var(--surface) 84%, transparent);
+  box-shadow: inset 0 1px 0 var(--card-edge-light);
+  color: var(--text);
+  place-items: center;
+}
+
+.stock-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stock-logo > span {
+  display: grid !important;
+  width: 100%;
+  height: 100%;
+  color: var(--text);
+  font-size: calc(var(--logo-size) * 0.32);
+  font-weight: 850;
+  line-height: 1;
+  place-items: center;
+}
+
+.stock-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  vertical-align: middle;
+}
+
+.stock-identity.compact {
+  gap: 8px;
+}
+
+.stock-identity-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.stock-identity-text strong,
+.stock-identity-text small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stock-identity-text small {
+  font-size: 0.74rem;
+}
+
+.ticker-chip-with-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ticker-chip-plain {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.stock-chart-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.stock-chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chart-toolbar-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chart-mode-toggle {
+  display: inline-grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 12px;
+  background: var(--glass-fill-soft);
+}
+
+.chart-mode-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.chart-mode-toggle button.active {
+  border-color: color-mix(in srgb, var(--purple) 38%, var(--glass-stroke));
+  background: color-mix(in srgb, var(--purple) 9%, var(--glass-fill-soft));
+  color: var(--purple);
+  box-shadow: inset 0 1px 0 var(--card-edge-light);
+}
+
+.chart-range-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chart-range-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 52%),
+    rgba(148, 163, 184, 0.08);
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 850;
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.chart-range-button:hover,
+.chart-range-button.active {
+  border-color: rgba(99, 102, 241, 0.4);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 52%),
+    rgba(99, 102, 241, 0.14);
+  color: var(--text);
+}
+
+.chart-symbol-chip {
+  min-height: 34px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.chart-update-chip {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+  opacity: 0.84;
+}
+
+.chart-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 2px 4px 0;
+}
+
+.chart-meta-column {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.chart-meta-column h3 {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.chart-meta-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.chart-meta-row:last-child {
+  border-bottom: 0;
+}
+
+.chart-meta-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-meta-row strong {
+  max-width: 220px;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.stock-chart-canvas {
+  position: relative;
+  width: 100%;
+  height: 390px;
+  min-height: 320px;
+  padding: 12px 6px 8px 0;
+  overflow: hidden;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%),
+    var(--glass-fill-soft);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.stock-chart-canvas .recharts-responsive-container {
+  transition: opacity 180ms ease, filter 180ms ease;
+}
+
+.stock-chart-canvas.is-loading .recharts-responsive-container {
+  opacity: 0.38;
+  filter: saturate(0.72);
+}
+
+.chart-refresh-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--glass-fill) 28%, transparent);
+  place-items: center;
+}
+
+.chart-refresh-overlay > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid var(--glass-stroke-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-strong) 94%, transparent);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.14), inset 0 1px 0 var(--card-edge-light);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.chart-refresh-overlay svg {
+  color: var(--accent);
+  animation: chart-refresh-spin 800ms linear infinite;
+}
+
+@keyframes chart-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:root.light .stock-chart-canvas {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 48%),
+    var(--glass-fill-soft);
+}
+
+.chart-tooltip {
+  display: grid;
+  gap: 7px;
+  min-width: 166px;
+  padding: 11px 12px;
+  border: 1px solid var(--glass-stroke-strong);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: 0 14px 40px rgba(2, 6, 23, 0.18), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+
+.chart-tooltip strong {
+  font-size: 0.82rem;
+}
+
+.chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.chart-tooltip-row b {
+  color: var(--text);
+}
+
+.chart-tooltip-ohlc {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 16px;
+  margin: 3px 0;
+  font-size: 0.76rem;
+}
+
+.chart-tooltip-ohlc span {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.chart-tooltip-ohlc b {
+  color: var(--text);
+}
+
+.status-open {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.14);
+  color: var(--green);
+}
+
+.status-closed {
+  border-color: rgba(251, 113, 133, 0.42);
+  background: rgba(251, 113, 133, 0.12);
+  color: var(--red);
+}
+
+.status-checking {
+  border-color: rgba(99, 102, 241, 0.42);
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent);
+}
+

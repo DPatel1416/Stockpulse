@@ -1,0 +1,103 @@
+﻿/* ======================================================
+   Final Cinematic Auth Light Mode Neutralizer
+====================================================== */
+/* Final light-mode neutralizer for the auth pages: shared controls must not inherit white app chrome here. */
+:root.light .public-shell:has(.cinematic-auth-screen) {
+  --text: #eff7ff;
+  --muted: #98a7bd;
+  --surface: #02030a;
+  --surface-strong: #070d1d;
+  --glass-fill: rgba(7, 14, 31, 0.54);
+  --glass-fill-soft: rgba(12, 23, 48, 0.46);
+  --glass-fill-strong: rgba(8, 17, 36, 0.76);
+  --glass-stroke: rgba(129, 176, 255, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 14% 10%, rgba(99, 102, 241, 0.18), transparent 27%),
+    radial-gradient(circle at 54% 0%, rgba(139, 92, 246, 0.22), transparent 33%),
+    radial-gradient(circle at 100% 78%, rgba(34, 211, 238, 0.08), transparent 28%),
+    #02030a !important;
+  color: #eff7ff;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-card,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-feature-grid article,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-preview-shell {
+  border-color: rgba(122, 169, 255, 0.18) !important;
+  background:
+    linear-gradient(145deg, rgba(13, 24, 51, 0.7), rgba(7, 12, 28, 0.46)),
+    rgba(5, 11, 26, 0.54) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11), 0 24px 80px rgba(0, 0, 0, 0.26) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .button,
+:root.light .public-shell:has(.cinematic-auth-screen) .button.secondary,
+:root.light .public-shell:has(.cinematic-auth-screen) .button.ghost {
+  border-color: rgba(129, 176, 255, 0.18) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 48%),
+    rgba(4, 9, 22, 0.52) !important;
+  color: rgba(238, 247, 255, 0.94) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .button.primary,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-primary-action.button {
+  border-color: rgba(125, 211, 252, 0.5) !important;
+  background: linear-gradient(100deg, #1fa8ff, #6d5dfc 50%, #a855f7) !important;
+  color: #04111f !important;
+  box-shadow: 0 16px 42px rgba(99, 102, 241, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .input,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field .input {
+  border-color: rgba(129, 176, 255, 0.16) !important;
+  background: rgba(4, 9, 22, 0.55) !important;
+  color: #eff7ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -12px 28px rgba(2, 6, 23, 0.18) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .input:focus,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field .input:focus {
+  border-color: rgba(99, 102, 241, 0.78) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .input-label,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field > svg,
+:root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle,
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field .password-visibility-toggle {
+  color: rgba(190, 210, 235, 0.82) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle:hover,
+:root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle:focus-visible,
+:root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle[aria-pressed='true'] {
+  border-color: rgba(99, 102, 241, 0.28) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: #6366f1 !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-switch {
+  border-color: rgba(129, 176, 255, 0.16) !important;
+  background: rgba(4, 9, 22, 0.56) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-switch button {
+  color: rgba(203, 216, 236, 0.72) !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .cinematic-auth-switch button.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(139, 92, 246, 0.3)) !important;
+  color: #f8fbff !important;
+}
+
+:root.light .public-shell:has(.cinematic-auth-screen) .auth-verification-inline,
+:root.light .public-shell:has(.cinematic-auth-screen) .auth-verification-state {
+  border-color: rgba(45, 212, 191, 0.28) !important;
+  background:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.13), rgba(99, 102, 241, 0.1)),
+    rgba(4, 9, 22, 0.58) !important;
+  color: rgba(238, 247, 255, 0.92) !important;
+}
+

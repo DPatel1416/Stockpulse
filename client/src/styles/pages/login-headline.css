@@ -1,0 +1,29 @@
+﻿/* ======================================================
+   Cinematic Auth Headline Clipping Guard
+====================================================== */
+/* Prevent animated headline descenders such as g/y from clipping inside the tight cinematic hero type. */
+.cinematic-hero-copy h1 {
+  line-height: 1.06;
+  overflow: visible;
+}
+
+.cinematic-hero-copy h1 > span {
+  display: block;
+  overflow: visible;
+  padding-bottom: 0.08em;
+}
+
+.cinematic-rotating-word {
+  line-height: 1.16;
+  padding: 0 0.02em 0.14em 0;
+  margin-bottom: -0.14em;
+  overflow: visible;
+  vertical-align: baseline;
+}
+
+@media (min-width: 1021px) {
+  .cinematic-hero-copy h1 {
+    line-height: 1.04;
+  }
+}
+

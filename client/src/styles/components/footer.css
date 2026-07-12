@@ -1,0 +1,174 @@
+﻿/* ======================================================
+   Footer And Legal Footer Actions
+====================================================== */
+.site-footer {
+  position: relative;
+  width: min(100%, 1080px);
+  margin: 28px auto 0;
+  padding: 22px 28px 8px;
+}
+
+.site-footer-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.site-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text);
+}
+
+.site-footer-logo {
+  position: relative;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  border: 1px solid color-mix(in srgb, var(--accent) 54%, var(--glass-stroke));
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent) 76%, transparent), color-mix(in srgb, var(--purple) 66%, transparent)),
+    var(--glass-fill-strong);
+  color: #f8fdff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 0 0 5px color-mix(in srgb, var(--accent) 6%, transparent),
+    0 10px 30px color-mix(in srgb, var(--accent) 16%, transparent);
+  place-items: center;
+}
+
+.site-footer-logo svg {
+  width: 23px;
+  height: 23px;
+  filter: drop-shadow(0 2px 5px rgba(2, 6, 23, 0.18));
+}
+
+.site-footer-wordmark {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  line-height: 1;
+}
+
+.site-footer-wordmark strong {
+  font-size: 1.05rem;
+  font-weight: 780;
+}
+
+.site-footer-wordmark small {
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.site-footer-tagline {
+  margin: 0;
+  color: color-mix(in srgb, var(--text) 76%, var(--muted));
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.site-footer-divider {
+  width: min(100%, 760px);
+  height: 1px;
+  margin: 3px 0 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-stroke-strong), transparent);
+}
+
+.public-shell > .site-footer {
+  width: min(calc(100% - 32px), 1080px);
+  margin: 0 auto 8px;
+}
+
+.site-footer.compact {
+  margin-top: 18px;
+  padding: 14px 18px 2px;
+}
+
+.site-footer.compact .site-footer-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), 0 0 0 4px color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.site-footer.compact .site-footer-wordmark strong {
+  font-size: 0.82rem;
+}
+
+.site-footer.compact .site-footer-tagline {
+  display: none;
+}
+
+.site-footer-legal {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.site-footer-disclaimer {
+  display: block;
+  width: min(100%, 820px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  text-align: center;
+  transition: color 160ms ease;
+}
+
+.site-footer.compact .site-footer-disclaimer {
+  font-size: 0.64rem;
+}
+
+.site-footer-disclaimer:hover {
+  color: var(--text);
+}
+
+.site-footer-disclaimer:focus-visible {
+  border-radius: 8px;
+  color: var(--text);
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: 4px;
+}
+
+.site-footer-legal-action {
+  display: inline-block;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.site-footer-legal-action:hover,
+.site-footer-legal-action:focus-visible {
+  color: var(--accent);
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.site-footer.compact .site-footer-legal-action {
+  padding: 1px 0;
+}
+
+.site-footer.compact .site-footer-inner {
+  gap: 6px;
+}
+

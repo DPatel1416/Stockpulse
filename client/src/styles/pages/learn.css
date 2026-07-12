@@ -1,0 +1,186 @@
+﻿/* ======================================================
+   Learn Page Base Layout
+====================================================== */
+.learn-grid {
+  --card-row-height: 250px;
+}
+
+.learn-foundations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+}
+
+.learn-foundations-grid > .glass-card {
+  height: auto;
+}
+
+.learn-foundations-grid > .glass-card > .card-body {
+  height: 100%;
+}
+
+.learn-path-card .card-body,
+.learn-calculator-card .card-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 390px;
+  padding: 30px;
+}
+
+.learn-path-card h2,
+.learn-calculator-card h2 {
+  margin: 0;
+}
+
+.learn-path-card .section-title .chip,
+.learn-calculator-card .section-title .chip {
+  margin-bottom: 14px;
+}
+
+.learn-path-list {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learn-path-list li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--glass-stroke);
+}
+
+.learn-path-list li:last-child {
+  border-bottom: 0;
+}
+
+.learn-path-list li > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--glass-stroke));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 9%, var(--glass-fill-soft));
+  color: var(--accent);
+  font-weight: 850;
+  place-items: center;
+}
+
+.learn-path-list p {
+  margin: 5px 0 0;
+  line-height: 1.45;
+}
+
+.learn-calculator-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 0;
+}
+
+.learn-projection-output {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 0;
+  padding-top: 18px;
+}
+
+.learn-calculator-card .card-body {
+  gap: 18px;
+  align-content: start;
+}
+
+.learn-calculator-card .section-title {
+  margin-bottom: 0;
+}
+
+.learn-calculator-card .section-title + p {
+  margin: 0;
+}
+
+.learn-calculator-card .learn-projection-output {
+  padding-top: 0;
+}
+
+.learn-projection-output > span {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid var(--glass-stroke);
+  border-radius: 14px;
+  background: var(--glass-fill-soft);
+  box-shadow: inset 0 1px 0 var(--card-edge-light);
+}
+
+.learn-projection-output small {
+  color: var(--muted);
+}
+
+.learn-projection-output strong {
+  font-size: 1.05rem;
+}
+
+.learn-projection-total {
+  grid-column: 1 / -1;
+  background: color-mix(in srgb, var(--accent) 10%, var(--glass-fill-soft)) !important;
+}
+
+.learn-projection-total strong {
+  color: var(--accent);
+  font-size: 1.35rem;
+}
+
+.learn-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 2px 4px 0;
+}
+
+.learn-section-heading h2 {
+  margin: 10px 0 0;
+}
+
+.learn-safety-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 28px;
+}
+
+.learn-checklist {
+  display: grid;
+  gap: 10px;
+}
+
+.learn-checklist span {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  line-height: 1.45;
+}
+
+.learn-checklist svg {
+  margin-top: 2px;
+  color: var(--green);
+}
+
+.learn-ai-callout {
+  padding-left: 26px;
+  border-left: 1px solid var(--glass-stroke);
+}
+
+.learn-ai-callout h2 {
+  margin: 12px 0 7px;
+}
+
+.learn-ai-callout p {
+  margin: 0 0 16px;
+}
+

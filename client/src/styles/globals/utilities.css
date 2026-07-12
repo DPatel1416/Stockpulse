@@ -1,0 +1,18 @@
+﻿/* ======================================================
+   Grid Span Utilities
+====================================================== */
+.span-4 {
+  grid-column: span 4;
+}
+
+.span-6 {
+  grid-column: span 6;
+}
+
+.span-8 {
+  grid-column: span 8;
+}
+
+.span-12 {
+  grid-column: span 12;
+}

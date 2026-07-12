@@ -2,7 +2,7 @@
  * File purpose: Tests the email-verification authentication flow with mocked Resend delivery.
  */
 import assert from 'node:assert/strict';
-import { beforeEach, test } from 'node:test';
+import { beforeEach, test } from 'vitest';
 import { login, register, resendVerification, verifyEmail } from '../src/controllers/authController.js';
 import { demoStore, findDemoUserByEmail } from '../src/utils/demoStore.js';
 import { hashVerificationToken, resetVerificationResendLimits } from '../src/utils/emailVerification.js';
