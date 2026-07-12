@@ -85,7 +85,7 @@ app.get('/api', (req, res) => {
     service: 'StockPulse API',
     routes: {
       health: 'GET /api/health',
-      auth: ['POST /api/auth/register', 'POST /api/auth/login', 'POST /api/auth/demo', 'GET /api/auth/me'],
+      auth: ['POST /api/auth/register', 'POST /api/auth/login', 'GET /api/auth/verify-email', 'POST /api/auth/resend-verification', 'POST /api/auth/demo', 'GET /api/auth/me'],
       market: ['GET /api/market/status', 'GET /api/market/summary', 'GET /api/market/active', 'GET /api/market/news', 'GET /api/market/earnings'],
       stocks: ['GET /api/stocks/suggest?query=apple', 'GET /api/stocks/search/:ticker', 'GET /api/stocks/:ticker/chart?range=1M', 'GET /api/stocks/:ticker/news', 'GET /api/stocks/:ticker/earnings'],
       watchlist: ['GET /api/watchlist', 'POST /api/watchlist', 'DELETE /api/watchlist/:ticker'],

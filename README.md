@@ -94,9 +94,12 @@ STOCK_API_KEY=your_market_data_api_key
 STOCK_API_PROVIDER=finnhub
 OPENAI_API_KEY=optional_openai_key
 CLIENT_URL=http://localhost:5173
+API_PUBLIC_URL=http://localhost:5000
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=StockPulse Learn <onboarding@resend.dev>
 ```
 
-If `MONGO_URI`, `STOCK_API_KEY`, or `OPENAI_API_KEY` are missing or unavailable, the app still runs with demo storage and mock market/AI responses.
+If `MONGO_URI`, `STOCK_API_KEY`, or `OPENAI_API_KEY` are missing or unavailable, the app still runs with demo storage and mock market/AI responses. `RESEND_API_KEY` is required for real verification email delivery; without it, the server logs a warning and prints a local verification link for development testing.
 
 ### Finnhub Setup
 
@@ -109,10 +112,32 @@ STOCK_API_KEY=your_finnhub_api_key_here
 
 Then restart the server. StockPulse uses Finnhub for quotes, company profiles, chart candles, market news, company news, and earnings calendar data. If Finnhub rate-limits a request or a specific endpoint has no data, that route falls back to demo data instead of breaking the page.
 
+### Resend Email Verification Setup
+
+StockPulse uses Resend for account verification emails. Create a Resend API key, add a verified sender/domain in Resend, then set these values in `server/.env`:
+
+```env
+RESEND_API_KEY=your_resend_api_key_here
+RESEND_FROM_EMAIL=StockPulse Learn <verify@your-domain.com>
+CLIENT_URL=http://localhost:5173
+API_PUBLIC_URL=http://localhost:5000
+```
+
+For Render, set the same variables in the backend service environment. Use your deployed URLs, for example:
+
+```env
+CLIENT_URL=https://stockpulse07.vercel.app
+API_PUBLIC_URL=https://stockpulse-6w4m.onrender.com
+```
+
+The verification email links point to the backend `/api/auth/verify-email` endpoint, which validates the token and redirects users back to `/login` on the client.
+
 ## API Summary
 
-- `POST /api/auth/register` creates a user with `$10,000` virtual cash.
-- `POST /api/auth/login` authenticates and returns a JWT.
+- `POST /api/auth/register` creates an unverified user with `$10,000` virtual cash and sends a verification email.
+- `GET /api/auth/verify-email?token=...` verifies the email token and redirects back to login.
+- `POST /api/auth/resend-verification` sends a fresh verification email for an unverified account.
+- `POST /api/auth/login` authenticates verified users and returns a JWT.
 - `POST /api/auth/demo` creates or resumes a demo API session.
 - `GET /api/auth/me` returns the current authenticated user.
 - `GET /api/market/summary` returns index summary cards.
@@ -136,4 +161,19 @@ Then restart the server. StockPulse uses Finnhub for quotes, company profiles, c
 
 The client and server both include demo data so the portfolio demo works without paid APIs. Live API integration should be added behind the `stockDataService` methods so controllers and UI components do not change.
 
+## Testing
 
+Run backend verification tests:
+
+```bash
+npm test --prefix server
+```
+
+The auth tests mock Resend by replacing `fetch`, so no real email is sent during tests. They cover registration, email verification, invalid tokens, expired tokens, resend verification, login before verification, and login after verification.
+
+Run frontend checks:
+
+```bash
+npm run lint --prefix client
+npm run build --prefix client
+```

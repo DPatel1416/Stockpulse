@@ -91,23 +91,29 @@ export function AuthProvider({ children }) {
   }
 
   /**
-   * Creates a user account and starts its authenticated session.
-   * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
+   * Creates a user account and waits for email verification before starting a session.
+   * Registration no longer stores a JWT because unverified users should not be authenticated yet.
    * @param {*} payload - Validated data supplied by the caller.
    * @returns {Promise<*>} A promise resolving to the register result.
    */
   async function register(payload) {
     setIsAuthenticating(true);
     try {
-      const result = await api.register(payload);
-      localStorage.setItem(STORAGE_KEYS.token, result.token);
-      localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(result.user));
-      setUser(result.user);
-      setIsSessionReady(true);
-      return result;
+      return await api.register(payload);
     } finally {
       setIsAuthenticating(false);
     }
+  }
+
+  
+  /**
+   * Requests another email verification message for an unverified account.
+   * Keeping this in context lets login and register screens share one auth action.
+   * @param {object} payload - Email address that should receive another verification email.
+   * @returns {Promise<object>} A promise resolving to the resend-verification response.
+   */
+  async function resendVerification(payload) {
+    return api.resendVerification(payload);
   }
 
   /**
@@ -181,6 +187,7 @@ export function AuthProvider({ children }) {
     isSessionReady,
     login,
     register,
+    resendVerification,
     startDemoSession,
     updateProfile,
     updatePassword,

@@ -31,7 +31,7 @@ export default function Footer({ compact = false }) {
             <span className="site-footer-logo" aria-hidden="true"><BarChart3 size={18} /></span>
             <span className="site-footer-wordmark"><strong>StockPulse</strong><small>Learn</small></span>
           </span>
-          <p className="site-footer-tagline">Learn the market. Practice with confidence.</p>
+          <p className="site-footer-tagline">Practice markets with clarity and confidence.</p>
           <span className="site-footer-divider" aria-hidden="true" />
           <div className="site-footer-legal">
             <button

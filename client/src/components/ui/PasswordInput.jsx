@@ -27,7 +27,7 @@ export default function PasswordInput({ id, label, name, ...props }) {
           aria-pressed={visible}
           onClick={() => setVisible((current) => !current)}
         >
-          {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+          {visible ? <Eye size={18} /> : <EyeOff size={18} />}
         </button>
       </div>
     </div>

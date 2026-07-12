@@ -12,7 +12,6 @@ import { useToasts } from '../ui/Toast';
 import { isStrongPassword, PASSWORD_REQUIREMENT_MESSAGE } from '../../utils/validation';
 
 const emptyPasswordForm = {
-  currentPassword: '',
   newPassword: '',
   confirmPassword: '',
 };
@@ -65,7 +64,7 @@ export default function AccountSettingsModal({ open, onClose }) {
   if (!open || !user) return null;
 
   /**
-   * Closes the mobile-only focused account sheet.
+   * Closes the focused account action sheet.
    * Keeping this small helper avoids duplicating modal state updates across buttons and overlays.
    * @returns {void} No value is returned; the mobile sheet state is cleared.
    */
@@ -122,7 +121,6 @@ export default function AccountSettingsModal({ open, onClose }) {
     setBusyAction('password');
     try {
       await updatePassword({
-        currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
       setPasswordForm(emptyPasswordForm);
@@ -185,65 +183,6 @@ export default function AccountSettingsModal({ open, onClose }) {
             </button>
           </div>
 
-          <div className="account-settings-grid">
-            <form className="account-settings-form account-settings-profile-form" onSubmit={handleProfileSubmit}>
-              <div className="account-settings-form-title">
-                <UserRound size={17} />
-                <h3>Profile</h3>
-              </div>
-              <Input label="Display name" name="account-name" value={name} onChange={(event) => setName(event.target.value)} required />
-              <Button type="submit" disabled={busyAction === 'profile'}>
-                {busyAction === 'profile' ? 'Saving...' : 'Save name'}
-              </Button>
-            </form>
-
-            <form className="account-settings-form account-settings-password-form" onSubmit={handlePasswordSubmit}>
-              <div className="account-settings-form-title">
-                <KeyRound size={17} />
-                <h3>Password</h3>
-              </div>
-              <PasswordInput
-                label="Current password"
-                name="currentPassword"
-                autoComplete="current-password"
-                value={passwordForm.currentPassword}
-                onChange={(event) => setPasswordForm({ ...passwordForm, currentPassword: event.target.value })}
-                required
-              />
-              <PasswordInput
-                label="New password"
-                name="newPassword"
-                autoComplete="new-password"
-                value={passwordForm.newPassword}
-                onChange={(event) => setPasswordForm({ ...passwordForm, newPassword: event.target.value })}
-                required
-              />
-              <p className="muted auth-password-rule">Use at least 8 characters, one uppercase letter, and one special character.</p>
-              <PasswordInput
-                label="Confirm new password"
-                name="confirmPassword"
-                autoComplete="new-password"
-                value={passwordForm.confirmPassword}
-                onChange={(event) => setPasswordForm({ ...passwordForm, confirmPassword: event.target.value })}
-                required
-              />
-              <Button type="submit" disabled={busyAction === 'password'}>
-                {busyAction === 'password' ? 'Updating...' : 'Update password'}
-              </Button>
-            </form>
-
-            <div className="account-settings-form account-settings-session">
-              <div className="account-settings-form-title">
-                <LogOut size={17} />
-                <h3>Session</h3>
-              </div>
-              <p className="muted">You are signed in as {user.email}. Logging out only ends this browser session.</p>
-              <Button variant="danger" onClick={() => { logout(); onClose(); }}>
-                <LogOut size={16} />
-                Log out
-              </Button>
-            </div>
-          </div>
 
           {mobileAction === 'profile' && (
             <div className="account-settings-mobile-sheet" role="presentation" onMouseDown={closeMobileAction}>
@@ -280,15 +219,6 @@ export default function AccountSettingsModal({ open, onClose }) {
                     <X size={17} />
                   </Button>
                 </div>
-                <PasswordInput
-                  id="mobile-current-password"
-                  label="Current password"
-                  name="currentPassword"
-                  autoComplete="current-password"
-                  value={passwordForm.currentPassword}
-                  onChange={(event) => setPasswordForm({ ...passwordForm, currentPassword: event.target.value })}
-                  required
-                />
                 <PasswordInput
                   id="mobile-new-password"
                   label="New password"

@@ -21,9 +21,9 @@ export const demoStore = {
  * @param {*} options - Named settings that adjust the operation.
  * @returns {object} The newly created in-memory demo user.
  */
-export function createDemoUser({ name, email, passwordHash }) {
+export function createDemoUser({ name, email, passwordHash, isVerified = true, verificationTokenHash, verificationTokenExpires }) {
   const id = randomUUID();
-  const user = { id, name, email, passwordHash, virtualCash: 10000, createdAt: new Date().toISOString() };
+  const user = { id, name, email, passwordHash, virtualCash: 10000, isVerified, verificationTokenHash, verificationTokenExpires, createdAt: new Date().toISOString() };
   demoStore.users.set(id, user);
   demoStore.watchlists.set(id, []);
   demoStore.holdings.set(id, []);
@@ -40,9 +40,9 @@ export function createDemoUser({ name, email, passwordHash }) {
  * @param {*} options - Named settings that adjust the operation.
  * @returns {*} The requested or create demo user result.
  */
-export function getOrCreateDemoUser({ name = 'Demo Student', email = 'demo@stockpulse.test', passwordHash }) {
+export function getOrCreateDemoUser({ name = 'Demo Student', email = 'demo@stockpulse.test', passwordHash, isVerified = true, verificationTokenHash, verificationTokenExpires }) {
   const existingUser = findDemoUserByEmail(email);
-  return existingUser || createDemoUser({ name, email, passwordHash });
+  return existingUser || createDemoUser({ name, email, passwordHash, isVerified, verificationTokenHash, verificationTokenExpires });
 }
 
 /**
@@ -53,6 +53,16 @@ export function getOrCreateDemoUser({ name = 'Demo Student', email = 'demo@stock
  */
 export function findDemoUserByEmail(email) {
   return Array.from(demoStore.users.values()).find((user) => user.email === email);
+}
+
+/**
+ * Finds an in-memory user by the stored verification token hash.
+ * The plain email-verification token is never stored, so matching must happen against the hash.
+ * @param {string} tokenHash - SHA-256 hash of the verification token sent by email.
+ * @returns {*} The matching demo user, or undefined when no user has that token hash.
+ */
+export function findDemoUserByVerificationTokenHash(tokenHash) {
+  return Array.from(demoStore.users.values()).find((user) => user.verificationTokenHash === tokenHash);
 }
 
 /**

@@ -92,6 +92,10 @@ async function request(path, options = {}, fallbackResolver) {
   if (!response.ok) {
     const error = new Error(data?.message || `API request failed with status ${response.status}.`);
     error.status = response.status;
+    error.code = data?.code;
+    error.email = data?.email;
+    error.retryAfterSeconds = data?.retryAfterSeconds;
+    error.canResendVerification = Boolean(data?.canResendVerification);
     throw error;
   }
 
@@ -854,6 +858,14 @@ export const api = {
    * @returns {Promise<object>} A promise resolving to the API response.
    */
   register: (payload) => request('/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
+
+  /**
+   * Requests a fresh verification email for an unverified account.
+   * Keeping this endpoint in the API layer prevents pages from knowing backend route strings.
+   * @param {object} payload - Email address that should receive another verification email.
+   * @returns {Promise<object>} A promise resolving to the API response.
+   */
+  resendVerification: (payload) => request('/auth/resend-verification', { method: 'POST', body: JSON.stringify(payload) }),
 
   /**
    * Returns the current user needed by the calling screen or service.
