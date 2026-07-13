@@ -1,4 +1,4 @@
-﻿/* ======================================================
+/* ======================================================
    Cinematic Auth Theme Lock
 ====================================================== */
 /* Auth pages intentionally keep the cinematic dark identity in both light and dark app themes. */
@@ -27,6 +27,7 @@
   --accent: #8ea2ff;
   --accent-strong: #6366f1;
   --purple: #7c3aed;
+  color-scheme: dark;
   color: #eff7ff;
 }
 

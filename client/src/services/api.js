@@ -9,8 +9,9 @@ import {
   initialPortfolio,
 } from '../data/mockData';
 
-// Same-origin /api proxies keep the HttpOnly session first-party in local development and production.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+// Production must stay same-origin even if an old Vercel environment variable still points at Render.
+// Development may override the URL for isolated tests, while normal Vite usage also goes through /api.
+const API_BASE_URL = import.meta.env.PROD ? '/api' : (import.meta.env.VITE_API_BASE_URL || '/api');
 let sessionCsrfToken = '';
 const STORAGE_KEYS = {
   token: 'stockpulse_token',

@@ -1,4 +1,4 @@
-﻿/* ======================================================
+/* ======================================================
    Final Cinematic Auth Light Mode Neutralizer
 ====================================================== */
 /* Final light-mode neutralizer for the auth pages: shared controls must not inherit white app chrome here. */
@@ -63,6 +63,18 @@
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
+/* Saved credentials must retain the auth page's dark glass surface in every app theme. */
+.public-shell:has(.cinematic-auth-screen) .cinematic-field .input:-webkit-autofill,
+.public-shell:has(.cinematic-auth-screen) .cinematic-field .input:-webkit-autofill:hover,
+.public-shell:has(.cinematic-auth-screen) .cinematic-field .input:-webkit-autofill:focus,
+.public-shell:has(.cinematic-auth-screen) .cinematic-field .input:autofill {
+  border-color: rgba(129, 176, 255, 0.2) !important;
+  -webkit-text-fill-color: #eff7ff !important;
+  caret-color: #eff7ff;
+  -webkit-box-shadow: 0 0 0 1000px rgba(4, 9, 22, 0.98) inset !important;
+  box-shadow: 0 0 0 1000px rgba(4, 9, 22, 0.98) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
 :root.light .public-shell:has(.cinematic-auth-screen) .input-label,
 :root.light .public-shell:has(.cinematic-auth-screen) .cinematic-field > svg,
 :root.light .public-shell:has(.cinematic-auth-screen) .password-visibility-toggle,
