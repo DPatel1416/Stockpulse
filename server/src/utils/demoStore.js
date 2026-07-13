@@ -21,9 +21,38 @@ export const demoStore = {
  * @param {*} options - Named settings that adjust the operation.
  * @returns {object} The newly created in-memory demo user.
  */
-export function createDemoUser({ name, email, passwordHash, isVerified = true, verificationTokenHash, verificationTokenExpires }) {
+export function createDemoUser({
+  name,
+  email,
+  passwordHash,
+  isVerified = true,
+  verificationTokenHash,
+  verificationTokenExpires,
+  passwordResetTokenHash,
+  passwordResetTokenExpires,
+  failedLoginAttempts = 0,
+  loginLockUntil,
+  loginLockLevel = 0,
+  sessionVersion = 0,
+}) {
   const id = randomUUID();
-  const user = { id, name, email, passwordHash, virtualCash: 10000, isVerified, verificationTokenHash, verificationTokenExpires, createdAt: new Date().toISOString() };
+  const user = {
+    id,
+    name,
+    email,
+    passwordHash,
+    virtualCash: 10000,
+    isVerified,
+    verificationTokenHash,
+    verificationTokenExpires,
+    passwordResetTokenHash,
+    passwordResetTokenExpires,
+    failedLoginAttempts,
+    loginLockUntil,
+    loginLockLevel,
+    sessionVersion,
+    createdAt: new Date().toISOString(),
+  };
   demoStore.users.set(id, user);
   demoStore.watchlists.set(id, []);
   demoStore.holdings.set(id, []);
@@ -63,6 +92,15 @@ export function findDemoUserByEmail(email) {
  */
 export function findDemoUserByVerificationTokenHash(tokenHash) {
   return Array.from(demoStore.users.values()).find((user) => user.verificationTokenHash === tokenHash);
+}
+
+/**
+ * Finds an in-memory user by the stored password-reset token hash.
+ * @param {string} tokenHash - SHA-256 hash of the token received from the reset link.
+ * @returns {object|undefined} Matching demo user when the reset token is valid.
+ */
+export function findDemoUserByPasswordResetTokenHash(tokenHash) {
+  return Array.from(demoStore.users.values()).find((user) => user.passwordResetTokenHash === tokenHash);
 }
 
 /**

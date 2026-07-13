@@ -3,11 +3,11 @@
  */
 import { Router } from 'express';
 import { addWatchlistItem, listWatchlist, removeWatchlistItem } from '../controllers/watchlistController.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requireCsrf } from '../middleware/auth.js';
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth, requireCsrf);
 router.get('/', listWatchlist);
 router.post('/', addWatchlistItem);
 router.delete('/:ticker', removeWatchlistItem);

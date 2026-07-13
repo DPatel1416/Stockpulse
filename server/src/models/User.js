@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     verificationTokenHash: { type: String, default: undefined, index: true },
     verificationTokenExpires: { type: Date, default: undefined },
+    passwordResetTokenHash: { type: String, default: undefined, index: true },
+    passwordResetTokenExpires: { type: Date, default: undefined },
+    failedLoginAttempts: { type: Number, default: 0, min: 0 },
+    loginLockUntil: { type: Date, default: undefined },
+    loginLockLevel: { type: Number, default: 0, min: 0, max: 2 },
+    sessionVersion: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true },
 );

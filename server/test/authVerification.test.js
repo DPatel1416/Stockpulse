@@ -6,6 +6,7 @@ import { beforeEach, test } from 'vitest';
 import { login, register, resendVerification, verifyEmail } from '../src/controllers/authController.js';
 import { demoStore, findDemoUserByEmail } from '../src/utils/demoStore.js';
 import { hashVerificationToken, resetVerificationResendLimits } from '../src/utils/emailVerification.js';
+import { SESSION_COOKIE_NAME } from '../src/utils/sessionCookies.js';
 
 const TEST_USER = {
   name: 'Verification Tester',
@@ -65,6 +66,16 @@ function createResponse() {
     statusCode: 200,
     body: null,
     redirectedTo: '',
+    cookies: [],
+    clearedCookies: [],
+    cookie(name, value, options) {
+      this.cookies.push({ name, value, options });
+      return this;
+    },
+    clearCookie(name, options) {
+      this.clearedCookies.push({ name, options });
+      return this;
+    },
     status(code) {
       this.statusCode = code;
       return this;
@@ -195,13 +206,16 @@ test('login before verification is blocked with a resend-friendly error', async 
   assert.equal(response.body.canResendVerification, true);
 });
 
-test('login after verification returns the normal JWT session', async () => {
+test('login after verification returns an HttpOnly cookie session', async () => {
   const token = await registerAndExtractToken();
   await invoke(verifyEmail, { query: { token, format: 'json' } });
 
   const response = await invoke(login, { body: { email: TEST_USER.email, password: TEST_USER.password } });
 
   assert.equal(response.statusCode, 200);
-  assert.ok(response.body.token);
+  assert.equal(response.body.token, undefined);
+  assert.ok(response.body.csrfToken);
   assert.equal(response.body.user.email, TEST_USER.email);
+  assert.equal(response.cookies[0].name, SESSION_COOKIE_NAME);
+  assert.equal(response.cookies[0].options.httpOnly, true);
 });

@@ -33,6 +33,7 @@ const ROTATING_WORDS = [
 
 const emptyLoginForm = { email: '', password: '' };
 const emptyRegisterForm = { name: '', email: '', password: '', confirmPassword: '' };
+const emptyPasswordResetForm = { newPassword: '', confirmPassword: '' };
 
 // GoogleLogo uses Google's official four-color mark so the disabled sign-in button still looks professional.
 /**
@@ -61,12 +62,17 @@ function GoogleLogo() {
 export default function Login({ initialMode = 'login' }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { login, register, resendVerification, isAuthenticating } = useAuth();
+  const { login, register, requestPasswordReset, resendVerification, resetPassword, isAuthenticating } = useAuth();
   const { showToast } = useToasts();
   const [mode, setMode] = useState(initialMode === 'register' ? 'register' : 'login');
   const [loginForm, setLoginForm] = useState(emptyLoginForm);
   const [registerForm, setRegisterForm] = useState(emptyRegisterForm);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotStep, setForgotStep] = useState('request');
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [passwordResetToken, setPasswordResetToken] = useState('');
+  const [passwordResetForm, setPasswordResetForm] = useState(emptyPasswordResetForm);
+  const [forgotBusy, setForgotBusy] = useState(false);
   const [verificationNoticeEmail, setVerificationNoticeEmail] = useState('');
   const [unverifiedEmail, setUnverifiedEmail] = useState('');
   const [verificationStatus, setVerificationStatus] = useState('');
@@ -95,6 +101,16 @@ export default function Login({ initialMode = 'login' }) {
   }, [searchParams, setSearchParams, showToast]);
 
   useEffect(() => {
+    const resetToken = String(searchParams.get('resetToken') || '').trim();
+    if (!resetToken) return;
+
+    setMode('login');
+    setPasswordResetToken(resetToken);
+    setPasswordResetForm(emptyPasswordResetForm);
+    setForgotStep('reset');
+    setShowForgotPassword(true);
+  }, [searchParams]);
+  useEffect(() => {
     const timer = window.setInterval(() => {
       setWordIndex((current) => (current + 1) % ROTATING_WORDS.length);
     }, 2600);
@@ -112,12 +128,24 @@ export default function Login({ initialMode = 'login' }) {
      * @returns {void} No value is returned; the modal state is updated when needed.
      */
     function handleEscape(event) {
-      if (event.key === 'Escape') setShowForgotPassword(false);
+      if (event.key !== 'Escape') return;
+
+      setShowForgotPassword(false);
+      setForgotBusy(false);
+      setPasswordResetToken('');
+      setPasswordResetForm(emptyPasswordResetForm);
+      setForgotStep('request');
+
+      if (searchParams.has('resetToken')) {
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete('resetToken');
+        setSearchParams(nextParams, { replace: true });
+      }
     }
 
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [showForgotPassword]);
+  }, [searchParams, setSearchParams, showForgotPassword]);
 
   /**
    * Handles the login submit interaction and coordinates its related state changes.
@@ -201,9 +229,8 @@ export default function Login({ initialMode = 'login' }) {
   }
 
   /**
-   * Opens the forgot-password placeholder only after the typed email has a valid shape.
-   * The real reset flow is intentionally left as a future feature to avoid unnecessary SMTP setup.
-   * @returns {void} No value is returned; the modal or validation toast is shown.
+   * Opens the password-recovery dialog after validating the email already entered on the login card.
+   * @returns {void} The request step is prepared for the selected email address.
    */
   function handleForgotPassword() {
     if (!isValidEmail(loginForm.email)) {
@@ -211,9 +238,90 @@ export default function Login({ initialMode = 'login' }) {
       return;
     }
 
+    setForgotEmail(loginForm.email.trim().toLowerCase());
+    setPasswordResetToken('');
+    setPasswordResetForm(emptyPasswordResetForm);
+    setForgotStep('request');
     setShowForgotPassword(true);
   }
 
+  /**
+   * Closes password recovery and removes an emailed reset token from the browser URL.
+   * @returns {void} Modal state and sensitive URL state are cleared.
+   */
+  function closeForgotPassword() {
+    setShowForgotPassword(false);
+    setForgotBusy(false);
+    setPasswordResetForm(emptyPasswordResetForm);
+
+    if (searchParams.has('resetToken')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('resetToken');
+      setSearchParams(nextParams, { replace: true });
+    }
+
+    setPasswordResetToken('');
+    setForgotStep('request');
+  }
+
+  /**
+   * Sends a password-reset link through the backend without revealing whether the account exists.
+   * @param {SubmitEvent} event - Forgot-password form submission event.
+   * @returns {Promise<void>} Resolves after the request response is displayed.
+   */
+  async function handlePasswordResetRequest(event) {
+    event.preventDefault();
+
+    if (!isValidEmail(forgotEmail)) {
+      showToast('Enter a valid email address.', 'error');
+      return;
+    }
+
+    setForgotBusy(true);
+    try {
+      const result = await requestPasswordReset({ email: forgotEmail.trim().toLowerCase() });
+      setForgotStep('sent');
+      showToast(result.message || 'Check your inbox for a password-reset link.', 'success');
+    } catch (error) {
+      showToast(error.message || 'Unable to request a password-reset email.', 'error');
+    } finally {
+      setForgotBusy(false);
+    }
+  }
+
+  /**
+   * Validates and submits a replacement password with the one-time token from the email.
+   * @param {SubmitEvent} event - Reset-password form submission event.
+   * @returns {Promise<void>} Resolves after the password is changed or an error is displayed.
+   */
+  async function handlePasswordResetSubmit(event) {
+    event.preventDefault();
+
+    if (!isStrongPassword(passwordResetForm.newPassword)) {
+      showToast(PASSWORD_REQUIREMENT_MESSAGE, 'error');
+      return;
+    }
+
+    if (passwordResetForm.newPassword !== passwordResetForm.confirmPassword) {
+      showToast('New passwords must match.', 'error');
+      return;
+    }
+
+    setForgotBusy(true);
+    try {
+      const result = await resetPassword({
+        token: passwordResetToken,
+        newPassword: passwordResetForm.newPassword,
+      });
+      setLoginForm((current) => ({ ...current, email: result.email || current.email, password: '' }));
+      showToast(result.message || 'Password updated. You can now log in.', 'success');
+      closeForgotPassword();
+    } catch (error) {
+      showToast(error.message || 'Unable to reset your password.', 'error');
+    } finally {
+      setForgotBusy(false);
+    }
+  }
   /**
    * Requests another verification email for the selected account.
    * This action is shown only for unverified-account states so regular login remains uncluttered.
@@ -419,24 +527,59 @@ export default function Login({ initialMode = 'login' }) {
       </div>
 
       {showForgotPassword && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={() => setShowForgotPassword(false)}>
-          <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="forgot-password-title" onMouseDown={(event) => event.stopPropagation()}>
-            <GlassCard className="confirm-modal-card" bodyClassName="confirm-modal-body" variant="glow">
+        <div className="modal-backdrop" role="presentation" onMouseDown={closeForgotPassword}>
+          <div className="modal-card password-reset-modal-card" role="dialog" aria-modal="true" aria-labelledby="forgot-password-title" onMouseDown={(event) => event.stopPropagation()}>
+            <GlassCard className="confirm-modal-card password-reset-modal-surface" bodyClassName="confirm-modal-body" variant="glow">
               <div className="section-title">
                 <span className="brand-mark">
                   <KeyRound size={20} />
                 </span>
-                <Button variant="ghost" iconOnly aria-label="Close forgot password dialog" onClick={() => setShowForgotPassword(false)}>
+                <Button variant="ghost" iconOnly aria-label="Close password reset dialog" onClick={closeForgotPassword}>
                   <X size={18} />
                 </Button>
               </div>
-              <h2 id="forgot-password-title" className="confirm-modal-title">Password reset coming soon</h2>
-              <p className="muted confirm-modal-description">
-                Password recovery for {loginForm.email.trim()} will be added in a future update.
-              </p>
-              <div className="confirm-modal-actions">
-                <Button onClick={() => setShowForgotPassword(false)}>Got it</Button>
-              </div>
+
+              {forgotStep === 'request' && (
+                <form className="password-reset-form" onSubmit={handlePasswordResetRequest}>
+                  <div>
+                    <h2 id="forgot-password-title" className="confirm-modal-title">Reset your password</h2>
+                    <p className="muted confirm-modal-description">We will email a secure, one-time reset link to your StockPulse account.</p>
+                  </div>
+                  <Input label="Email" name="forgotEmail" type="email" autoComplete="email" value={forgotEmail} onChange={(event) => setForgotEmail(event.target.value)} required />
+                  <div className="password-reset-actions">
+                    <Button type="button" variant="ghost" onClick={closeForgotPassword}>Cancel</Button>
+                    <Button type="submit" disabled={forgotBusy}>{forgotBusy ? 'Sending...' : 'Send reset link'}</Button>
+                  </div>
+                </form>
+              )}
+
+              {forgotStep === 'sent' && (
+                <div className="password-reset-status">
+                  <Mail size={28} aria-hidden="true" />
+                  <div>
+                    <h2 id="forgot-password-title" className="confirm-modal-title">Check your inbox</h2>
+                    <p className="muted confirm-modal-description">If an account exists for {forgotEmail}, a password-reset link is on its way. The link expires in 30 minutes.</p>
+                  </div>
+                  <Button onClick={closeForgotPassword}>Back to login</Button>
+                </div>
+              )}
+
+              {forgotStep === 'reset' && (
+                <form className="password-reset-form" onSubmit={handlePasswordResetSubmit}>
+                  <div>
+                    <h2 id="forgot-password-title" className="confirm-modal-title">Choose a new password</h2>
+                    <p className="muted confirm-modal-description">Use at least 8 characters, one uppercase letter, and one special character.</p>
+                  </div>
+                  <div className="password-reset-fields">
+                    <PasswordInput label="New password" name="resetNewPassword" autoComplete="new-password" value={passwordResetForm.newPassword} onChange={(event) => setPasswordResetForm({ ...passwordResetForm, newPassword: event.target.value })} required />
+                    <PasswordInput label="Confirm new password" name="resetConfirmPassword" autoComplete="new-password" value={passwordResetForm.confirmPassword} onChange={(event) => setPasswordResetForm({ ...passwordResetForm, confirmPassword: event.target.value })} required />
+                  </div>
+                  <div className="password-reset-actions">
+                    <Button type="button" variant="ghost" onClick={closeForgotPassword}>Cancel</Button>
+                    <Button type="submit" disabled={forgotBusy}>{forgotBusy ? 'Updating...' : 'Update password'}</Button>
+                  </div>
+                </form>
+              )}
             </GlassCard>
           </div>
         </div>

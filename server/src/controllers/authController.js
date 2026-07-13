@@ -4,11 +4,12 @@
 import bcrypt from 'bcryptjs';
 import { isDatabaseConnected } from '../config/db.js';
 import User from '../models/User.js';
-import { sendVerificationEmail } from '../services/emailService.js';
+import { sendPasswordResetEmail, sendVerificationEmail } from '../services/emailService.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import {
   createDemoUser,
   findDemoUserByEmail,
+  findDemoUserByPasswordResetTokenHash,
   findDemoUserByVerificationTokenHash,
   getOrCreateDemoUser,
 } from '../utils/demoStore.js';
@@ -19,12 +20,24 @@ import {
   isVerificationTokenExpired,
   recordVerificationResend,
 } from '../utils/emailVerification.js';
+import {
+  checkPasswordResetLimit,
+  createPasswordResetToken,
+  hashPasswordResetToken,
+  isPasswordResetTokenExpired,
+  recordPasswordResetRequest,
+} from '../utils/passwordReset.js';
+import { clearSessionCookie, createCsrfToken, setSessionCookie } from '../utils/sessionCookies.js';
 import { signToken } from '../utils/tokens.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
 const PASSWORD_REQUIREMENT_MESSAGE = 'Password must be at least 8 characters and include one uppercase letter and one special character.';
 const UNVERIFIED_MESSAGE = 'Your email address has not been verified yet. Please verify your email before logging in.';
+const PASSWORD_RESET_REQUEST_MESSAGE = 'If an account exists for that email, a password-reset link has been sent.';
+const MAX_FAILED_LOGIN_ATTEMPTS = 5;
+const FIRST_LOGIN_LOCK_MS = 60 * 60 * 1000;
+const REPEATED_LOGIN_LOCK_MS = 24 * 60 * 60 * 1000;
 
 
 /**
@@ -74,6 +87,23 @@ function serializeUser(user) {
 }
 
 /**
+ * Creates a revocable JWT, places it in an HttpOnly cookie, and returns its CSRF companion.
+ * The frontend receives only the CSRF token; browser JavaScript never receives the signed JWT.
+ * @param {object} res - Express response receiving the session cookie.
+ * @param {object} user - Authenticated user who owns the session.
+ * @returns {string} CSRF token signed into the session and returned to the trusted frontend.
+ */
+function issueBrowserSession(res, user) {
+  const csrfToken = createCsrfToken();
+  const token = signToken(String(user._id || user.id), {
+    csrfToken,
+    sessionVersion: Number(user.sessionVersion || 0),
+  });
+  setSessionCookie(res, token);
+  return csrfToken;
+}
+
+/**
  * Returns the user id needed by the calling screen or service.
  * Centralizing this lookup keeps callers independent from where the data comes from.
  * @param {*} user - Authenticated user whose data is being read or changed.
@@ -103,6 +133,14 @@ async function findUserByVerificationHash(tokenHash) {
   return isDatabaseConnected() ? User.findOne({ verificationTokenHash: tokenHash }) : findDemoUserByVerificationTokenHash(tokenHash);
 }
 
+/**
+ * Finds a user by the stored password-reset token hash.
+ * @param {string} tokenHash - SHA-256 hash received from the reset form.
+ * @returns {Promise<object|undefined|null>} Matching user record, if the token exists.
+ */
+async function findUserByPasswordResetHash(tokenHash) {
+  return isDatabaseConnected() ? User.findOne({ passwordResetTokenHash: tokenHash }) : findDemoUserByPasswordResetTokenHash(tokenHash);
+}
 /**
  * Persists verification-token fields on an existing user.
  * A shared helper keeps new registration and resend behavior identical.
@@ -140,6 +178,117 @@ async function clearVerificationToken(user, markVerified = false) {
   }
 
   return user;
+}
+
+/**
+ * Stores a new one-time password-reset token and invalidates any previous reset link.
+ * @param {object} user - User requesting password recovery.
+ * @param {string} tokenHash - Hashed token to persist.
+ * @param {Date} expiresAt - Reset-token expiration timestamp.
+ * @returns {Promise<object>} Updated user record.
+ */
+async function storePasswordResetToken(user, tokenHash, expiresAt) {
+  user.passwordResetTokenHash = tokenHash;
+  user.passwordResetTokenExpires = expiresAt;
+
+  if (isDatabaseConnected()) {
+    await user.save();
+  }
+
+  return user;
+}
+
+/**
+ * Clears password-reset fields so a link cannot be reused.
+ * @param {object} user - User whose reset token should be invalidated.
+ * @returns {Promise<object>} Updated user record.
+ */
+async function clearPasswordResetToken(user) {
+  user.passwordResetTokenHash = undefined;
+  user.passwordResetTokenExpires = undefined;
+
+  if (isDatabaseConnected()) {
+    await user.save();
+  }
+
+  return user;
+}
+
+/**
+ * Saves authentication-security fields for MongoDB users while demo users update by reference.
+ * @param {object} user - User whose security state changed.
+ * @returns {Promise<object>} Persisted user record.
+ */
+async function saveLoginSecurityState(user) {
+  if (isDatabaseConnected()) {
+    await user.save();
+  }
+
+  return user;
+}
+
+/**
+ * Returns an active login lock or clears an expired lock before another password attempt.
+ * The escalation level is retained after expiry so repeated attacks move from one hour to one day.
+ * @param {object} user - User attempting to log in.
+ * @param {Date} now - Clock value used to evaluate the lock.
+ * @returns {Promise<{locked:boolean,retryAfterSeconds:number}>} Current lock decision.
+ */
+async function evaluateLoginLock(user, now = new Date()) {
+  if (!user?.loginLockUntil) return { locked: false, retryAfterSeconds: 0 };
+
+  const remainingMs = new Date(user.loginLockUntil).getTime() - now.getTime();
+  if (remainingMs > 0) {
+    return { locked: true, retryAfterSeconds: Math.ceil(remainingMs / 1000) };
+  }
+
+  user.failedLoginAttempts = 0;
+  user.loginLockUntil = undefined;
+  await saveLoginSecurityState(user);
+  return { locked: false, retryAfterSeconds: 0 };
+}
+
+/**
+ * Records one incorrect password and creates the next progressive lock when the threshold is reached.
+ * @param {object} user - User whose password was incorrect.
+ * @param {Date} now - Clock value used to create a lock expiration.
+ * @returns {Promise<{locked:boolean,retryAfterSeconds:number,lockDurationHours:number}>} Updated attempt result.
+ */
+async function recordFailedLogin(user, now = new Date()) {
+  user.failedLoginAttempts = Number(user.failedLoginAttempts || 0) + 1;
+
+  if (user.failedLoginAttempts < MAX_FAILED_LOGIN_ATTEMPTS) {
+    await saveLoginSecurityState(user);
+    return { locked: false, retryAfterSeconds: 0, lockDurationHours: 0 };
+  }
+
+  const nextLevel = Math.min(Number(user.loginLockLevel || 0) + 1, 2);
+  const durationMs = nextLevel === 1 ? FIRST_LOGIN_LOCK_MS : REPEATED_LOGIN_LOCK_MS;
+  user.failedLoginAttempts = 0;
+  user.loginLockLevel = nextLevel;
+  user.loginLockUntil = new Date(now.getTime() + durationMs);
+  await saveLoginSecurityState(user);
+
+  return {
+    locked: true,
+    retryAfterSeconds: Math.ceil(durationMs / 1000),
+    lockDurationHours: durationMs / (60 * 60 * 1000),
+  };
+}
+
+/**
+ * Clears failed-login history after valid credentials or password recovery.
+ * @param {object} user - User whose successful authentication should reset escalation.
+ * @returns {Promise<object>} Updated user record.
+ */
+async function clearLoginSecurityState(user) {
+  const hasSecurityState = Number(user.failedLoginAttempts || 0) > 0 || Boolean(user.loginLockUntil) || Number(user.loginLockLevel || 0) > 0;
+  if (!hasSecurityState) return user;
+
+  user.failedLoginAttempts = 0;
+  user.loginLockUntil = undefined;
+  user.loginLockLevel = 0;
+  return saveLoginSecurityState(user);
 }
 
 /**
@@ -251,10 +400,34 @@ export const login = catchAsync(async (req, res) => {
     user = createDemoUser({ name: 'Demo Student', email: normalizedEmail, passwordHash: await bcrypt.hash(password, 12), isVerified: true });
   }
 
+  const lock = user ? await evaluateLoginLock(user) : { locked: false, retryAfterSeconds: 0 };
+  if (lock.locked) {
+    return res.status(423).json({
+      message: 'This account is temporarily locked after too many incorrect password attempts. Try again later or reset your password.',
+      code: 'LOGIN_LOCKED',
+      retryAfterSeconds: lock.retryAfterSeconds,
+    });
+  }
+
   const isValidPassword = user ? await bcrypt.compare(password, user.passwordHash) : false;
   if (!user || !isValidPassword) {
+    if (user) {
+      const failedAttempt = await recordFailedLogin(user);
+      if (failedAttempt.locked) {
+        const durationLabel = failedAttempt.lockDurationHours === 1 ? '1 hour' : '24 hours';
+        return res.status(423).json({
+          message: `Too many incorrect password attempts. This account is locked for ${durationLabel}.`,
+          code: 'LOGIN_LOCKED',
+          retryAfterSeconds: failedAttempt.retryAfterSeconds,
+          lockDurationHours: failedAttempt.lockDurationHours,
+        });
+      }
+    }
+
     return res.status(401).json({ message: 'Invalid email or password.' });
   }
+
+  await clearLoginSecurityState(user);
 
   if (user.isVerified === false) {
     return res.status(403).json({
@@ -265,7 +438,8 @@ export const login = catchAsync(async (req, res) => {
     });
   }
 
-  res.json({ token: signToken(String(user._id || user.id)), user: serializeUser(user) });
+  const csrfToken = issueBrowserSession(res, user);
+  res.json({ user: serializeUser(user), csrfToken });
 });
 
 
@@ -362,6 +536,96 @@ export const resendVerification = catchAsync(async (req, res) => {
 });
 
 /**
+ * Requests a password-reset email without revealing whether an account exists.
+ * Known users receive a new one-time token; unknown addresses receive the same public response.
+ * @param {object} req - Express request containing the account email.
+ * @param {object} res - Express response used to return the generic request result.
+ * @returns {Promise<*>} Password-reset request response.
+ */
+export const requestPasswordReset = catchAsync(async (req, res) => {
+  const normalizedEmail = normalizeEmail(req.body.email);
+
+  if (!normalizedEmail) {
+    return res.status(400).json({ message: 'Email is required.' });
+  }
+
+  if (!isValidEmail(normalizedEmail)) {
+    return res.status(400).json({ message: 'Enter a valid email address.' });
+  }
+
+  const rateLimit = checkPasswordResetLimit(normalizedEmail);
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      message: `Please wait ${rateLimit.retryAfterSeconds} seconds before requesting another password-reset email.`,
+      retryAfterSeconds: rateLimit.retryAfterSeconds,
+    });
+  }
+
+  const user = await findUserByEmail(normalizedEmail);
+  recordPasswordResetRequest(normalizedEmail);
+
+  if (user) {
+    const reset = createPasswordResetToken();
+    await storePasswordResetToken(user, reset.tokenHash, reset.expiresAt);
+
+    try {
+      await sendPasswordResetEmail({ user, token: reset.token });
+    } catch (error) {
+      // Keep the public response generic so Resend failures cannot reveal whether this account exists.
+      console.error('Password-reset email delivery failed.', error.message);
+    }
+  }
+
+  return res.json({ message: PASSWORD_RESET_REQUEST_MESSAGE });
+});
+
+/**
+ * Replaces a password after validating a short-lived, one-time reset token.
+ * @param {object} req - Express request containing the plain token and replacement password.
+ * @param {object} res - Express response used to confirm the completed reset.
+ * @returns {Promise<*>} Password-reset result.
+ */
+export const resetPassword = catchAsync(async (req, res) => {
+  const token = String(req.body.token || '').trim();
+  const newPassword = String(req.body.newPassword || '');
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ message: 'Reset token and new password are required.' });
+  }
+
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({ message: PASSWORD_REQUIREMENT_MESSAGE });
+  }
+
+  const user = await findUserByPasswordResetHash(hashPasswordResetToken(token));
+  if (!user) {
+    return res.status(400).json({
+      message: 'This password-reset link is invalid or has already been used.',
+      code: 'PASSWORD_RESET_INVALID',
+    });
+  }
+
+  if (isPasswordResetTokenExpired(user.passwordResetTokenExpires)) {
+    await clearPasswordResetToken(user);
+    return res.status(410).json({
+      message: 'This password-reset link has expired. Request a new one from the login page.',
+      code: 'PASSWORD_RESET_EXPIRED',
+    });
+  }
+
+  user.passwordHash = await bcrypt.hash(newPassword, 12);
+  user.failedLoginAttempts = 0;
+  user.loginLockUntil = undefined;
+  user.loginLockLevel = 0;
+  user.sessionVersion = Number(user.sessionVersion || 0) + 1;
+  await clearPasswordResetToken(user);
+
+  return res.json({
+    message: 'Password updated. You can now log in with your new password.',
+    email: user.email,
+  });
+});
+/**
  * Returns the currently authenticated user profile.
  * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
  * @param {*} req - Express request containing route parameters, query values, body data, and authentication context.
@@ -369,7 +633,21 @@ export const resendVerification = catchAsync(async (req, res) => {
  * @returns {Promise<*>} A promise resolving to the me result.
  */
 export const me = catchAsync(async (req, res) => {
-  res.json({ user: serializeUser(req.user) });
+  const csrfToken = req.authMethod === 'cookie' && !req.auth?.csrfToken
+    ? issueBrowserSession(res, req.user)
+    : req.auth?.csrfToken;
+  res.json({ user: serializeUser(req.user), csrfToken });
+});
+
+/**
+ * Clears the current browser's HttpOnly session without affecting sessions on other devices.
+ * @param {object} req - Authenticated Express request.
+ * @param {object} res - Express response receiving the expired cookie.
+ * @returns {void} A logout confirmation is returned after clearing the cookie.
+ */
+export const logout = catchAsync(async (req, res) => {
+  clearSessionCookie(res);
+  res.json({ message: 'Logged out successfully.' });
 });
 
 /**
@@ -421,12 +699,17 @@ export const changePassword = catchAsync(async (req, res) => {
   if (!user) return res.status(404).json({ message: 'User not found.' });
 
   user.passwordHash = await bcrypt.hash(newPassword, 12);
+  user.failedLoginAttempts = 0;
+  user.loginLockUntil = undefined;
+  user.loginLockLevel = 0;
+  user.sessionVersion = Number(user.sessionVersion || 0) + 1;
 
   if (isDatabaseConnected()) {
     await user.save();
   }
 
-  res.json({ user: serializeUser(user), message: 'Password updated.' });
+  const csrfToken = issueBrowserSession(res, user);
+  res.json({ user: serializeUser(user), csrfToken, message: 'Password updated.' });
 });
 
 /**
@@ -446,5 +729,6 @@ export const demoSession = catchAsync(async (req, res) => {
       )
     : getOrCreateDemoUser({ passwordHash, isVerified: true });
 
-  res.json({ token: signToken(String(user._id || user.id)), user: serializeUser(user) });
+  const csrfToken = issueBrowserSession(res, user);
+  res.json({ user: serializeUser(user), csrfToken });
 });

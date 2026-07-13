@@ -47,6 +47,7 @@ import './styles/pages/login-register.css';
 import './styles/pages/login-light.css';
 import './styles/pages/account-simplified.css';
 import './styles/components/auth-verification.css';
+import './styles/components/auth-password-reset.css';
 import './styles/pages/login-theme-lock.css';
 import './styles/pages/login-logo.css';
 import './styles/pages/login-neutralizer.css';

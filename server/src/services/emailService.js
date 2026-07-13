@@ -2,6 +2,7 @@
  * File purpose: Sends StockPulse transactional emails through Resend while keeping secrets on the server.
  */
 import { renderVerificationEmail } from '../templates/verificationEmailTemplate.js';
+import { renderPasswordResetEmail } from '../templates/passwordResetEmailTemplate.js';
 
 const RESEND_EMAILS_URL = 'https://api.resend.com/emails';
 const DEFAULT_FROM_EMAIL = 'StockPulse Learn <onboarding@resend.dev>';
@@ -35,6 +36,19 @@ export function buildVerificationUrl(req, token) {
 }
 
 /**
+ * Builds the frontend URL where a user chooses a replacement password.
+ * The API validates the token only when the form is submitted, so the email opens inside the existing login experience.
+ * @param {string} token - Plain one-time password-reset token.
+ * @returns {string} Public client URL containing the reset token.
+ */
+export function buildPasswordResetUrl(token) {
+  const clientOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+  const url = new URL('/login', clientOrigin);
+  url.searchParams.set('resetToken', token);
+  return url.toString();
+}
+
+/**
  * Sends a generic HTML email through Resend's HTTP API.
  * Using fetch avoids adding a new runtime dependency while keeping the Resend API key server-only.
  * @param {object} options - Email payload values.
@@ -49,7 +63,7 @@ export async function sendEmail({ to, subject, html, text }) {
   const from = process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_EMAIL;
 
   if (!apiKey) {
-    console.warn('RESEND_API_KEY is not configured. Verification email was not sent; configure Resend before production use.');
+    console.warn('RESEND_API_KEY is not configured. Transactional email was not sent; configure Resend before production use.');
     return { skipped: true, provider: 'resend' };
   }
 
@@ -64,7 +78,7 @@ export async function sendEmail({ to, subject, html, text }) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const error = new Error(data?.message || data?.error?.message || 'Unable to send verification email with Resend.');
+    const error = new Error(data?.message || data?.error?.message || 'Unable to send transactional email with Resend.');
     error.statusCode = 502;
     throw error;
   }
@@ -86,8 +100,27 @@ export async function sendVerificationEmail({ req, user, token }) {
   const email = renderVerificationEmail({ name: user.name, verificationUrl });
   const result = await sendEmail({ to: user.email, subject: email.subject, html: email.html, text: email.text });
 
-  if (result.skipped) {
+  if (result.skipped && process.env.NODE_ENV !== 'production') {
     console.warn(`Local verification link for ${user.email}: ${verificationUrl}`);
+  }
+
+  return result;
+}
+
+/**
+ * Sends a one-time password-reset link using the same server-only Resend configuration as verification email.
+ * @param {object} options - Password-reset email values.
+ * @param {object} options.user - User receiving the reset email.
+ * @param {string} options.token - Plain token sent only to the user inbox.
+ * @returns {Promise<object>} Resend provider result.
+ */
+export async function sendPasswordResetEmail({ user, token }) {
+  const resetUrl = buildPasswordResetUrl(token);
+  const email = renderPasswordResetEmail({ name: user.name, resetUrl });
+  const result = await sendEmail({ to: user.email, subject: email.subject, html: email.html, text: email.text });
+
+  if (result.skipped && process.env.NODE_ENV !== 'production') {
+    console.warn(`Local password-reset link for ${user.email}: ${resetUrl}`);
   }
 
   return result;

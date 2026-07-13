@@ -9,7 +9,9 @@ import {
   initialPortfolio,
 } from '../data/mockData';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// Same-origin /api proxies keep the HttpOnly session first-party in local development and production.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+let sessionCsrfToken = '';
 const STORAGE_KEYS = {
   token: 'stockpulse_token',
   user: 'stockpulse_user',
@@ -44,12 +46,21 @@ function writeJson(key, value) {
 }
 
 /**
- * Returns the token needed by the calling screen or service.
- * Centralizing this lookup keeps callers independent from where the data comes from.
- * @returns {*} The requested token result.
+ * Stores the non-secret CSRF companion for the current in-memory cookie session.
+ * The signed JWT remains inaccessible inside the server-issued HttpOnly cookie.
+ * @param {string|undefined} token - CSRF token returned by login or session validation.
+ * @returns {void} The API request layer is updated for later mutations.
  */
-function getToken() {
-  return localStorage.getItem(STORAGE_KEYS.token);
+function setSessionCsrfToken(token) {
+  sessionCsrfToken = String(token || '');
+}
+
+/**
+ * Clears browser-readable session helpers after logout or an authentication failure.
+ * @returns {void} No server credential is touched because the JWT exists only in the cookie.
+ */
+function clearSessionSecurity() {
+  sessionCsrfToken = '';
 }
 
 /**
@@ -65,10 +76,10 @@ async function request(path, options = {}, fallbackResolver) {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   };
-  const token = getToken();
+  const method = String(options.method || 'GET').toUpperCase();
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method) && sessionCsrfToken) {
+    headers['X-CSRF-Token'] = sessionCsrfToken;
   }
 
   let response;
@@ -76,6 +87,7 @@ async function request(path, options = {}, fallbackResolver) {
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
+      credentials: 'include',
       headers,
     });
   } catch (error) {
@@ -88,8 +100,10 @@ async function request(path, options = {}, fallbackResolver) {
   }
 
   const data = await response.json().catch(() => null);
+  if (data?.csrfToken) setSessionCsrfToken(data.csrfToken);
 
   if (!response.ok) {
+    if (response.status === 401) clearSessionSecurity();
     const error = new Error(data?.message || `API request failed with status ${response.status}.`);
     error.status = response.status;
     error.code = data?.code;
@@ -852,6 +866,15 @@ export const api = {
   login: (credentials) => request('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
 
   /**
+   * Ends the server-managed browser session and expires its HttpOnly cookie.
+   * @returns {Promise<object>} Logout confirmation from the API.
+   */
+  logout: () => request('/auth/logout', { method: 'POST' }),
+
+  setSessionCsrfToken,
+  clearSessionSecurity,
+
+  /**
    * Creates a user account and starts its authenticated session.
    * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
    * @param {*} payload - Validated data supplied by the caller.
@@ -866,6 +889,20 @@ export const api = {
    * @returns {Promise<object>} A promise resolving to the API response.
    */
   resendVerification: (payload) => request('/auth/resend-verification', { method: 'POST', body: JSON.stringify(payload) }),
+
+  /**
+   * Requests a one-time password-reset link for an email address.
+   * @param {object} payload - Email address entered in the forgot-password dialog.
+   * @returns {Promise<object>} Generic password-reset request response.
+   */
+  requestPasswordReset: (payload) => request('/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) }),
+
+  /**
+   * Replaces a password using the one-time token from the reset email.
+   * @param {object} payload - Reset token and validated replacement password.
+   * @returns {Promise<object>} Completed password-reset response.
+   */
+  resetPassword: (payload) => request('/auth/reset-password', { method: 'POST', body: JSON.stringify(payload) }),
 
   /**
    * Returns the current user needed by the calling screen or service.
@@ -898,9 +935,8 @@ export const api = {
   startDemoSession: () =>
     request('/auth/demo', { method: 'POST' }, () => {
       const user = { id: 'demo-user', name: 'Demo Student', email: 'demo@stockpulse.test' };
-      localStorage.setItem(STORAGE_KEYS.token, 'demo-token');
       writeJson(STORAGE_KEYS.user, user);
-      return { demo: true, token: 'demo-token', user };
+      return { demo: true, user };
     }),
 
   /**

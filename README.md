@@ -7,7 +7,7 @@ This project is for educational use only. It does not provide financial advice, 
 ## Main Features
 
 - Cinematic React login/register experience with guest access and responsive mobile layouts.
-- Email verification for new accounts using Resend when email delivery is configured.
+- Email verification and secure one-time password recovery using Resend when email delivery is configured.
 - JWT-based authentication with protected watchlist, portfolio, account, and trading APIs.
 - Guest browsing mode for public exploration without saving data to MongoDB.
 - Dashboard with market status, portfolio snapshot, top gainers/losers, active stocks, news, earnings, and watchlist previews.
@@ -87,7 +87,7 @@ LIMIT_ORDER_POLL_MS=15000
 Create `client/.env.local` only when the frontend needs a custom API URL:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=/api
 ```
 
 Run both apps together:
@@ -112,7 +112,7 @@ Default local URLs:
 
 ### Frontend
 
-- `VITE_API_BASE_URL`: API base URL used by the React client. Set this on Vercel for production, for example `https://your-render-service.onrender.com/api`.
+- `VITE_API_BASE_URL`: Optional API base URL used during local development. Production intentionally uses the same-origin `/api` path so Vercel can proxy requests to Render and keep the secure session cookie first-party.
 
 ### Backend
 
@@ -138,11 +138,14 @@ Default local URLs:
 | GET | `/api` | No | Route catalog for the API. |
 | GET | `/health` | No | Health check for deployment monitoring. |
 | POST | `/api/auth/register` | No | Create an unverified user and send a verification email. |
-| POST | `/api/auth/login` | No | Log in a verified user and return a JWT. |
+| POST | `/api/auth/login` | No | Log in a verified user and create a secure browser session. |
+| POST | `/api/auth/forgot-password` | No | Request a one-time password-reset email without exposing account existence. |
+| POST | `/api/auth/reset-password` | No | Replace a password using a valid, unexpired reset token. |
 | POST | `/api/auth/validate-email` | No | Check basic email format/availability. |
 | GET/POST | `/api/auth/verify-email` | No | Verify an email token and redirect or return JSON. |
 | POST | `/api/auth/resend-verification` | No | Send a fresh verification email to an unverified account. |
 | POST | `/api/auth/demo` | No | Start or resume a demo API session. |
+| POST | `/api/auth/logout` | Yes | Clear the browser session cookie. |
 | GET | `/api/auth/me` | Yes | Return the authenticated user. |
 | PATCH | `/api/auth/me` | Yes | Update account display name. |
 | PATCH | `/api/auth/password` | Yes | Change password for a logged-in user. |
@@ -170,11 +173,11 @@ Default local URLs:
 
 ## Authentication Notes
 
-Registration creates a user with `isVerified = false`, stores a hashed verification token, and sends the plain token only inside the verification email. Login is blocked until the email is verified. JWTs are stored by the client after login and sent in the `Authorization: Bearer <token>` header for protected routes.
+Registration creates a user with `isVerified = false`, stores a hashed verification token, and sends the plain token only inside the verification email. Login is blocked until the email is verified. A successful browser login places the signed JWT in an `HttpOnly`, `SameSite=Lax` cookie, so frontend JavaScript cannot read or copy it. Mutating cookie-authenticated requests also send a CSRF token in the `X-CSRF-Token` header. Explicit API clients may still use bearer authentication.
 
 Guest access is handled separately on the frontend. Guest users can explore public pages and temporary watchlist-style interactions, but trading and saved portfolio data require login.
 
-The forgot-password UI is currently a future-update modal. OTP/password-reset flow is not implemented in the current codebase.
+Forgot password uses the same Resend sender as verification. The request endpoint stores only a SHA-256 token hash, emails a one-time link that expires after 30 minutes, and the login page opens a focused new-password form when that link is followed. OTP recovery is not implemented.
 
 ## Paper-Trading Notes
 
@@ -206,8 +209,8 @@ The test suite mocks external APIs where needed so tests do not depend on live R
 ### Frontend on Vercel
 
 - Deploy the `client` app through Vercel.
-- Set `VITE_API_BASE_URL` to the Render backend API URL, ending in `/api`.
-- `client/vercel.json` rewrites all routes to `index.html` so React Router works on refresh.
+- The production client calls the same-origin `/api` path; do not point browser requests directly at Render with `VITE_API_BASE_URL`.
+- `client/vercel.json` proxies `/api/*` to the Render service and sends all remaining routes to `index.html` so React Router works on refresh.
 
 ### Backend on Render
 
@@ -226,8 +229,11 @@ The test suite mocks external APIs where needed so tests do not depend on live R
 ## Security Notes
 
 - Passwords are hashed with bcrypt before storage.
-- JWTs are signed on the backend and validated by protected middleware.
-- Email verification tokens are hashed before being stored.
+- JWTs are signed on the backend, stored in secure `HttpOnly` browser cookies, and validated by protected middleware.
+- Cookie-authenticated mutations require a matching CSRF token; bearer-authenticated API clients remain supported without browser CSRF handling.
+- Password changes and successful password resets increment the user's session version, invalidating previously issued sessions.
+- Email verification and password-reset tokens are hashed before being stored.
+- Five incorrect passwords lock an account for one hour; another failed cycle after expiry escalates the lock to 24 hours.
 - Secrets belong only in `.env`, Vercel, or Render environment settings.
 - Do not commit `server/.env`, API keys, MongoDB connection strings, or JWT secrets.
 - This is an educational paper-trading app, not a production brokerage system.

@@ -12,7 +12,9 @@ import { ACCESS_CHOICE_KEY } from '../../utils/accessChoice.js';
 const authMock = vi.hoisted(() => ({
   login: vi.fn(),
   register: vi.fn(),
+  requestPasswordReset: vi.fn(),
   resendVerification: vi.fn(),
+  resetPassword: vi.fn(),
   isAuthenticating: false,
 }));
 
@@ -34,9 +36,9 @@ vi.mock('../../components/ui/Toast', () => ({
  * @param {React.ReactNode} element - Page element to render at the /login route.
  * @returns {object} React Testing Library render result.
  */
-function renderAuth(element = <Login />) {
+function renderAuth(element = <Login />, initialEntry = '/login') {
   return render(
-    <MemoryRouter initialEntries={['/login']}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
         <Route path="/login" element={element} />
         <Route path="/" element={<div>Dashboard destination</div>} />
@@ -79,7 +81,9 @@ describe('Login page', () => {
     localStorage.clear();
     authMock.login = vi.fn();
     authMock.register = vi.fn();
+    authMock.requestPasswordReset = vi.fn();
     authMock.resendVerification = vi.fn();
+    authMock.resetPassword = vi.fn();
     authMock.isAuthenticating = false;
     toastMock.showToast = vi.fn();
   });
@@ -113,18 +117,35 @@ describe('Login page', () => {
     expect(screen.getByText('Dashboard destination')).toBeInTheDocument();
   });
 
-  it('opens and closes the forgot password future-update modal', async () => {
+  it('requests a password-reset email without exposing account existence', async () => {
     const user = userEvent.setup();
+    authMock.requestPasswordReset = vi.fn(async () => ({ message: 'If an account exists for that email, a password-reset link has been sent.' }));
     renderAuth();
 
     await user.type(field(loginFace(), 'email'), 'person@example.com');
     await user.click(screen.getByRole('button', { name: /forgot password/i }));
 
-    expect(screen.getByRole('dialog', { name: /password reset coming soon/i })).toBeInTheDocument();
-    expect(screen.getByText(/password recovery for person@example.com/i)).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog', { name: /reset your password/i });
+    expect(dialog).toBeInTheDocument();
+    await user.click(within(dialog).getByRole('button', { name: /send reset link/i }));
 
-    await user.click(screen.getByRole('button', { name: /got it/i }));
+    expect(authMock.requestPasswordReset).toHaveBeenCalledWith({ email: 'person@example.com' });
+    expect(await screen.findByRole('heading', { name: /check your inbox/i })).toBeInTheDocument();
+  });
+
+  it('opens an emailed reset token and submits a matching strong password', async () => {
+    const user = userEvent.setup();
+    authMock.resetPassword = vi.fn(async () => ({ email: 'person@example.com', message: 'Password updated.' }));
+    renderAuth(<Login />, '/login?resetToken=secure-test-token');
+
+    const dialog = await screen.findByRole('dialog', { name: /choose a new password/i });
+    await user.type(dialog.querySelector('[name="resetNewPassword"]'), 'NewPassword!2');
+    await user.type(dialog.querySelector('[name="resetConfirmPassword"]'), 'NewPassword!2');
+    await user.click(within(dialog).getByRole('button', { name: /update password/i }));
+
+    expect(authMock.resetPassword).toHaveBeenCalledWith({ token: 'secure-test-token', newPassword: 'NewPassword!2' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(field(loginFace(), 'email')).toHaveValue('person@example.com');
   });
 
   it('validates register password strength before calling the API', async () => {

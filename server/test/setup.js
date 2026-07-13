@@ -4,6 +4,7 @@
 import { afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { demoStore } from '../src/utils/demoStore.js';
 import { resetVerificationResendLimits } from '../src/utils/emailVerification.js';
+import { resetPasswordResetLimits } from '../src/utils/passwordReset.js';
 
 beforeAll(() => {
   process.env.NODE_ENV = 'test';
@@ -15,6 +16,7 @@ beforeAll(() => {
 beforeEach(() => {
   Object.values(demoStore).forEach((store) => store.clear());
   resetVerificationResendLimits();
+  resetPasswordResetLimits();
   globalThis.fetch = vi.fn(async () => ({
     ok: true,
     status: 200,

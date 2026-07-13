@@ -31,26 +31,21 @@ export function AuthProvider({ children }) {
   const [isSessionReady, setIsSessionReady] = useState(false);
 
   /**
-   * Removes the saved authentication token and user after logout or failed validation.
-   * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
-   * @returns {*} The clear session result.
+   * Clears browser-readable session state after logout or failed cookie validation.
+   * The legacy token key is removed once during migration; the active JWT is HttpOnly and inaccessible here.
+   * @returns {void} React state, cached profile data, and the CSRF helper are cleared.
    */
   function clearSession() {
     localStorage.removeItem(STORAGE_KEYS.token);
     localStorage.removeItem(STORAGE_KEYS.user);
+    api.clearSessionSecurity();
     setUser(null);
   }
 
-  // Verify persisted credentials with the API instead of trusting stale browser data.
+  // Ask the API to validate its HttpOnly cookie instead of trusting browser-readable credentials.
   useEffect(() => {
     let isActive = true;
-    const token = localStorage.getItem(STORAGE_KEYS.token);
-
-    if (!token) {
-      clearSession();
-      setIsSessionReady(true);
-      return undefined;
-    }
+    localStorage.removeItem(STORAGE_KEYS.token);
 
     api.getCurrentUser()
       .then(({ user: currentUser }) => {
@@ -80,7 +75,6 @@ export function AuthProvider({ children }) {
     setIsAuthenticating(true);
     try {
       const result = await api.login(credentials);
-      localStorage.setItem(STORAGE_KEYS.token, result.token);
       localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(result.user));
       setUser(result.user);
       setIsSessionReady(true);
@@ -117,6 +111,24 @@ export function AuthProvider({ children }) {
   }
 
   /**
+   * Requests a password-reset email while keeping account existence private.
+   * @param {object} payload - Email address submitted for password recovery.
+   * @returns {Promise<object>} Generic reset-request response.
+   */
+  async function requestPasswordReset(payload) {
+    return api.requestPasswordReset(payload);
+  }
+
+  /**
+   * Submits a one-time reset token and replacement password.
+   * @param {object} payload - Reset token and new password.
+   * @returns {Promise<object>} Password-reset completion response.
+   */
+  async function resetPassword(payload) {
+    return api.resetPassword(payload);
+  }
+
+  /**
    * Starts the legacy demo session used when that explicit flow is requested.
    * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
    * @returns {Promise<object>} A promise resolving to the demo authentication response.
@@ -125,7 +137,6 @@ export function AuthProvider({ children }) {
     setIsAuthenticating(true);
     try {
       const result = await api.startDemoSession();
-      localStorage.setItem(STORAGE_KEYS.token, result.token);
       localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(result.user));
       setUser(result.user);
       setIsSessionReady(true);
@@ -172,12 +183,15 @@ export function AuthProvider({ children }) {
   }
 
   /**
-   * Clears the authenticated session from React state and browser storage.
-   * Keeping this step in a named helper makes the surrounding workflow easier to read and test.
-   * @returns {*} The logout result.
+   * Expires the server-managed cookie and always clears the local profile cache.
+   * @returns {Promise<void>} Resolves after the logout request has completed or failed safely.
    */
-  function logout() {
-    clearSession();
+  async function logout() {
+    try {
+      await api.logout();
+    } finally {
+      clearSession();
+    }
   }
 
   const value = {
@@ -188,6 +202,8 @@ export function AuthProvider({ children }) {
     login,
     register,
     resendVerification,
+    requestPasswordReset,
+    resetPassword,
     startDemoSession,
     updateProfile,
     updatePassword,

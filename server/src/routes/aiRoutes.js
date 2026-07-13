@@ -3,11 +3,11 @@
  */
 import { Router } from 'express';
 import { insight } from '../controllers/aiController.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requireCsrf } from '../middleware/auth.js';
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth, requireCsrf);
 router.post('/insight', insight);
 
 export default router;
