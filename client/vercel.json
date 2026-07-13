@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://stockpulse-6w4m.onrender.com/api/:path*"
+      "destination": "https://stockpulse-1-4d9d.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
