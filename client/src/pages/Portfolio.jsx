@@ -1,10 +1,10 @@
 /**
  * File purpose: Assembles the Portfolio screen from reusable components, API data, and page-specific interactions.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { Area, AreaChart, Cell, Pie, PieChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ArrowLeftRight, Brain, ChartPie, ChartSpline, Clock3, ListChecks, Save, Trash2, WalletCards, X } from 'lucide-react';
+import { ArrowLeftRight, Brain, CalendarDays, ChartPie, ChartSpline, Clock3, ListChecks, Save, Trash2, WalletCards, X } from 'lucide-react';
 import PaperFundingPanel from '../components/trading/PaperFundingPanel';
 import PortfolioReturnsChart from '../components/trading/PortfolioReturnsChart';
 import TradeTicket from '../components/trading/TradeTicket';
@@ -201,36 +201,67 @@ function sortTransactionsNewestFirst(transactions) {
  */
 function TransactionTable({ transactions }) {
   const [selectedDate, setSelectedDate] = useState('');
+  const dateInputRef = useRef(null);
   const sortedTransactions = sortTransactionsNewestFirst(transactions);
   const shouldShowDateFilter = sortedTransactions.length > recentTransactionLimit;
   const filteredTransactions = selectedDate
     ? sortedTransactions.filter((transaction) => getTransactionDateInputValue(transaction.createdAt) === selectedDate)
     : sortedTransactions.slice(0, recentTransactionLimit);
   const emptyMessage = selectedDate ? 'No transactions found for that date.' : 'No orders yet.';
+  const visibleTransactionCount = filteredTransactions.length;
+  const selectedDateLabel = selectedDate
+    ? new Date(`${selectedDate}T00:00:00`).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+
+  /**
+   * Opens the browser's native calendar directly from the compact Filter button.
+   * The hidden date input preserves native keyboard and locale support without adding another visible form row.
+   * @returns {void} No value is returned; the browser opens its date picker.
+   */
+  function openDatePicker() {
+    const dateInput = dateInputRef.current;
+    if (!dateInput) return;
+
+    if (typeof dateInput.showPicker === 'function') {
+      dateInput.showPicker();
+      return;
+    }
+
+    dateInput.click();
+  }
 
   return (
     <>
-      {shouldShowDateFilter && (
-        <div className="transaction-filter-bar" aria-label="Transaction date filter">
-          <label className="transaction-date-filter">
-            <span className="input-label">Filter by date</span>
+      <div className="transaction-card-header">
+        <div className="transaction-card-heading">
+          <h2>Recent Transactions</h2>
+          <p className="muted">Showing {visibleTransactionCount} of {sortedTransactions.length} transactions</p>
+        </div>
+        {shouldShowDateFilter && (
+          <div className="transaction-filter-control">
+            {selectedDate && (
+              <button className="transaction-filter-chip" type="button" onClick={() => setSelectedDate('')} aria-label={`Clear date filter ${selectedDateLabel}`}>
+                <CalendarDays size={13} aria-hidden="true" />
+                <span>{selectedDateLabel}</span>
+                <X size={12} aria-hidden="true" />
+              </button>
+            )}
+            <Button className="transaction-filter-trigger" variant="ghost" aria-label="Filter transactions by date" onClick={openDatePicker}>
+              <CalendarDays size={15} aria-hidden="true" />
+              Filter
+            </Button>
             <input
-              className="input transaction-filter-input"
+              ref={dateInputRef}
+              className="transaction-filter-native-input"
               type="date"
               value={selectedDate}
+              tabIndex="-1"
+              aria-hidden="true"
               onChange={(event) => setSelectedDate(event.target.value)}
             />
-          </label>
-          <div className="transaction-filter-summary">
-            <span className="muted">
-              {selectedDate
-                ? `${filteredTransactions.length} transaction${filteredTransactions.length === 1 ? '' : 's'} found`
-                : `Showing latest ${Math.min(recentTransactionLimit, sortedTransactions.length)} of ${sortedTransactions.length}`}
-            </span>
-            {selectedDate && <Button variant="ghost" onClick={() => setSelectedDate('')}>Clear</Button>}
           </div>
-        </div>
-      )}
+        )}
+      </div>
       <div className="table-wrap scroll-panel portfolio-six-row-scroll">
         <table className="data-table transaction-table">
           <thead>
@@ -430,6 +461,7 @@ function PendingLimitOrders({ orders, onPortfolioChange }) {
               <article className="pending-limit-row" key={order.id}>
                 <span className={`pending-limit-side ${order.side.toLowerCase()}`}>{order.side}</span>
                 <div className="pending-limit-details">
+                  <strong className="pending-limit-mobile-ticker">{order.ticker}</strong>
                   <StockIdentity stock={order} company={order.companyName} size={30} compact />
                   <small>{quantityLabel} pending</small>
                   <small>Placed near {formatCurrency(order.submittedPrice)}</small>
@@ -740,7 +772,6 @@ export default function Portfolio() {
       <div className="portfolio-records-grid">
         <AllocationCard holdings={portfolio.holdings || []} />
         <GlassCard className="portfolio-transactions-card portfolio-records-card">
-          <div className="section-title"><h2>Recent Transactions</h2></div>
           <TransactionTable transactions={portfolio.transactions} />
         </GlassCard>
       </div>

@@ -1,7 +1,7 @@
 /**
  * File purpose: Assembles the cinematic Login/Register screen from reusable components, API data, and page-specific interactions.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, BarChart3, BookOpen, KeyRound, LockKeyhole, Mail, PieChart, ShieldCheck, TrendingUp, UserRound, X } from 'lucide-react';
 import Button from '../components/ui/Button';
@@ -78,6 +78,27 @@ export default function Login({ initialMode = 'login' }) {
   const [verificationStatus, setVerificationStatus] = useState('');
   const [resendBusy, setResendBusy] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
+
+  // Auth routes intentionally ignore the saved app theme so every auth and recovery state renders identically.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('stockpulse_theme') === 'dark' ? 'dark' : 'light';
+    const applyDarkTheme = () => {
+      if (root.classList.contains('dark') && !root.classList.contains('light')) return;
+      root.classList.remove('light');
+      root.classList.add('dark');
+    };
+
+    applyDarkTheme();
+    const themeObserver = new MutationObserver(applyDarkTheme);
+    themeObserver.observe(root, { attributes: true, attributeFilter: ['class'] });
+
+    return () => {
+      themeObserver.disconnect();
+      root.classList.remove('light', 'dark');
+      root.classList.add(savedTheme);
+    };
+  }, []);
 
   useEffect(() => {
     setMode(initialMode === 'register' ? 'register' : 'login');
