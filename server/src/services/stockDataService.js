@@ -613,6 +613,28 @@ function sortByChange(stocks, direction) {
 }
 
 /**
+ * Completes a mover list with valid live fallback quotes without replacing the
+ * preferred screener ranking or showing the same ticker twice.
+ * @param {Array<object>} preferredStocks - Primary screener results.
+ * @param {Array<object>} fallbackStocks - Secondary live quote candidates.
+ * @param {'gainer'|'loser'} direction - Required sign and ordering direction.
+ * @param {number} limit - Maximum number of movers to return.
+ * @returns {Array<object>} Up to the requested number of unique, correctly signed movers.
+ */
+export function selectTopMovers(preferredStocks, fallbackStocks, direction, limit = 3) {
+  const seen = new Set();
+  return [
+    ...sortByChange(preferredStocks || [], direction),
+    ...sortByChange(fallbackStocks || [], direction),
+  ].filter((stock) => {
+    const ticker = String(stock?.ticker || '').trim().toUpperCase();
+    if (!ticker || seen.has(ticker)) return false;
+    seen.add(ticker);
+    return true;
+  }).slice(0, limit);
+}
+
+/**
  * Returns the recent volume needed by the calling screen or service.
  * Centralizing this lookup keeps callers independent from where the data comes from.
  * @param {string} symbol - Ticker symbol identifying the stock.
@@ -1652,20 +1674,20 @@ export async function getTopActiveStocks() {
             };
           }),
         ),
-        getYahooScreenerStocks('day_gainers', 8).catch(() => []),
-        getYahooScreenerStocks('day_losers', 8).catch(() => []),
+        getYahooScreenerStocks('day_gainers', 25).catch(() => []),
+        getYahooScreenerStocks('day_losers', 25).catch(() => []),
       ]);
       const volumeStocks = sortByVolume(stocks);
-      const fallbackGainers = sortByChange(volumeStocks, 'gainer').slice(0, 3);
-      const fallbackLosers = sortByChange(volumeStocks, 'loser').slice(0, 3);
+      const topGainers = selectTopMovers(gainers, volumeStocks, 'gainer');
+      const topLosers = selectTopMovers(losers, volumeStocks, 'loser');
 
       return {
         demo: false,
         provider: gainers.length || losers.length ? 'finnhub+yahoo' : 'finnhub',
         message: 'Volume leaders use Finnhub quotes; day gainers and losers use the latest available Yahoo Finance screener results.',
         stocks: volumeStocks,
-        gainers: gainers.length ? gainers.slice(0, 3) : fallbackGainers,
-        losers: losers.length ? losers.slice(0, 3) : fallbackLosers,
+        gainers: topGainers,
+        losers: topLosers,
       };
     } catch (error) {
       const stocks = sortByVolume(demoStocks);

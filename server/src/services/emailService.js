@@ -78,7 +78,11 @@ export async function sendEmail({ to, subject, html, text }) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const error = new Error(data?.message || data?.error?.message || 'Unable to send transactional email with Resend.');
+    // Provider errors can include private account details, so they must never become browser-facing messages.
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Resend email delivery failed with status ' + response.status + '.');
+    }
+    const error = new Error('The email could not be sent right now. Please try again later.');
     error.statusCode = 502;
     throw error;
   }

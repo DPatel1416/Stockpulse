@@ -75,6 +75,23 @@ describe('auth API', () => {
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   });
 
+  it('does not expose private details from email-provider errors', async () => {
+    const privateProviderEmail = 'private-owner@example.com';
+    globalThis.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+      json: async () => ({
+        message: 'Testing emails can only be sent to ' + privateProviderEmail + '.',
+      }),
+    });
+
+    const response = await request(app).post('/api/auth/register').send(TEST_USER);
+
+    expect(response.status).toBe(502);
+    expect(response.body.message).toBe('The email could not be sent right now. Please try again later.');
+    expect(JSON.stringify(response.body)).not.toContain(privateProviderEmail);
+  });
+
   it('rejects duplicate email registration', async () => {
     await registerAndGetToken();
 

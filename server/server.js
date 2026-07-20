@@ -18,39 +18,31 @@ if (process.env.JWT_SECRET.trim().length < 32) {
 
 const port = process.env.PORT || 5000;
 
-// The API still starts if MongoDB is unavailable; controllers then use demo memory storage.
-/**
- * Starts HTTP and background order processing after the initial database attempt finishes.
- * The API starts even without MongoDB because StockPulse supports in-memory demonstration storage.
- * @returns {void} No value is returned; long-running server processes are started.
- */
-connectDatabase().finally(() => {
-  /**
-   * Logs the local API address after Express begins listening.
-   * Keeping startup feedback here makes terminal troubleshooting straightforward.
-   * @returns {void} No value is returned; a startup message is written.
-   */
-  app.listen(port, () => {
-    console.log(`StockPulse API running on http://localhost:${port}`);
-  });
-
-  let orderSweepRunning = false;
-  const orderSweepInterval = Number(process.env.LIMIT_ORDER_POLL_MS || 15000);
-  /**
-   * Periodically checks whether pending limit orders have reached executable prices.
-   * A lock prevents overlapping sweeps when a market-data request takes longer than the interval.
-   * @returns {Promise<void>} A promise that resolves after one sweep attempt finishes.
-   */
-  const orderSweep = setInterval(async () => {
-    if (orderSweepRunning) return;
-    orderSweepRunning = true;
-    try {
-      await processAllPendingOrders();
-    } catch (error) {
-      console.warn(`Limit order check skipped: ${error.message}`);
-    } finally {
-      orderSweepRunning = false;
-    }
-  }, Math.max(5000, orderSweepInterval));
-  orderSweep.unref();
+// Listen before the optional database connection finishes so a slow Atlas DNS
+// lookup cannot make the frontend proxy appear offline. Controllers already
+// use in-memory storage until Mongoose reports an active connection.
+app.listen(port, () => {
+  console.log('StockPulse API running on http://localhost:' + port);
 });
+
+void connectDatabase();
+
+let orderSweepRunning = false;
+const orderSweepInterval = Number(process.env.LIMIT_ORDER_POLL_MS || 15000);
+/**
+ * Periodically checks whether pending limit orders have reached executable prices.
+ * A lock prevents overlapping sweeps when a market-data request takes longer than the interval.
+ * @returns {Promise<void>} A promise that resolves after one sweep attempt finishes.
+ */
+const orderSweep = setInterval(async () => {
+  if (orderSweepRunning) return;
+  orderSweepRunning = true;
+  try {
+    await processAllPendingOrders();
+  } catch (error) {
+    console.warn('Limit order check skipped: ' + error.message);
+  } finally {
+    orderSweepRunning = false;
+  }
+}, Math.max(5000, orderSweepInterval));
+orderSweep.unref();

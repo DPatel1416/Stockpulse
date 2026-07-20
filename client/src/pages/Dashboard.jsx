@@ -72,6 +72,29 @@ function sortMovers(stocks, direction) {
 }
 
 /**
+ * Fills an incomplete screener list with other live quote candidates.
+ * The screener remains authoritative while the fallback prevents partially
+ * populated provider responses from leaving blank slots in the dashboard.
+ * @param {Array<object>} preferredStocks - Stocks ranked by the market screener.
+ * @param {Array<object>} fallbackStocks - Live active-stock candidates.
+ * @param {'gainer'|'loser'} direction - Required change direction.
+ * @returns {Array<object>} Up to three unique movers with the correct change sign.
+ */
+function mergeMoverCandidates(preferredStocks, fallbackStocks, direction) {
+  const seen = new Set();
+  return [
+    ...sortMovers(preferredStocks || [], direction),
+    ...sortMovers(fallbackStocks || [], direction),
+  ].filter((stock) => {
+    const ticker = String(stock?.ticker || '').trim().toUpperCase();
+    if (!ticker || seen.has(ticker)) return false;
+    seen.add(ticker);
+    return true;
+  }).slice(0, 3);
+}
+
+
+/**
  * Returns the news ticker needed by the calling screen or service.
  * Centralizing this lookup keeps callers independent from where the data comes from.
  * @param {*} item - Current item being rendered or transformed.
@@ -119,17 +142,11 @@ export default function Dashboard() {
   );
 
   const topGainers = useMemo(
-    () => {
-      const dayGainers = sortMovers(marketMovers.gainers || [], 'gainer');
-      return dayGainers.length ? dayGainers : sortMovers(filteredActiveStocks, 'gainer');
-    },
+    () => mergeMoverCandidates(marketMovers.gainers, filteredActiveStocks, 'gainer'),
     [filteredActiveStocks, marketMovers.gainers],
   );
   const topLosers = useMemo(
-    () => {
-      const dayLosers = sortMovers(marketMovers.losers || [], 'loser');
-      return dayLosers.length ? dayLosers : sortMovers(filteredActiveStocks, 'loser');
-    },
+    () => mergeMoverCandidates(marketMovers.losers, filteredActiveStocks, 'loser'),
     [filteredActiveStocks, marketMovers.losers],
   );
   const heroPulseItems = useMemo(() => {
