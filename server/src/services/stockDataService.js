@@ -391,30 +391,68 @@ function mapYahooScreenerQuote(item) {
  * @returns {Promise<*>} A promise resolving to the requested yahoo screener stocks result.
  */
 async function getYahooScreenerStocks(scrId, limit = 8, forceRefresh = false) {
-  const cacheKey = `yahoo-screener:${scrId}:${limit}`;
+  const cacheKey = ['yahoo-screener', scrId, limit].join(':');
   const cached = cache.get(cacheKey);
   if (!forceRefresh && cached && Date.now() - cached.createdAt < 60_000) return cached.data;
 
-  const session = await getYahooSession(forceRefresh);
-  const url = new URL(`${YAHOO_QUERY_BASE_URL}/v1/finance/screener/predefined/saved`);
-  url.searchParams.set('scrIds', scrId);
-  url.searchParams.set('count', String(limit));
-  url.searchParams.set('start', '0');
-  url.searchParams.set('formatted', 'false');
-  url.searchParams.set('crumb', session.crumb);
+  const createScreenerUrl = () => {
+    const url = new URL(YAHOO_QUERY_BASE_URL + '/v1/finance/screener/predefined/saved');
+    url.searchParams.set('scrIds', scrId);
+    url.searchParams.set('count', String(limit));
+    url.searchParams.set('start', '0');
+    url.searchParams.set('formatted', 'false');
+    url.searchParams.set('region', 'US');
+    url.searchParams.set('lang', 'en-US');
+    return url;
+  };
 
-  const response = await yahooFetch(url, {
-    headers: { ...session.headers, ...(session.cookie ? { Cookie: session.cookie } : {}) },
-  });
+  let payload;
 
-  if ((response.status === 401 || response.status === 403) && !forceRefresh) {
-    yahooSession = null;
-    return getYahooScreenerStocks(scrId, limit, true);
+  try {
+    // The screener JSON normally works without authentication. Trying it first
+    // avoids Yahoo's cookie bootstrap, which is commonly blocked on cloud hosts.
+    const directResponse = await yahooFetch(createScreenerUrl(), {
+      headers: {
+        Accept: 'application/json,text/plain,*/*',
+        'User-Agent': 'Mozilla/5.0 StockPulse/1.0',
+      },
+    });
+
+    if (!directResponse.ok) {
+      throw new Error('Direct Yahoo screener request failed with status ' + directResponse.status);
+    }
+
+    payload = await directResponse.json();
+    if (!payload?.finance?.result?.[0]?.quotes?.length) {
+      throw new Error('Direct Yahoo screener response contained no quotes.');
+    }
+  } catch (directError) {
+    // Some Yahoo regions still require a cookie and crumb, so retain the
+    // authenticated session route as the secondary provider path.
+    const session = await getYahooSession(forceRefresh);
+    const sessionUrl = createScreenerUrl();
+    sessionUrl.searchParams.set('crumb', session.crumb);
+    const response = await yahooFetch(sessionUrl, {
+      headers: { ...session.headers, ...(session.cookie ? { Cookie: session.cookie } : {}) },
+    });
+
+    if ((response.status === 401 || response.status === 403) && !forceRefresh) {
+      yahooSession = null;
+      return getYahooScreenerStocks(scrId, limit, true);
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        'Yahoo Finance screener request failed with status '
+        + response.status
+        + '. Direct request: '
+        + directError.message,
+      );
+    }
+
+    payload = await response.json();
   }
 
-  if (!response.ok) throw new Error(`Yahoo Finance screener request failed with status ${response.status}`);
-
-  const payload = await response.json();
   const quotes = payload?.finance?.result?.[0]?.quotes || [];
   const stocks = quotes
     .map(mapYahooScreenerQuote)
