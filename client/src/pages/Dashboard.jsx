@@ -153,9 +153,7 @@ export default function Dashboard() {
     const volumeLeader = [...activeStocks]
       .filter((stock) => Number.isFinite(Number(stock.volume)))
       .sort((a, b) => Number(b.volume) - Number(a.volume))[0];
-    const strongestMover = [...activeStocks]
-      .filter((stock) => Number.isFinite(Number(stock.change)))
-      .sort((a, b) => Math.abs(Number(b.change)) - Math.abs(Number(a.change)))[0];
+    const topGainer = topGainers[0];
     const nextReport = [...watchlistEarnings]
       .sort((a, b) => String(a.date).localeCompare(String(b.date)))[0];
 
@@ -169,13 +167,13 @@ export default function Dashboard() {
         route: volumeLeader ? `/stock/${volumeLeader.ticker}` : '/stock/AAPL',
       },
       {
-        label: 'Biggest move',
-        value: strongestMover?.ticker || '--',
-        detail: strongestMover ? formatPercent(strongestMover.change) : 'Awaiting movers',
+        label: 'Top gainer',
+        value: topGainer?.ticker || '--',
+        detail: topGainer ? formatPercent(topGainer.change) : 'Awaiting movers',
         icon: TrendingUp,
-        stock: strongestMover,
-        route: strongestMover ? `/stock/${strongestMover.ticker}` : '/stock/AAPL',
-        detailClass: strongestMover ? getChangeClass(strongestMover.change) : '',
+        stock: topGainer,
+        route: topGainer ? `/stock/${topGainer.ticker}` : '/stock/AAPL',
+        detailClass: topGainer ? getChangeClass(topGainer.change) : '',
       },
       {
         label: 'Watchlist',
@@ -195,7 +193,7 @@ export default function Dashboard() {
         route: nextReport ? `/stock/${nextReport.ticker}` : '/watchlist',
       },
     ];
-  }, [activeStocks, isAuthenticated, watchlist.length, watchlistEarnings]);
+  }, [activeStocks, isAuthenticated, topGainers, watchlist.length, watchlistEarnings]);
 
   useEffect(() => {
     if (!industryOptions.includes(selectedIndustry)) {
